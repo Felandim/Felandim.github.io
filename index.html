@@ -30,7 +30,24 @@
   text-align: left;
   display: inline-block;
   }
-
+  * Estilos adicionais para o link */
+  .link-destaque {
+    font-size: 20px; /* Tamanho da fonte maior */
+    background-color: #f2f2f2; /* Cor de fundo */
+    padding: 10px; /* Espaçamento interno */
+    border: 2px solid #333; /* Borda ao redor */
+    border-radius: 5px; /* Cantos arredondados */
+    display: inline-block; /* Permite definir padding e borda */
+    margin-bottom: 20px; /* Espaçamento abaixo do link */
+  }
+  .link-destaque a {
+    text-decoration: none; /* Remove o sublinhado */
+    color: #333; /* Cor do texto */
+  }
+  .link-destaque a:hover {
+    color: #007BFF; /* Cor do texto ao passar o mouse */
+  }
+    
   </style>
   
 </head>
@@ -42,6 +59,10 @@
 </header>
 
 <main>
+
+  <!-- Inserção do link para a nova página acima do título do dashboard -->
+  <p class="link-destaque"><a href="tabela_returno.html">Clique aqui para ver a tabela do segundo turno do brasileirão</a></p>
+  
   <h1>Meu Primeiro Dashboard Hospedado</h1>
   
   <p>📊 POWER BI CODE-ALONG DE 1h20</p> <!-- Comentários sobre o dashboard -->
