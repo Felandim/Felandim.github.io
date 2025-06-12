@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Capítulo 21</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 1rem;
+        }
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            font-size: 1.5rem;
+            color: #4a5568;
+        }
+        .spinner {
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            border-left-color: #6366f1;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body class="bg-gray-100 antialiased">
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="spinner"></div>
+        <p class="ml-4">Carregando vozes...</p>
+    </div>
+
+    <div class="bg-white p-8 rounded-lg shadow-xl w-full max-w-2xl border-t-4 border-indigo-500">
+        <h1 class="text-3xl font-bold text-gray-800 mb-6 text-center">Quiz Capítulo 21</h1>
+        <p class="text-gray-600 mb-8 text-center">Teste seus conhecimentos sobre "Estimando Custos de Reivindicações Médicas".</p>
+
+        <div class="mb-6 bg-indigo-50 p-4 rounded-md border border-indigo-200">
+            <p id="questionDisplay" class="text-lg font-medium text-gray-900 mb-4"></p>
+            <div id="optionsDisplay" class="space-y-2 text-gray-700"></div>
+            <p id="answerDisplay" class="text-md font-semibold text-green-700 mt-4 hidden"></p>
+        </div>
+
+        <div class="flex flex-wrap justify-center gap-4 mb-6">
+            <button id="readQuestionBtn" class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 px-4 rounded-md shadow-md transition duration-300 ease-in-out transform hover:scale-105">Ouvir Pergunta</button>
+            <button id="showAnswerBtn" class="bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded-md shadow-md transition duration-300 ease-in-out transform hover:scale-105">Mostrar Resposta</button>
+            <button id="readAnswerBtn" class="bg-purple-600 hover:bg-purple-700 text-white font-semibold py-2 px-4 rounded-md shadow-md transition duration-300 ease-in-out transform hover:scale-105 hidden">Ouvir Resposta</button>
+            <label for="toggleSpeakAnswer" class="flex items-center cursor-pointer">
+                <div class="relative">
+                    <input type="checkbox" id="toggleSpeakAnswer" class="sr-only">
+                    <div class="block bg-gray-600 w-14 h-8 rounded-full"></div>
+                    <div class="dot absolute left-1 top-1 bg-white w-6 h-6 rounded-full transition"></div>
+                </div>
+                <div class="ml-3 text-gray-700 font-medium">Ler Resposta (Automático)</div>
+            </label>
+        </div>
+
+        <div class="flex justify-between mt-8">
+            <button id="prevQuestionBtn" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold py-2 px-4 rounded-md shadow-md transition duration-300 ease-in-out transform hover:scale-105">Anterior</button>
+            <button id="nextQuestionBtn" class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 px-4 rounded-md shadow-md transition duration-300 ease-in-out transform hover:scale-105">Próxima</button>
+        </div>
+    </div>
+
+    <script>
+        const quizData = [
+            {
+                question: "1. Qual é o elemento essencial na precificação de produtos de benefícios médicos, de acordo com o Capítulo 21?",
+                options: [
+                    "a) Custos administrativos",
+                    "b) Custos estimados de reivindicações médicas",
+                    "c) Margem de lucro da seguradora",
+                    "d) Despesas de marketing"
+                ],
+                answer: "b) Custos estimados de reivindicações médicas"
+            },
+            {
+                question: "2. A partir de 2016, a Lei de Cuidados Acessíveis (ACA) expandiu a definição de \"pequeno grupo\" para incluir empregadores com até quantos funcionários?",
+                options: ["a) 50", "b) 75", "c) 100", "d) 200"],
+                answer: "c) 100"
+            },
+            {
+                question: "3. Qual é a melhor fonte de dados para estimar os custos de reivindicações médicas, desde que haja volume suficiente para ser credível?",
+                options: ["a) Dados de fontes públicas", "b) Dados comprados de empresas do setor", "c) A própria experiência da empresa", "d) Dados de consultorias atuariais"],
+                answer: "c) A própria experiência da empresa"
+            },
+            {
+                question: "4. Ao coletar dados financeiros para estimar os custos de reivindicações médicas, quais tipos de valores de reivindicações é útil coletar se os planos de benefícios ou arranjos de reembolso de provedores estiverem mudando?",
+                options: ["a) Apenas valores pagos", "b) Apenas valores permitidos", "c) Valores faturados, permitidos e pagos", "d) Apenas valores faturados"],
+                answer: "c) Valores faturados, permitidos e pagos"
+            },
+            {
+                question: "5. Por que é importante coletar dados para um período de incurso de pelo menos doze meses?",
+                options: [
+                    "a) Para garantir que a seguradora tenha tempo suficiente para processar todas as reivindicações.",
+                    "b) Para incluir um ciclo sazonal completo de incurso e pagamentos.",
+                    "c) Para corresponder aos requisitos regulatórios do governo.",
+                    "d) Para facilitar a comparação com dados de anos anteriores."
+                ],
+                answer: "b) Para incluir um ciclo sazonal completo de incurso e pagamentos."
+            },
+            {
+                question: "6. A variação no custo da reivindicação por idade e sexo pode ser substancial. Com que frequência é comum realizar estudos de idade/sexo?",
+                options: ["a) Anualmente", "b) A cada dois anos", "c) A cada três anos", "d) Mensalmente"],
+                answer: "c) A cada três anos"
+            },
+            {
+                question: "7. Quais são as restrições da ACA em relação aos fatores de classificação por área geográfica para pequenos grupos?",
+                options: [
+                    "a) Os fatores de área podem diferir para diferenças de contrato com provedores, mas não para morbidade.",
+                    "b) Os fatores de área podem diferir para morbidade, mas não para diferenças de contrato com provedores.",
+                    "c) Os fatores de área podem diferir para ambos, morbidade e diferenças de contrato com provedores.",
+                    "d) A ACA eliminou totalmente os fatores de classificação por área geográfica."
+                ],
+                answer: "a) Os fatores de área podem diferir para diferenças de contrato com provedores, mas não para morbidade."
+            },
+            {
+                question: "8. O que normalmente reflete a diferença entre os valores pagos e permitidos em dados de reivindicações médicas?",
+                options: [
+                    "a) Reembolsos de resseguro",
+                    "b) Recuperações de Coordenação de Benefícios (COB)",
+                    "c) O valor de qualquer compartilhamento de custos segurado (dedutível, coparticipação ou copagamentos)",
+                    "d) Arranjos de reembolso negociados com o provedor"
+                ],
+                answer: "c) O valor de qualquer compartilhamento de custos segurado (dedutível, coparticipação ou copagamentos)"
+            }
+        ];
+
+        const questionDisplay = document.getElementById('questionDisplay');
+        const optionsDisplay = document.getElementById('optionsDisplay');
+        const answerDisplay = document.getElementById('answerDisplay');
+        const readQuestionBtn = document.getElementById('readQuestionBtn');
+        const showAnswerBtn = document.getElementById('showAnswerBtn');
+        const readAnswerBtn = document.getElementById('readAnswerBtn');
+        const prevQuestionBtn = document.getElementById('prevQuestionBtn');
+        const nextQuestionBtn = document.getElementById('nextQuestionBtn');
+        const toggleSpeakAnswer = document.getElementById('toggleSpeakAnswer');
+        const loadingOverlay = document.getElementById('loadingOverlay');
+
+        let currentQuestionIndex = 0;
+        let speechSynth = window.speechSynthesis;
+        let portugueseVoice = null;
+
+        function setPortugueseVoice() {
+            const voices = speechSynth.getVoices();
+            portugueseVoice = voices.find(v => v.lang === 'pt-BR' || v.lang === 'pt-PT');
+            if (!portugueseVoice) {
+                console.warn('Nenhuma voz em português encontrada. Usando a voz padrão.');
+            }
+            loadingOverlay.classList.add('hidden');
+        }
+
+        speechSynth.onvoiceschanged = setPortugueseVoice;
+        if (speechSynth.getVoices().length > 0) {
+            setPortugueseVoice();
+        } else {
+            loadingOverlay.classList.remove('hidden');
+        }
+
+        function displayQuestion() {
+            const question = quizData[currentQuestionIndex];
+            questionDisplay.textContent = question.question;
+            optionsDisplay.innerHTML = '';
+            question.options.forEach(option => {
+                const p = document.createElement('p');
+                p.textContent = option;
+                optionsDisplay.appendChild(p);
+            });
+            answerDisplay.classList.add('hidden');
+            readAnswerBtn.classList.add('hidden');
+            if (toggleSpeakAnswer.checked) {
+                showAnswerBtn.classList.add('hidden');
+            } else {
+                showAnswerBtn.classList.remove('hidden');
+            }
+        }
+
+        function speak(text) {
+            if (speechSynth.speaking) {
+                speechSynth.cancel();
+            }
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = 'pt-BR';
+            if (portugueseVoice) {
+                utterance.voice = portugueseVoice;
+            }
+            speechSynth.speak(utterance);
+        }
+
+        readQuestionBtn.addEventListener('click', () => {
+            speak(quizData[currentQuestionIndex].question + '. As opções são: ' + quizData[currentQuestionIndex].options.join('. '));
+        });
+
+        showAnswerBtn.addEventListener('click', () => {
+            const answer = quizData[currentQuestionIndex].answer;
+            answerDisplay.textContent = `Resposta: ${answer}`;
+            answerDisplay.classList.remove('hidden');
+            readAnswerBtn.classList.remove('hidden');
+        });
+
+        readAnswerBtn.addEventListener('click', () => {
+            const answer = quizData[currentQuestionIndex].answer;
+            speak('A resposta é: ' + answer);
+        });
+
+        prevQuestionBtn.addEventListener('click', () => {
+            if (currentQuestionIndex > 0) {
+                currentQuestionIndex--;
+                displayQuestion();
+            }
+        });
+
+        nextQuestionBtn.addEventListener('click', () => {
+            if (currentQuestionIndex < quizData.length - 1) {
+                currentQuestionIndex++;
+                displayQuestion();
+            }
+        });
+
+        toggleSpeakAnswer.addEventListener('change', () => {
+            if (toggleSpeakAnswer.checked) {
+                showAnswerBtn.classList.add('hidden');
+                readAnswerBtn.classList.add('hidden');
+                if (!answerDisplay.classList.contains('hidden')) {
+                    const answer = quizData[currentQuestionIndex].answer;
+                    speak('A resposta é: ' + answer);
+                }
+            } else {
+                showAnswerBtn.classList.remove('hidden');
+                if (!answerDisplay.classList.contains('hidden')) {
+                    readAnswerBtn.classList.remove('hidden');
+                }
+            }
+        });
+
+        toggleSpeakAnswer.parentNode.querySelector('.dot').style.left = toggleSpeakAnswer.checked ? '22px' : '4px';
+        toggleSpeakAnswer.parentNode.querySelector('.block').style.backgroundColor = toggleSpeakAnswer.checked ? '#4F46E5' : '#4a5568';
+        toggleSpeakAnswer.addEventListener('change', function() {
+            this.parentNode.querySelector('.dot').style.left = this.checked ? '22px' : '4px';
+            this.parentNode.querySelector('.block').style.backgroundColor = this.checked ? '#4F46E5' : '#4a5568';
+        });
+
+        displayQuestion();
+    </script>
+    <p class="text-center mt-4"><a href="index.html" class="text-indigo-600 underline">Voltar à página inicial</a></p>
+</body>
+</html>

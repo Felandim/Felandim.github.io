@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Quiz Capítulo 20</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <script src="https://unpkg.com/react@17/umd/react.development.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js" crossorigin></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+</head>
+<body class="bg-gray-100">
+    <div id="root"></div>
+    <p class="text-center mt-4"><a href="index.html" class="text-blue-600 underline">Voltar à página inicial</a></p>
+
+    <script type="text/babel">
+const { useState, useEffect } = React;
+
+const App = () => {
+  const quizData = [
+    {
+      question: "O que representa o 'prémio bruto' para qualquer cobertura de grupo e quais são os seus quatro elementos principais?",
+      answer: "O prémio bruto representa o custo da cobertura para o cliente. Os seus quatro elementos principais são: custos de sinistros estimados, despesas, impostos e lucro (ou contribuição para o excedente para organizações sem fins lucrativos)."
+    },
+    {
+      question: "Quais são as três premissas de preço principais para os prémios brutos, além dos custos de sinistro esperados?",
+      answer: "As três premissas de preço principais são: Despesas (incluindo despesas administrativas, comissões e outras despesas de vendas), Impostos sobre prémios e outros impostos, e Contribuições para o excedente (que geralmente refletem o nível de risco e o lucro esperado)."
+    },
+    {
+      question: "Descreva duas formas pelas quais as despesas administrativas podem ser alocadas aos produtos ou funções.",
+      answer: "Duas formas de alocação de despesas administrativas são: Alocação Baseada em Atividades (aloca despesas de acordo com alguma medida ou estimativa de uso para os produtos ou funções, ex: custo real do envio de correspondência) e Alocação de Despesas Funcionais (envolve determinar como as despesas totais de uma organização são divididas por categorias de atividades principais e secundárias, por linha de negócio para negócios novos e renovados, ex: pesquisa de tempo de funcionário)."
+    },
+    {
+      question: "Como as comissões são geralmente expressas no seguro de grupo e como elas variam com o tamanho do grupo?",
+      answer: "As comissões são geralmente expressas como uma percentagem dos prémios, com a percentagem a diminuir com o tamanho do grupo. Alternativamente, podem ser expressas numa escala de prémios deslizante ou como um valor fixo por membro."
+    },
+    {
+      question: "Qual é o intervalo típico da taxa de imposto sobre prémios cobrada pelos estados?",
+      answer: "O nível de imposto sobre prémios geralmente varia de 1% a 3% dos prémios, conforme estabelecido pelos estatutos estaduais."
+    },
+    {
+      question: "Cite dois outros impostos ou avaliações que as seguradoras estão sujeitas, além dos impostos sobre prémios.",
+      answer: "Além dos impostos sobre prémios, as seguradoras estão sujeitas a impostos federais e estaduais sobre o rendimento e a avaliações da ACA (Affordable Care Act), como a avaliação federal sobre quase todas as coberturas de seguro de saúde e a avaliação de pesquisa de eficiência comparativa."
+    },
+    {
+      question: "Quais fatores devem teoricamente refletir o nível escolhido de encargos de risco e lucro?",
+      answer: "O nível escolhido de encargos de risco e lucro deve, em teoria, refletir o grau de risco envolvido, o montante de capital da seguradora alocado para suportar a cobertura e o retorno esperado sobre o capital."
+    },
+    {
+      question: "O que são 'taxas de prémio manual' e o que elas geralmente não consideram?",
+      answer: "As taxas de prémio manual são as taxas que seriam cobradas na ausência de qualquer credibilidade dada à experiência de sinistros passada e sem subscrição de saúde do grupo. Elas não consideram a experiência de sinistros específica do grupo ou a subscrição de saúde individual."
+    },
+    {
+      question: "Cite pelo menos quatro características de avaliação comuns que podem ser usadas para ajustar a taxa média de prémio bruto de um produto.",
+      answer: "Quatro características de avaliação comuns são: idade, gênero, estado de saúde (pontuações de ajuste de risco), níveis de avaliação, fatores geográficos, códigos da indústria, tamanho do grupo e duração do período do prémio."
+    },
+    {
+      question: "Por que é essencial desenvolver e implementar sistemas para monitorizar a experiência real na precificação de seguros de grupo?",
+      answer: "É essencial desenvolver e implementar sistemas para monitorizar a experiência real na precificação de seguros de grupo porque a experiência real nunca estará em conformidade precisa com as premissas de precificação. A monitorização permite a comparação pronta da experiência real com as premissas de precificação, para que as premissas possam ser modificadas apropriadamente à luz da experiência emergente."
+    }
+  ];
+
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+  const [showAnswer, setShowAnswer] = useState(false);
+  const [isSpeaking, setIsSpeaking] = useState(false);
+  const [speechSynthesisAvailable, setSpeechSynthesisAvailable] = useState(false);
+
+  useEffect(() => {
+    if ('speechSynthesis' in window) {
+      setSpeechSynthesisAvailable(true);
+    } else {
+      console.warn('A API SpeechSynthesis não é suportada neste navegador.');
+    }
+  }, []);
+
+  const speakText = (text, onEndCallback) => {
+    if (!speechSynthesisAvailable) {
+      console.warn('A API SpeechSynthesis não está disponível.');
+      return;
+    }
+    window.speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = 'pt-PT';
+    utterance.onstart = () => setIsSpeaking(true);
+    utterance.onend = () => {
+      setIsSpeaking(false);
+      if (onEndCallback) onEndCallback();
+    };
+    utterance.onerror = (e) => {
+      console.error('Erro na síntese de fala:', e.error);
+      setIsSpeaking(false);
+    };
+    window.speechSynthesis.speak(utterance);
+  };
+
+  const playQuestion = () => {
+    setShowAnswer(false);
+    speakText(`Pergunta ${currentQuestionIndex + 1}: ${quizData[currentQuestionIndex].question}`);
+  };
+
+  const playAnswer = () => {
+    setShowAnswer(true);
+    speakText(`Resposta: ${quizData[currentQuestionIndex].answer}`);
+  };
+
+  const nextQuestion = () => {
+    setShowAnswer(false);
+    window.speechSynthesis.cancel();
+    if (currentQuestionIndex < quizData.length - 1) {
+      setCurrentQuestionIndex((i) => i + 1);
+    } else {
+      setCurrentQuestionIndex(0);
+    }
+  };
+
+  const prevQuestion = () => {
+    setShowAnswer(false);
+    window.speechSynthesis.cancel();
+    if (currentQuestionIndex > 0) {
+      setCurrentQuestionIndex((i) => i - 1);
+    }
+  };
+
+  useEffect(() => {
+    window.speechSynthesis.cancel();
+    setIsSpeaking(false);
+  }, [currentQuestionIndex]);
+
+  const currentQuestion = quizData[currentQuestionIndex];
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-blue-100 to-indigo-200 flex items-center justify-center p-4 font-sans">
+      <div className="bg-white p-8 rounded-lg shadow-xl max-w-2xl w-full text-center border-4 border-blue-400">
+        <h1 className="text-3xl font-bold text-blue-700 mb-6">Quiz Capítulo 20</h1>
+
+        <div className="bg-blue-50 p-6 rounded-lg mb-6 border border-blue-300">
+          <p className="text-xl font-semibold text-blue-800 mb-4">
+            Pergunta {currentQuestionIndex + 1} de {quizData.length}:
+          </p>
+          <p className="text-lg text-gray-700 leading-relaxed">
+            {currentQuestion.question}
+          </p>
+        </div>
+
+        {showAnswer && (
+          <div className="bg-green-50 p-6 rounded-lg mb-6 border border-green-300">
+            <p className="text-xl font-semibold text-green-800 mb-4">Resposta:</p>
+            <p className="text-lg text-gray-700 leading-relaxed">
+              {currentQuestion.answer}
+            </p>
+          </div>
+        )}
+
+        <div className="flex flex-col sm:flex-row justify-center gap-4">
+          <button
+            onClick={playQuestion}
+            disabled={isSpeaking || !speechSynthesisAvailable}
+            className={
+              `px-6 py-3 rounded-full text-white font-bold transition-all duration-300 ease-in-out ` +
+              (isSpeaking ? 'bg-gray-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700 active:bg-blue-800 transform hover:scale-105 shadow-md') +
+              (!speechSynthesisAvailable ? ' opacity-50 cursor-not-allowed' : '')
+            }
+          >
+            {isSpeaking ? 'A Falar...' : 'Ouvir Pergunta'}
+          </button>
+
+          <button
+            onClick={playAnswer}
+            disabled={isSpeaking || !speechSynthesisAvailable}
+            className={
+              `px-6 py-3 rounded-full text-white font-bold transition-all duration-300 ease-in-out ` +
+              (isSpeaking ? 'bg-gray-400 cursor-not-allowed' : 'bg-green-600 hover:bg-green-700 active:bg-green-800 transform hover:scale-105 shadow-md') +
+              (!speechSynthesisAvailable ? ' opacity-50 cursor-not-allowed' : '')
+            }
+          >
+            {isSpeaking ? 'A Falar...' : 'Ouvir Resposta'}
+          </button>
+        </div>
+
+        <div className="flex justify-between mt-6">
+          <button
+            onClick={prevQuestion}
+            disabled={currentQuestionIndex === 0 || isSpeaking}
+            className={
+              `px-5 py-2 rounded-full text-blue-700 font-bold border-2 border-blue-500 hover:bg-blue-100 transition-all duration-300 ease-in-out ` +
+              ((currentQuestionIndex === 0 || isSpeaking) ? 'opacity-50 cursor-not-allowed' : 'hover:scale-105')
+            }
+          >
+            Anterior
+          </button>
+          <button
+            onClick={nextQuestion}
+            disabled={isSpeaking}
+            className={
+              `px-5 py-2 rounded-full text-white font-bold bg-blue-500 hover:bg-blue-600 transition-all duration-300 ease-in-out ` +
+              (isSpeaking ? 'opacity-50 cursor-not-allowed' : 'hover:scale-105')
+            }
+          >
+            Próxima
+          </button>
+        </div>
+
+        {!speechSynthesisAvailable && (
+          <p className="mt-4 text-red-500 text-sm">
+            O seu navegador não suporta a funcionalidade de conversão de texto em fala. Por favor, tente um navegador diferente (ex: Chrome, Edge, Firefox).
+          </p>
+        )}
+      </div>
+    </div>
+  );
+};
+
+ReactDOM.render(<App />, document.getElementById('root'));
+    </script>
+</body>
+</html>
