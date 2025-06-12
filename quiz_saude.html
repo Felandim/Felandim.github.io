@@ -2,7 +2,9 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <title>Quiz de Seguros de Grupo</title>
+
+    <title>Quiz Capítulo 20</title>
+
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <script src="https://unpkg.com/react@17/umd/react.development.js" crossorigin></script>
     <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js" crossorigin></script>
@@ -11,50 +13,55 @@
 <body class="bg-gray-100">
     <div id="root"></div>
 
+    <p class="text-center mt-4"><a href="index.html" class="text-blue-600 underline">Voltar à página inicial</a></p>
+
+
     <script type="text/babel">
 const { useState, useEffect } = React;
 
 const App = () => {
   const quizData = [
     {
-      question: "O que representa o 'pr\u00E9mio bruto' para qualquer cobertura de grupo e quais s\u00E3o os seus quatro elementos principais?",
-      answer: "O pr\u00E9mio bruto representa o custo da cobertura para o cliente. Os seus quatro elementos principais s\u00E3o: custos de sinistros estimados, despesas, impostos e lucro (ou contribui\u00E7\u00E3o para o excedente para organiza\u00E7\u00F5es sem fins lucrativos)."
+
+      question: "O que representa o 'prémio bruto' para qualquer cobertura de grupo e quais são os seus quatro elementos principais?",
+      answer: "O prémio bruto representa o custo da cobertura para o cliente. Os seus quatro elementos principais são: custos de sinistros estimados, despesas, impostos e lucro (ou contribuição para o excedente para organizações sem fins lucrativos)."
     },
     {
-      question: "Quais s\u00E3o as tr\u00EAs premissas de pre\u00E7o principais para os pr\u00E9mios brutos, al\u00E9m dos custos de sinistro esperados?",
-      answer: "As tr\u00EAs premissas de pre\u00E7o principais s\u00E3o: Despesas (incluindo despesas administrativas, comiss\u00F5es e outras despesas de vendas), Impostos sobre pr\u00E9mios e outros impostos, e Contribui\u00E7\u00F5es para o excedente (que geralmente refletem o n\u00EDvel de risco e o lucro esperado)."
+      question: "Quais são as três premissas de preço principais para os prémios brutos, além dos custos de sinistro esperados?",
+      answer: "As três premissas de preço principais são: Despesas (incluindo despesas administrativas, comissões e outras despesas de vendas), Impostos sobre prémios e outros impostos, e Contribuições para o excedente (que geralmente refletem o nível de risco e o lucro esperado)."
     },
     {
-      question: "Descreva duas formas pelas quais as despesas administrativas podem ser alocadas aos produtos ou fun\u00E7\u00F5es.",
-      answer: "Duas formas de aloca\u00E7\u00E3o de despesas administrativas s\u00E3o: Aloca\u00E7\u00E3o Baseada em Atividades (aloca despesas de acordo com alguma medida ou estimativa de uso para os produtos ou fun\u00E7\u00F5es, ex: custo real do envio de correspond\u00EAncia) e Aloca\u00E7\u00E3o de Despesas Funcionais (envolve determinar como as despesas totais de uma organiza\u00E7\u00E3o s\u00E3o divididas por categorias de atividades principais e secund\u00E1rias, por linha de neg\u00F3cio para neg\u00F3cios novos e renovados, ex: pesquisa de tempo de funcion\u00E1rio)."
+      question: "Descreva duas formas pelas quais as despesas administrativas podem ser alocadas aos produtos ou funções.",
+      answer: "Duas formas de alocação de despesas administrativas são: Alocação Baseada em Atividades (aloca despesas de acordo com alguma medida ou estimativa de uso para os produtos ou funções, ex: custo real do envio de correspondência) e Alocação de Despesas Funcionais (envolve determinar como as despesas totais de uma organização são divididas por categorias de atividades principais e secundárias, por linha de negócio para negócios novos e renovados, ex: pesquisa de tempo de funcionário)."
     },
     {
-      question: "Como as comiss\u00F5es s\u00E3o geralmente expressas no seguro de grupo e como elas variam com o tamanho do grupo?",
-      answer: "As comiss\u00F5es s\u00E3o geralmente expressas como uma percentagem dos pr\u00E9mios, com a percentagem a diminuir com o tamanho do grupo. Alternativamente, podem ser expressas numa escala de pr\u00E9mios deslizante ou como um valor fixo por membro."
+      question: "Como as comissões são geralmente expressas no seguro de grupo e como elas variam com o tamanho do grupo?",
+      answer: "As comissões são geralmente expressas como uma percentagem dos prémios, com a percentagem a diminuir com o tamanho do grupo. Alternativamente, podem ser expressas numa escala de prémios deslizante ou como um valor fixo por membro."
     },
     {
-      question: "Qual \u00E9 o intervalo t\u00EDpico da taxa de imposto sobre pr\u00E9mios cobrada pelos estados?",
-      answer: "O n\u00EDvel de imposto sobre pr\u00E9mios geralmente varia de 1% a 3% dos pr\u00E9mios, conforme estabelecido pelos estatutos estaduais."
+      question: "Qual é o intervalo típico da taxa de imposto sobre prémios cobrada pelos estados?",
+      answer: "O nível de imposto sobre prémios geralmente varia de 1% a 3% dos prémios, conforme estabelecido pelos estatutos estaduais."
     },
     {
-      question: "Cite dois outros impostos ou avalia\u00E7\u00F5es que as seguradoras est\u00E3o sujeitas, al\u00E9m dos impostos sobre pr\u00E9mios.",
-      answer: "Al\u00E9m dos impostos sobre pr\u00E9mios, as seguradoras est\u00E3o sujeitas a impostos federais e estaduais sobre o rendimento e a avalia\u00E7\u00F5es da ACA (Affordable Care Act), como a avalia\u00E7\u00E3o federal sobre quase todas as coberturas de seguro de sa\u00FAde e a avalia\u00E7\u00E3o de pesquisa de efici\u00EAncia comparativa."
+      question: "Cite dois outros impostos ou avaliações que as seguradoras estão sujeitas, além dos impostos sobre prémios.",
+      answer: "Além dos impostos sobre prémios, as seguradoras estão sujeitas a impostos federais e estaduais sobre o rendimento e a avaliações da ACA (Affordable Care Act), como a avaliação federal sobre quase todas as coberturas de seguro de saúde e a avaliação de pesquisa de eficiência comparativa."
     },
     {
-      question: "Quais fatores devem teoricamente refletir o n\u00EDvel escolhido de encargos de risco e lucro?",
-      answer: "O n\u00EDvel escolhido de encargos de risco e lucro deve, em teoria, refletir o grau de risco envolvido, o montante de capital da seguradora alocado para suportar a cobertura e o retorno esperado sobre o capital."
+      question: "Quais fatores devem teoricamente refletir o nível escolhido de encargos de risco e lucro?",
+      answer: "O nível escolhido de encargos de risco e lucro deve, em teoria, refletir o grau de risco envolvido, o montante de capital da seguradora alocado para suportar a cobertura e o retorno esperado sobre o capital."
     },
     {
-      question: "O que s\u00E3o 'taxas de pr\u00E9mio manual' e o que elas geralmente n\u00E3o consideram?",
-      answer: "As taxas de pr\u00E9mio manual s\u00E3o as taxas que seriam cobradas na aus\u00EAncia de qualquer credibilidade dada \u00E0 experi\u00EAncia de sinistros passada e sem subscri\u00E7\u00E3o de sa\u00FAde do grupo. Elas n\u00E3o consideram a experi\u00EAncia de sinistros espec\u00EDfica do grupo ou a subscri\u00E7\u00E3o de sa\u00FAde individual."
+      question: "O que são 'taxas de prémio manual' e o que elas geralmente não consideram?",
+      answer: "As taxas de prémio manual são as taxas que seriam cobradas na ausência de qualquer credibilidade dada à experiência de sinistros passada e sem subscrição de saúde do grupo. Elas não consideram a experiência de sinistros específica do grupo ou a subscrição de saúde individual."
     },
     {
-      question: "Cite pelo menos quatro caracter\u00EDsticas de avalia\u00E7\u00E3o comuns que podem ser usadas para ajustar a taxa m\u00E9dia de pr\u00E9mio bruto de um produto.",
-      answer: "Quatro caracter\u00EDsticas de avalia\u00E7\u00E3o comuns s\u00E3o: idade, g\u00EAnero, estado de sa\u00FAde (pontua\u00E7\u00F5es de ajuste de risco), n\u00EDveis de avalia\u00E7\u00E3o, fatores geogr\u00E1ficos, c\u00F3digos da ind\u00FAstria, tamanho do grupo e dura\u00E7\u00E3o do per\u00EDodo do pr\u00E9mio."
+      question: "Cite pelo menos quatro características de avaliação comuns que podem ser usadas para ajustar a taxa média de prémio bruto de um produto.",
+      answer: "Quatro características de avaliação comuns são: idade, gênero, estado de saúde (pontuações de ajuste de risco), níveis de avaliação, fatores geográficos, códigos da indústria, tamanho do grupo e duração do período do prémio."
     },
     {
-      question: "Por que \u00E9 essencial desenvolver e implementar sistemas para monitorizar a experi\u00EAncia real na precifica\u00E7\u00E3o de seguros de grupo?",
-      answer: "\u00C9 essencial desenvolver e implementar sistemas para monitorizar a experi\u00EAncia real na precifica\u00E7\u00E3o de seguros de grupo porque a experi\u00EAncia real nunca estar\u00E1 em conformidade precisa com as premissas de precifica\u00E7\u00E3o. A monitoriza\u00E7\u00E3o permite a compara\u00E7\u00E3o pronta da experi\u00EAncia real com as premissas de precifica\u00E7\u00E3o, para que as premissas possam ser modificadas apropriadamente \u00E0 luz da experi\u00EAncia emergente."
+      question: "Por que é essencial desenvolver e implementar sistemas para monitorizar a experiência real na precificação de seguros de grupo?",
+      answer: "É essencial desenvolver e implementar sistemas para monitorizar a experiência real na precificação de seguros de grupo porque a experiência real nunca estará em conformidade precisa com as premissas de precificação. A monitorização permite a comparação pronta da experiência real com as premissas de precificação, para que as premissas possam ser modificadas apropriadamente à luz da experiência emergente."
+
     }
   ];
 
@@ -67,13 +74,17 @@ const App = () => {
     if ('speechSynthesis' in window) {
       setSpeechSynthesisAvailable(true);
     } else {
-      console.warn('A API SpeechSynthesis n\u00E3o \u00E9 suportada neste navegador.');
+
+      console.warn('A API SpeechSynthesis não é suportada neste navegador.');
+
     }
   }, []);
 
   const speakText = (text, onEndCallback) => {
     if (!speechSynthesisAvailable) {
-      console.warn('A API SpeechSynthesis n\u00E3o est\u00E1 dispon\u00EDvel.');
+
+      console.warn('A API SpeechSynthesis não está disponível.');
+
       return;
     }
     window.speechSynthesis.cancel();
@@ -85,7 +96,9 @@ const App = () => {
       if (onEndCallback) onEndCallback();
     };
     utterance.onerror = (e) => {
-      console.error('Erro na s\u00EDntese de fala:', e.error);
+
+      console.error('Erro na síntese de fala:', e.error);
+
       setIsSpeaking(false);
     };
     window.speechSynthesis.speak(utterance);
@@ -129,7 +142,9 @@ const App = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-100 to-indigo-200 flex items-center justify-center p-4 font-sans">
       <div className="bg-white p-8 rounded-lg shadow-xl max-w-2xl w-full text-center border-4 border-blue-400">
-        <h1 className="text-3xl font-bold text-blue-700 mb-6">Quiz de Seguros de Grupo</h1>
+
+        <h1 className="text-3xl font-bold text-blue-700 mb-6">Quiz Capítulo 20</h1>
+
 
         <div className="bg-blue-50 p-6 rounded-lg mb-6 border border-blue-300">
           <p className="text-xl font-semibold text-blue-800 mb-4">
@@ -196,15 +211,15 @@ const App = () => {
           >
 
             Próxima
-=======
-            
 
           </button>
         </div>
 
         {!speechSynthesisAvailable && (
           <p className="mt-4 text-red-500 text-sm">
-            O seu navegador n\u00E3o suporta a funcionalidade de convers\u00E3o de texto em fala. Por favor, tente um navegador diferente (ex: Chrome, Edge, Firefox).
+
+            O seu navegador não suporta a funcionalidade de conversão de texto em fala. Por favor, tente um navegador diferente (ex: Chrome, Edge, Firefox).
+
           </p>
         )}
       </div>
