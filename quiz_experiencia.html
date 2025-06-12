@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz: Avaliação de Experiência</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f4f8;
+        }
+    </style>
+</head>
+<body class="flex items-center justify-center min-h-screen p-4">
+    <div class="bg-white p-8 rounded-2xl shadow-xl w-full max-w-2xl">
+        <h1 class="text-3xl font-bold text-gray-800 mb-6 text-center">Quiz: Avaliação de Experiência e Métodos de Financiamento</h1>
+
+        <div id="quiz-container" class="space-y-6">
+            <div id="question-display" class="bg-blue-50 p-6 rounded-xl border border-blue-200">
+                <p class="text-lg font-semibold text-blue-800 mb-3">Questão <span id="current-question-number">1</span> de <span id="total-questions">5</span>:</p>
+                <p id="question-text" class="text-xl text-gray-900 font-medium"></p>
+                <div id="options-container" class="mt-4 space-y-2"></div>
+            </div>
+
+            <div class="flex flex-col sm:flex-row justify-center gap-4">
+                <button id="read-question-btn" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-6 rounded-xl shadow-md transition duration-300 ease-in-out transform hover:scale-105">Ouvir Questão</button>
+                <button id="show-answer-btn" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 px-6 rounded-xl shadow-md transition duration-300 ease-in-out transform hover:scale-105">Mostrar Resposta</button>
+                <button id="read-answer-btn" class="bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-6 rounded-xl shadow-md transition duration-300 ease-in-out transform hover:scale-105">Ouvir Resposta</button>
+            </div>
+
+            <div id="answer-display" class="bg-gray-100 p-6 rounded-xl border border-gray-300 hidden">
+                <p class="text-lg font-semibold text-gray-800 mb-2">Resposta:</p>
+                <p id="answer-text" class="text-xl text-gray-900"></p>
+            </div>
+
+            <div class="flex justify-between mt-6">
+                <button id="prev-btn" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded-xl shadow-sm transition duration-300 ease-in-out" disabled>Anterior</button>
+                <button id="next-btn" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-xl shadow-sm transition duration-300 ease-in-out">Próxima</button>
+            </div>
+        </div>
+        <p class="text-center mt-6"><a href="index.html" class="text-blue-600 underline">Voltar à página inicial</a></p>
+    </div>
+
+    <script>
+        const quizData = [
+            {
+                question: "1. Qual é o principal objetivo da avaliação de experiência?",
+                options: [
+                    "a) Determinar as taxas manuais para todos os segurados.",
+                    "b) Avaliar a experiência de sinistros passada de um segurado para calcular as taxas de seguro.",
+                    "c) Apenas contabilizar os sinistros futuros previstos.",
+                    "d) Fazer com que todos os grupos paguem o mesmo prêmio."
+                ],
+                answer: "b) Avaliar a experiência de sinistros passada de um segurado para calcular as taxas de seguro."
+            },
+            {
+                question: "2. Quais são as duas grandes categorias de avaliação de experiência?",
+                options: [
+                    "a) Simples e Complexa",
+                    "b) Individual e Coletiva",
+                    "c) Prospectiva e Retrospectiva",
+                    "d) Interna e Externa"
+                ],
+                answer: "c) Prospectiva e Retrospectiva."
+            },
+            {
+                question: "3. O que são cálculos de taxa prospectivos?",
+                options: [
+                    "a) A avaliação da experiência financeira para um período de tempo passado.",
+                    "b) A avaliação da experiência passada para prever a experiência provável para um período de classificação futuro.",
+                    "c) Taxas baseadas em taxas médias de todo o portfólio da seguradora.",
+                    "d) Taxas que não consideram a experiência de sinistros específica do grupo."
+                ],
+                answer: "b) A avaliação da experiência passada para prever a experiência provável para um período de classificação futuro."
+            },
+            {
+                question: "4. O que significa 'pooling de experiência' em relação à avaliação de experiência?",
+                options: [
+                    "a) Que um grupo paga um prêmio inteiramente baseado em sua própria experiência.",
+                    "b) Que a experiência de vários grupos é combinada para fins de classificação.",
+                    "c) Que a seguradora não considera a credibilidade estatística da experiência de sinistros passada.",
+                    "d) Que apenas grupos com sinistros acima da média são considerados."
+                ],
+                answer: "b) Que a experiência de vários grupos é combinada para fins de classificação."
+            },
+            {
+                question: "5. Qual é uma das razões pelas quais uma seguradora não pode se dar ao luxo de agrupar grupos 'críveis' (credíveis)?",
+                options: [
+                    "a) A seguradora perderia todos os seus segurados de alto sinistro.",
+                    "b) A antisseleção faria com que os grupos de baixo sinistro migrassem para a concorrência.",
+                    "c) As regulamentações governamentais proíbem o agrupamento de grupos críveis.",
+                    "d) Não há justificativa teórica para fazê-lo."
+                ],
+                answer: "b) A antisseleção faria com que os grupos de baixo sinistro migrassem para a concorrência."
+            }
+        ];
+
+        let currentQuestionIndex = 0;
+        const questionText = document.getElementById('question-text');
+        const optionsContainer = document.getElementById('options-container');
+        const answerDisplay = document.getElementById('answer-display');
+        const answerText = document.getElementById('answer-text');
+        const readQuestionBtn = document.getElementById('read-question-btn');
+        const showAnswerBtn = document.getElementById('show-answer-btn');
+        const readAnswerBtn = document.getElementById('read-answer-btn');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const currentQuestionNumber = document.getElementById('current-question-number');
+        const totalQuestions = document.getElementById('total-questions');
+
+        totalQuestions.textContent = quizData.length;
+
+        function loadQuestion() {
+            const question = quizData[currentQuestionIndex];
+            currentQuestionNumber.textContent = currentQuestionIndex + 1;
+            questionText.textContent = question.question;
+            optionsContainer.innerHTML = '';
+            answerDisplay.classList.add('hidden');
+            answerText.textContent = '';
+
+            question.options.forEach(option => {
+                const p = document.createElement('p');
+                p.textContent = option;
+                p.className = 'text-gray-700 text-lg';
+                optionsContainer.appendChild(p);
+            });
+
+            prevBtn.disabled = currentQuestionIndex === 0;
+            nextBtn.disabled = currentQuestionIndex === quizData.length - 1;
+        }
+
+        function speak(text) {
+            if ('speechSynthesis' in window) {
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = 'pt-BR';
+                speechSynthesis.speak(utterance);
+            } else {
+                console.warn('A API Web Speech (Text-to-Speech) não é suportada neste navegador.');
+                alert('Seu navegador não suporta a função de leitura em voz alta.');
+            }
+        }
+
+        readQuestionBtn.addEventListener('click', () => {
+            speak(quizData[currentQuestionIndex].question + '. As opções são: ' + quizData[currentQuestionIndex].options.join(', '));
+        });
+
+        showAnswerBtn.addEventListener('click', () => {
+            answerText.textContent = quizData[currentQuestionIndex].answer;
+            answerDisplay.classList.remove('hidden');
+        });
+
+        readAnswerBtn.addEventListener('click', () => {
+            speak('A resposta correta é: ' + quizData[currentQuestionIndex].answer);
+        });
+
+        prevBtn.addEventListener('click', () => {
+            if (currentQuestionIndex > 0) {
+                currentQuestionIndex--;
+                loadQuestion();
+            }
+        });
+
+        nextBtn.addEventListener('click', () => {
+            if (currentQuestionIndex < quizData.length - 1) {
+                currentQuestionIndex++;
+                loadQuestion();
+            }
+        });
+
+        loadQuestion();
+    </script>
+</body>
+</html>
