@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mapa de CO2</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+</head>
+<body>
+    <h1>Emissões de CO2 por país</h1>
+    <div id="controls">
+        <label for="year">Ano: <span id="year-value">1960</span></label>
+        <input type="range" id="year" min="1960" max="2023" value="1960" step="1">
+    </div>
+    <svg id="map"></svg>
+    <script src="script.js"></script>
+</body>
+</html>
