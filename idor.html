@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>IDOR</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            line-height: 1.6;
+        }
+        h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Insecure Direct Object Reference (IDOR)</h1>
+    <p>O IDOR &eacute; uma vulnerabilidade comum em aplica&ccedil;&otilde;es web. Ela ocorre quando um sistema referencia diretamente um objeto interno (como IDs em URLs) sem checar se o usu&aacute;rio possui permiss&atilde;o para acess&aacute;-lo. Como resultado &eacute; poss&iacute;vel manipular par&acirc;metros e acessar informa&ccedil;&otilde;es de outros usu&aacute;rios.</p>
+    <p>Geralmente essa falha surge em URLs com IDs sequenciais ou previs&iacute;veis. Se um usu&aacute;rio l&oacute;gico possui acesso a <code>/profile?id=10</code>, nada impede que teste <code>id=11</code> e visualize dados de outra conta caso n&atilde;o exista valida&ccedil;&atilde;o adequada.</p>
+    <h2>Exemplos not&aacute;veis</h2>
+    <ul>
+        <li><strong>Facebook (2012):</strong> Um pesquisador acessou fotos privadas alterando os IDs dos &aacute;lbuns, explorando um endpoint que n&atilde;o verificava permiss&otilde;es corretamente.</li>
+        <li><strong>Instagram (2019):</strong> A plataforma corrigiu uma falha onde &eacute; poss&iacute;vel visualizar stories privados modificando o ID da requisi&ccedil;&atilde;o de download.</li>
+        <li><strong>India Aadhaar (2018):</strong> Um bug em um portal governamental permitiu que informa&ccedil;&otilde;es sens&iacute;veis de cidad&atilde;os fossem extra&iacute;das alterando par&acirc;metros de URL.</li>
+    </ul>
+    <p>Para prevenir IDOR, as aplica&ccedil;&otilde;es devem validar sempre se o usu&aacute;rio autenticado possui permiss&atilde;o para cada objeto solicitado, al&eacute;m de evitar IDs facilmente enumer&aacute;veis.</p>
+</body>
+</html>
