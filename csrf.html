@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>CSRF</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            line-height: 1.6;
+        }
+        h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Cross-Site Request Forgery (CSRF)</h1>
+    <p>CSRF ocorre quando um site malicioso faz com que o navegador de um usuário autenticado execute ações indesejadas em outro site. Como as requisições são enviadas com as credenciais do usuário, a aplicação vulnerável acaba processando-as como se fossem legítimas.</p>
+    <h2>Exemplos notáveis</h2>
+    <ul>
+        <li><strong>2007 – YouTube:</strong> Um ataque permitia postar vídeos sem consentimento do usuário ao explorar formulários sem tokens de verificação.</li>
+        <li><strong>2010 – Gmail:</strong> Pesquisadores demonstraram a alteração de configurações de filtros por meio de requisições forjadas.</li>
+        <li><strong>2014 – Etsy:</strong> Uma falha na função de envio de mensagens permitia que links fossem enviados em nome das vítimas.</li>
+    </ul>
+    <p>Para mitigar CSRF é recomendável utilizar tokens de sessão imprevisíveis, validar a origem das requisições e empregar cabeçalhos como SameSite em cookies.</p>
+</body>
+</html>
