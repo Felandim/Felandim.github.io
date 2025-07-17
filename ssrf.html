@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>SSRF</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            line-height: 1.6;
+        }
+        h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Server Side Request Forgery (SSRF)</h1>
+    <p>A vulnerabilidade SSRF ocorre quando uma aplicação Web permite que o atacante force o servidor a realizar requisições HTTP em seu nome. Isso pode levar ao acesso a recursos internos, escaneamento de portas ou mesmo acesso a serviços protegidos não expostos ao público.</p>
+    <h2>Exemplos notáveis</h2>
+    <ul>
+        <li><strong>2019 – Capital One:</strong> Uma falha em serviço de metadata AWS permitiu que atacantes coletassem chaves e acessassem dados de clientes.</li>
+        <li><strong>2021 – Exchange ProxyLogon:</strong> Um conjunto de vulnerabilidades explorava solicitações falsificadas para acessar emails internos.</li>
+        <li><strong>2017 – Uber:</strong> Pesquisadores exploraram um endpoint que acessava recursos internos via URL controlada, possibilitando leitura de arquivos locais.</li>
+    </ul>
+    <p>Para mitigar SSRF, é essencial validar e sanitizar todos os URLs fornecidos pelo usuário, restringir saídas do servidor e empregar listas de permissão ao invés de listas de bloqueio.</p>
+</body>
+</html>
