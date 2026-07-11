@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Atualiza jogos e resultados do Brasileirão Série B 2026 a partir do ge."""
+"""Atualiza as 38 rodadas do Brasileirão Série B 2026 a partir do ge."""
 
 from __future__ import annotations
 
@@ -8,161 +8,162 @@ import json
 import os
 import re
 from datetime import datetime
-from pathlib import Path
 from typing import Any
-from urllib.request import Request, urlopen
+
+from playwright.sync_api import Page, sync_playwright
 
 SOURCE_URL = "https://ge.globo.com/futebol/brasileirao-serie-b/"
 DATA_FILE = "data/serie_b_2026.json"
 OUTPUT_HTML = "docs/serie_b_2026/index.html"
-USER_AGENT = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome/126 Safari/537.36"
+EXPECTED_ROUNDS = 38
+MATCHES_PER_ROUND = 10
+EXPECTED_MATCHES = EXPECTED_ROUNDS * MATCHES_PER_ROUND
+ROUND_LABEL = ".lista-jogos__navegacao--rodada"
+PREVIOUS_BUTTON = ".lista-jogos__navegacao--seta-esquerda"
+NEXT_BUTTON = ".lista-jogos__navegacao--seta-direita"
+GAME_SELECTOR = ".lista-jogos__jogo"
 
 
 def clean(value: Any) -> str:
     return re.sub(r"\s+", " ", str(value)).strip() if value is not None else ""
 
 
-def fetch_page() -> str:
-    local_file = os.getenv("SOURCE_HTML_FILE")
-    if local_file:
-        return Path(local_file).read_text(encoding="utf-8", errors="replace")
-    request = Request(
-        SOURCE_URL,
-        headers={"User-Agent": USER_AGENT, "Accept-Language": "pt-BR,pt;q=0.9"},
-    )
-    with urlopen(request, timeout=45) as response:
-        return response.read().decode("utf-8", errors="replace")
-
-
-def balanced_json(text: str, start: int) -> str:
-    opening = text[start]
-    closing = "}" if opening == "{" else "]"
-    depth = 0
-    in_string = False
-    escaped = False
-    for index in range(start, len(text)):
-        char = text[index]
-        if in_string:
-            if escaped:
-                escaped = False
-            elif char == "\\":
-                escaped = True
-            elif char == '"':
-                in_string = False
-            continue
-        if char == '"':
-            in_string = True
-        elif char == opening:
-            depth += 1
-        elif char == closing:
-            depth -= 1
-            if depth == 0:
-                return text[start : index + 1]
-    raise ValueError("JSON embutido no HTML está incompleto")
-
-
-def extract_js_value(page: str, variable: str) -> Any:
-    match = re.search(rf"\b(?:const|let|var)\s+{re.escape(variable)}\s*=\s*", page)
+def round_number(label: str) -> int:
+    match = re.search(r"\d+", label)
     if not match:
-        raise RuntimeError(f"Variável {variable!r} não encontrada no HTML do ge")
-    position = match.end()
-    while position < len(page) and page[position].isspace():
-        position += 1
-    if position >= len(page) or page[position] not in "[{":
-        raise RuntimeError(f"Valor de {variable!r} não é JSON")
-    return json.loads(balanced_json(page, position))
+        raise RuntimeError(f"Não foi possível interpretar a rodada: {label!r}")
+    return int(match.group())
 
 
-def current_round(page: str) -> int | None:
-    match = re.search(r'"rodada"\s*:\s*\{\s*"atual"\s*:\s*(\d+)', page)
-    return int(match.group(1)) if match else None
-
-
-def team_name(team: Any) -> str:
-    if not isinstance(team, dict):
-        return clean(team)
-    return clean(team.get("nome_popular") or team.get("nome") or team.get("sigla"))
-
-
-def normalize_match(item: dict[str, Any], round_number: int | None) -> dict[str, str]:
-    teams = item.get("equipes") or {}
-    home = team_name(teams.get("mandante"))
-    away = team_name(teams.get("visitante"))
-    if not home or not away:
-        raise ValueError("Partida sem mandante ou visitante")
-
-    home_score = item.get("placar_oficial_mandante")
-    away_score = item.get("placar_oficial_visitante")
-    score = (
-        f"{home_score} x {away_score}"
-        if home_score is not None and away_score is not None
-        else "-"
+def wait_for_round_change(page: Page, old_label: str, old_first_game: str) -> None:
+    page.wait_for_function(
+        """
+        ([labelSelector, gameSelector, previousLabel, previousGame]) => {
+          const label = document.querySelector(labelSelector)?.textContent?.trim() || '';
+          const firstGame = document.querySelector(`${gameSelector} meta[itemprop='startDate']`)
+            ?.getAttribute('content') || '';
+          return label !== previousLabel && firstGame !== previousGame;
+        }
+        """,
+        arg=[ROUND_LABEL, GAME_SELECTOR, old_label, old_first_game],
+        timeout=45_000,
     )
 
-    raw_datetime = clean(item.get("data_realizacao"))
-    date = ""
-    match_time = clean(item.get("hora_realizacao"))
-    if raw_datetime:
-        try:
-            parsed = datetime.fromisoformat(raw_datetime)
-            date = parsed.strftime("%d/%m/%Y")
-            match_time = match_time or parsed.strftime("%H:%M")
-        except ValueError:
-            date = raw_datetime
 
-    venue = item.get("sede") or {}
-    transmission = item.get("transmissao") or {}
-    return {
-        "id": clean(item.get("id")),
-        "round": f"{round_number}ª rodada" if round_number else "",
-        "date": date,
-        "time": match_time,
-        "home": home,
-        "score": score,
-        "away": away,
-        "stadium": clean(venue.get("nome_popular") if isinstance(venue, dict) else venue),
-        "status": clean(transmission.get("label") if isinstance(transmission, dict) else ""),
-        "url": clean(transmission.get("url") if isinstance(transmission, dict) else ""),
-    }
+def navigate(page: Page, selector: str) -> None:
+    old_label = clean(page.locator(ROUND_LABEL).inner_text())
+    first_meta = page.locator(f"{GAME_SELECTOR} meta[itemprop='startDate']").first
+    old_first_game = clean(first_meta.get_attribute("content"))
+    page.locator(selector).click()
+    wait_for_round_change(page, old_label, old_first_game)
 
 
-def scrape_matches(page: str) -> list[dict[str, str]]:
-    raw_matches = extract_js_value(page, "listaJogos")
-    if not isinstance(raw_matches, list) or len(raw_matches) < 2:
-        raise RuntimeError("O ge não retornou uma rodada válida em listaJogos")
-    round_number = current_round(page)
-    return [normalize_match(item, round_number) for item in raw_matches]
+def scrape_visible_round(page: Page, number: int) -> list[dict[str, Any]]:
+    raw_matches = page.locator(GAME_SELECTOR).evaluate_all(
+        """
+        (nodes) => nodes.map((node) => {
+          const text = (selector) => node.querySelector(selector)?.textContent?.trim() || '';
+          const attribute = (selector, name) => node.querySelector(selector)?.getAttribute(name) || '';
+          const homeScore = text('.placar-box__valor--mandante');
+          const awayScore = text('.placar-box__valor--visitante');
+          const homePenalty = text('.placar-box__penaltis-mandante');
+          const awayPenalty = text('.placar-box__penaltis-visitante');
+          let score = homeScore !== '' && awayScore !== '' ? `${homeScore} x ${awayScore}` : '-';
+          if (homePenalty !== '' && awayPenalty !== '') {
+            score += ` (pênaltis: ${homePenalty} x ${awayPenalty})`;
+          }
+          return {
+            start: attribute("meta[itemprop='startDate']", 'content'),
+            home: attribute(".placar__equipes--mandante meta[itemprop='name']", 'content') ||
+                  text('.placar__equipes--mandante .equipes__nome'),
+            away: attribute(".placar__equipes--visitante meta[itemprop='name']", 'content') ||
+                  text('.placar__equipes--visitante .equipes__nome'),
+            score,
+            stadium: text('.jogo__informacoes--local'),
+            status: text('.jogo__transmissao--broadcast'),
+            url: attribute('a.jogo__transmissao--link', 'href')
+          };
+        })
+        """
+    )
 
-
-def load_existing_matches() -> list[dict[str, str]]:
-    if not os.path.exists(DATA_FILE):
-        return []
-    try:
-        with open(DATA_FILE, "r", encoding="utf-8") as file:
-            matches = json.load(file).get("matches", [])
-        return matches if isinstance(matches, list) else []
-    except (OSError, json.JSONDecodeError):
-        return []
-
-
-def merge_matches(existing: list[dict[str, str]], scraped: list[dict[str, str]]) -> list[dict[str, str]]:
-    merged: dict[str, dict[str, str]] = {}
-    for match in existing + scraped:
-        key = clean(match.get("id")) or "|".join(
-            clean(match.get(field)).casefold()
-            for field in ("date", "time", "home", "away")
+    if len(raw_matches) != MATCHES_PER_ROUND:
+        raise RuntimeError(
+            f"A {number}ª rodada retornou {len(raw_matches)} partidas; "
+            f"eram esperadas {MATCHES_PER_ROUND}."
         )
-        if key.strip("|"):
-            merged[key] = match
 
-    def sort_key(match: dict[str, str]) -> tuple[str, str, str]:
+    matches: list[dict[str, Any]] = []
+    for item in raw_matches:
+        start = clean(item.get("start"))
+        date = ""
+        match_time = ""
+        if start:
+            try:
+                parsed = datetime.fromisoformat(start)
+                date = parsed.strftime("%d/%m/%Y")
+                match_time = parsed.strftime("%H:%M")
+            except ValueError:
+                date = start
+
+        home = clean(item.get("home"))
+        away = clean(item.get("away"))
+        if not home or not away:
+            raise RuntimeError(f"Partida sem equipes na {number}ª rodada")
+
+        matches.append(
+            {
+                "round": number,
+                "date": date,
+                "time": match_time,
+                "home": home,
+                "score": clean(item.get("score")) or "-",
+                "away": away,
+                "stadium": clean(item.get("stadium")),
+                "status": clean(item.get("status")),
+                "url": clean(item.get("url")),
+            }
+        )
+    return matches
+
+
+def scrape_all_matches() -> list[dict[str, Any]]:
+    with sync_playwright() as playwright:
+        browser = playwright.chromium.launch(headless=True)
+        page = browser.new_page(locale="pt-BR")
+        page.set_default_timeout(90_000)
         try:
-            date_key = datetime.strptime(match.get("date", ""), "%d/%m/%Y").strftime("%Y-%m-%d")
-        except ValueError:
-            date_key = match.get("date", "")
-        return date_key, match.get("time", ""), match.get("home", "")
+            page.goto(SOURCE_URL, wait_until="domcontentloaded", timeout=120_000)
+            page.wait_for_selector(ROUND_LABEL, state="visible")
+            page.wait_for_selector(GAME_SELECTOR, state="attached")
 
-    return sorted(merged.values(), key=sort_key)
+            current = round_number(page.locator(ROUND_LABEL).inner_text())
+            if not 1 <= current <= EXPECTED_ROUNDS:
+                raise RuntimeError(f"Rodada atual inesperada: {current}")
+
+            while current > 1:
+                navigate(page, PREVIOUS_BUTTON)
+                current = round_number(page.locator(ROUND_LABEL).inner_text())
+
+            matches: list[dict[str, Any]] = []
+            for expected_round in range(1, EXPECTED_ROUNDS + 1):
+                current = round_number(page.locator(ROUND_LABEL).inner_text())
+                if current != expected_round:
+                    raise RuntimeError(
+                        f"Navegação fora de sequência: esperava rodada {expected_round}, recebeu {current}."
+                    )
+                matches.extend(scrape_visible_round(page, current))
+                print(f"Rodada {current}: {MATCHES_PER_ROUND} partidas coletadas")
+                if current < EXPECTED_ROUNDS:
+                    navigate(page, NEXT_BUTTON)
+        finally:
+            browser.close()
+
+    if len(matches) != EXPECTED_MATCHES:
+        raise RuntimeError(
+            f"O ge retornou {len(matches)} partidas; eram esperadas {EXPECTED_MATCHES}."
+        )
+    return matches
 
 
 def write_if_changed(path: str, content: str) -> bool:
@@ -178,37 +179,55 @@ def write_if_changed(path: str, content: str) -> bool:
     return True
 
 
-def build_html(matches: list[dict[str, str]]) -> str:
-    rows = []
+def build_html(matches: list[dict[str, Any]]) -> str:
+    rows: list[str] = []
+    current_round = 0
     for match in matches:
-        score = html.escape(match.get("score", "-"))
-        if match.get("url"):
-            score = f'<a href="{html.escape(match["url"], quote=True)}">{score}</a>'
+        number = int(match["round"])
+        if number != current_round:
+            rows.append(
+                f'<tr class="round-header"><td colspan="8">{number}ª rodada</td></tr>'
+            )
+            current_round = number
+
+        score = html.escape(clean(match.get("score")) or "-")
+        url = clean(match.get("url"))
+        if url:
+            score = f'<a href="{html.escape(url, quote=True)}">{score}</a>'
         rows.append(
             "<tr>"
-            f"<td>{html.escape(match.get('round', ''))}</td>"
-            f"<td>{html.escape(match.get('date', ''))}</td>"
-            f"<td>{html.escape(match.get('time', ''))}</td>"
-            f"<td class=\"team\">{html.escape(match.get('home', ''))}</td>"
+            f"<td>{number}ª</td>"
+            f"<td>{html.escape(clean(match.get('date')))}</td>"
+            f"<td>{html.escape(clean(match.get('time')))}</td>"
+            f"<td class=\"team\">{html.escape(clean(match.get('home')))}</td>"
             f"<td class=\"score\">{score}</td>"
-            f"<td class=\"team\">{html.escape(match.get('away', ''))}</td>"
-            f"<td>{html.escape(match.get('stadium', ''))}</td>"
-            f"<td>{html.escape(match.get('status', ''))}</td>"
+            f"<td class=\"team\">{html.escape(clean(match.get('away')))}</td>"
+            f"<td>{html.escape(clean(match.get('stadium')))}</td>"
+            f"<td>{html.escape(clean(match.get('status')))}</td>"
             "</tr>"
         )
 
-    return """<!DOCTYPE html><html lang="pt-br"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Brasileirão Série B 2026</title><style>body{font-family:Arial,sans-serif;margin:20px;background:#fafafa;color:#333}h1,p{text-align:center}table{margin:auto;border-collapse:collapse;width:98%;max-width:1200px;background:white}th,td{padding:10px;border:1px solid #ddd;text-align:center}th{background:#1a1a2e;color:white}.team{text-align:left;font-weight:bold}.score{font-weight:bold}a{color:#007bff;text-decoration:none}</style></head><body><h1>Brasileirão Série B 2026</h1><p>Jogos e resultados obtidos do ge. O histórico é acumulado a cada rodada.</p><table><thead><tr><th>Rodada</th><th>Data</th><th>Hora</th><th>Mandante</th><th>Placar</th><th>Visitante</th><th>Estádio</th><th>Status</th></tr></thead><tbody>""" + "\n".join(rows) + """</tbody></table><p><a href="../index.html">← Voltar ao site</a></p></body></html>\n"""
+    return """<!DOCTYPE html>
+<html lang="pt-br"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Brasileirão Série B 2026</title>
+<style>body{font-family:Arial,sans-serif;margin:20px;background:#fafafa;color:#333}h1,p{text-align:center}table{margin:auto;border-collapse:collapse;width:98%;max-width:1200px;background:white}th,td{padding:10px;border:1px solid #ddd;text-align:center}th{background:#1a1a2e;color:white}.team{text-align:left;font-weight:bold}.score{font-weight:bold}.round-header td{background:#e8e8e8;font-weight:bold;text-align:left}a{color:#007bff;text-decoration:none}</style></head>
+<body><h1>Brasileirão Série B 2026</h1><p>As 38 rodadas, atualizadas automaticamente a partir do ge.</p>
+<table><thead><tr><th>Rodada</th><th>Data</th><th>Hora</th><th>Mandante</th><th>Placar</th><th>Visitante</th><th>Estádio</th><th>Status</th></tr></thead><tbody>""" + "\n".join(rows) + """</tbody></table><p><a href="../index.html">← Voltar ao site</a></p></body></html>\n"""
 
 
 def main() -> None:
-    scraped = scrape_matches(fetch_page())
-    matches = merge_matches(load_existing_matches(), scraped)
-    data = {"name": "Brasileirão Série B 2026", "source": SOURCE_URL, "matches": matches}
+    matches = scrape_all_matches()
+    data = {
+        "name": "Brasileirão Série B 2026",
+        "source": SOURCE_URL,
+        "rounds": EXPECTED_ROUNDS,
+        "matches": matches,
+    }
     json_content = json.dumps(data, indent=2, ensure_ascii=False, sort_keys=True) + "\n"
     json_changed = write_if_changed(DATA_FILE, json_content)
     html_changed = write_if_changed(OUTPUT_HTML, build_html(matches))
     print(
-        f"{len(scraped)} partidas coletadas; {len(matches)} armazenadas. "
+        f"{len(matches)} partidas armazenadas. "
         f"JSON alterado: {json_changed}. HTML alterado: {html_changed}."
     )
 
