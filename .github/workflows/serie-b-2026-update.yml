@@ -25,7 +25,7 @@ jobs:
         run: |
           pip install playwright
           python -m playwright install --with-deps chromium
-      - name: Inspect ge round navigation
+      - name: Inspect ge widget network
         continue-on-error: true
         run: |
           python - <<'PY' > round-debug.txt 2>&1
@@ -35,45 +35,38 @@ jobs:
           with sync_playwright() as p:
               browser = p.chromium.launch(headless=True)
               page = browser.new_page(locale="pt-BR")
-              page.set_default_timeout(45_000)
-              seen = []
+              page.set_default_timeout(30_000)
+              responses = []
+              console_messages = []
+              page_errors = []
 
-              def record(response):
-                  lower = response.url.lower()
-                  if any(token in lower for token in ("rodada", "tabela", "classificacao", "fase", "jogo")):
-                      seen.append((response.status, response.url))
+              page.on("response", lambda response: responses.append((response.status, response.request.resource_type, response.url)))
+              page.on("console", lambda message: console_messages.append(f"{message.type}: {message.text}"))
+              page.on("pageerror", lambda error: page_errors.append(str(error)))
 
-              page.on("response", record)
-              page.goto(url, wait_until="domcontentloaded", timeout=90_000)
-              page.wait_for_selector(".tabela-navegacao", state="visible")
-              page.wait_for_selector(".placar-jogo", state="attached")
-
-              nav = page.locator(".tabela-navegacao")
-              games = page.locator(".placar-jogo")
-              selector = page.locator(".tabela-navegacao-seletor")
-              previous = page.locator(".tabela-navegacao-anterior")
-
-              print("NAV_TEXT", nav.inner_text())
-              print("NAV_HTML", nav.evaluate("element => element.outerHTML"))
-              print("GAME_COUNT", games.count())
-              print("FIRST_GAME_HTML", games.first.evaluate("element => element.outerHTML"))
-
-              before = selector.inner_text()
-              print("PREVIOUS_HTML", previous.evaluate("element => element.outerHTML"))
-              previous.click()
-              page.wait_for_function(
-                  "before => document.querySelector('.tabela-navegacao-seletor')?.innerText !== before",
-                  arg=before,
-              )
-              page.wait_for_timeout(1_000)
-              print("ROUND_BEFORE", before)
-              print("ROUND_AFTER", selector.inner_text())
-              print("AFTER_FIRST_GAME_HTML", games.first.evaluate("element => element.outerHTML"))
-
-              print("NETWORK_URLS")
-              for status, response_url in sorted(set(seen)):
-                  print(status, response_url)
-              browser.close()
+              try:
+                  page.goto(url, wait_until="domcontentloaded", timeout=90_000)
+                  page.wait_for_timeout(20_000)
+                  print("TITLE", page.title())
+                  print("URL", page.url)
+                  print("ROOT_HTML", page.locator("#classificacao__wrapper").evaluate("element => element.outerHTML") if page.locator("#classificacao__wrapper").count() else "MISSING")
+                  print("NAV_COUNT", page.locator(".tabela-navegacao").count())
+                  print("GAME_COUNT", page.locator(".placar-jogo").count())
+                  print("SCRIPT_SRCS")
+                  for src in page.eval_on_selector_all("script[src]", "elements => elements.map(element => element.src)"):
+                      print(src)
+              finally:
+                  print("PAGE_ERRORS")
+                  for error in page_errors:
+                      print(error)
+                  print("CONSOLE")
+                  for message in console_messages:
+                      print(message)
+                  print("NETWORK")
+                  for status, resource_type, response_url in responses:
+                      if resource_type in {"xhr", "fetch", "script"} or any(token in response_url.lower() for token in ("rodada", "tabela", "classificacao", "fase", "jogo")):
+                          print(status, resource_type, response_url)
+                  browser.close()
           PY
       - name: Upload round diagnostic
         if: always()
