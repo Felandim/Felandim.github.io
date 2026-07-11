@@ -20,6 +20,8 @@ jobs:
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.ref || github.ref_name }}
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
@@ -51,16 +53,7 @@ jobs:
           assert all(sum(match['round'] == number for match in matches) == 10 for number in rounds)
           print('38 rodadas e 380 partidas validadas.')
           PY
-      - name: Upload generated pages
-        if: github.event_name == 'pull_request'
-        uses: actions/upload-artifact@v4
-        with:
-          name: serie-b-2026-generated
-          path: |
-            data/serie_b_2026.json
-            docs/serie_b_2026/index.html
-      - name: Commit changes
-        if: github.event_name != 'pull_request'
+      - name: Commit generated data
         run: |
           if git diff --quiet data/serie_b_2026.json docs/serie_b_2026/index.html; then
             echo "No changes"
