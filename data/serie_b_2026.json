@@ -1,5 +1,126 @@
 {
+  "matches": [
+    {
+      "away": "Criciúma",
+      "date": "08/07/2026",
+      "home": "Ponte Preta",
+      "id": "349232",
+      "round": "17ª rodada",
+      "score": "1 x 2",
+      "stadium": "Moisés Lucarelli",
+      "status": "saiba como foi",
+      "time": "20:00",
+      "url": "https://ge.globo.com/sp/campinas-e-regiao/futebol/brasileirao-serie-b/jogo/08-07-2026/ponte-preta-criciuma.ghtml"
+    },
+    {
+      "away": "Vila Nova",
+      "date": "10/07/2026",
+      "home": "Juventude",
+      "id": "349241",
+      "round": "17ª rodada",
+      "score": "1 x 0",
+      "stadium": "Alfredo Jaconi",
+      "status": "saiba como foi",
+      "time": "19:00",
+      "url": "https://ge.globo.com/rs/futebol/brasileirao-serie-b/jogo/10-07-2026/juventude-vila-nova.ghtml"
+    },
+    {
+      "away": "Botafogo-SP",
+      "date": "10/07/2026",
+      "home": "Sport",
+      "id": "349239",
+      "round": "17ª rodada",
+      "score": "3 x 3",
+      "stadium": "Ilha do Retiro",
+      "status": "saiba como foi",
+      "time": "20:00",
+      "url": "https://ge.globo.com/pe/futebol/brasileirao-serie-b/jogo/10-07-2026/sport-botafogo-sp.ghtml"
+    },
+    {
+      "away": "Novorizontino",
+      "date": "12/07/2026",
+      "home": "Operário-PR",
+      "id": "349235",
+      "round": "17ª rodada",
+      "score": "-",
+      "stadium": "Germano Krüger",
+      "status": "fique por dentro",
+      "time": "11:00",
+      "url": "https://ge.globo.com/pr/futebol/brasileirao-serie-b/jogo/12-07-2026/operario-pr-novorizontino.ghtml"
+    },
+    {
+      "away": "Náutico",
+      "date": "12/07/2026",
+      "home": "Avaí",
+      "id": "349238",
+      "round": "17ª rodada",
+      "score": "-",
+      "stadium": "Ressacada",
+      "status": "fique por dentro",
+      "time": "16:00",
+      "url": "https://ge.globo.com/sc/futebol/brasileirao-serie-b/jogo/12-07-2026/avai-nautico.ghtml"
+    },
+    {
+      "away": "Cuiabá",
+      "date": "12/07/2026",
+      "home": "São Bernardo",
+      "id": "349233",
+      "round": "17ª rodada",
+      "score": "-",
+      "stadium": "Primeiro de Maio",
+      "status": "fique por dentro",
+      "time": "16:00",
+      "url": "https://ge.globo.com/mt/futebol/brasileirao-serie-b/jogo/12-07-2026/sao-bernardo-cuiaba.ghtml"
+    },
+    {
+      "away": "Fortaleza",
+      "date": "12/07/2026",
+      "home": "Atlético-GO",
+      "id": "349237",
+      "round": "17ª rodada",
+      "score": "-",
+      "stadium": "Antônio Accioly",
+      "status": "fique por dentro",
+      "time": "18:00",
+      "url": "https://ge.globo.com/go/futebol/brasileirao-serie-b/jogo/12-07-2026/atletico-go-fortaleza.ghtml"
+    },
+    {
+      "away": "Goiás",
+      "date": "12/07/2026",
+      "home": "CRB",
+      "id": "349240",
+      "round": "17ª rodada",
+      "score": "-",
+      "stadium": "Rei Pelé (AL)",
+      "status": "fique por dentro",
+      "time": "19:00",
+      "url": "https://ge.globo.com/al/futebol/brasileirao-serie-b/jogo/12-07-2026/crb-goias.ghtml"
+    },
+    {
+      "away": "Londrina",
+      "date": "13/07/2026",
+      "home": "América-MG",
+      "id": "349234",
+      "round": "17ª rodada",
+      "score": "-",
+      "stadium": "Independência",
+      "status": "fique por dentro",
+      "time": "19:00",
+      "url": "https://ge.globo.com/mg/zona-da-mata-centro-oeste/futebol/brasileirao-serie-b/jogo/13-07-2026/america-mg-londrina.ghtml"
+    },
+    {
+      "away": "Athletic Club",
+      "date": "13/07/2026",
+      "home": "Ceará",
+      "id": "349236",
+      "round": "17ª rodada",
+      "score": "-",
+      "stadium": "Presidente Vargas (CE)",
+      "status": "fique por dentro",
+      "time": "20:30",
+      "url": "https://ge.globo.com/ce/futebol/brasileirao-serie-b/jogo/13-07-2026/ceara-athletic-club.ghtml"
+    }
+  ],
   "name": "Brasileirão Série B 2026",
-  "source": "https://ge.globo.com/futebol/brasileirao-serie-b/",
-  "matches": []
+  "source": "https://ge.globo.com/futebol/brasileirao-serie-b/"
 }
