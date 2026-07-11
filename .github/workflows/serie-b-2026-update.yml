@@ -4,6 +4,8 @@ on:
   pull_request:
     paths:
       - 'serie_b_2026/**'
+      - 'data/serie_b_2026.json'
+      - 'docs/serie_b_2026/**'
       - '.github/workflows/serie-b-2026-update.yml'
   schedule:
     - cron: '30 */6 * * *'
@@ -15,67 +17,40 @@ permissions:
 jobs:
   update:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-      - name: Install browser diagnostic
+      - name: Install Playwright
         run: |
           pip install playwright
           python -m playwright install --with-deps chromium
-      - name: Inspect ge widget network
-        continue-on-error: true
-        run: |
-          python - <<'PY' > round-debug.txt 2>&1
-          from playwright.sync_api import sync_playwright
-
-          url = "https://ge.globo.com/futebol/brasileirao-serie-b/"
-          with sync_playwright() as p:
-              browser = p.chromium.launch(headless=True)
-              page = browser.new_page(locale="pt-BR")
-              page.set_default_timeout(30_000)
-              responses = []
-              console_messages = []
-              page_errors = []
-
-              page.on("response", lambda response: responses.append((response.status, response.request.resource_type, response.url)))
-              page.on("console", lambda message: console_messages.append(f"{message.type}: {message.text}"))
-              page.on("pageerror", lambda error: page_errors.append(str(error)))
-
-              try:
-                  page.goto(url, wait_until="domcontentloaded", timeout=90_000)
-                  page.wait_for_timeout(20_000)
-                  print("TITLE", page.title())
-                  print("URL", page.url)
-                  print("ROOT_HTML", page.locator("#classificacao__wrapper").evaluate("element => element.outerHTML") if page.locator("#classificacao__wrapper").count() else "MISSING")
-                  print("NAV_COUNT", page.locator(".tabela-navegacao").count())
-                  print("GAME_COUNT", page.locator(".placar-jogo").count())
-                  print("SCRIPT_SRCS")
-                  for src in page.eval_on_selector_all("script[src]", "elements => elements.map(element => element.src)"):
-                      print(src)
-              finally:
-                  print("PAGE_ERRORS")
-                  for error in page_errors:
-                      print(error)
-                  print("CONSOLE")
-                  for message in console_messages:
-                      print(message)
-                  print("NETWORK")
-                  for status, resource_type, response_url in responses:
-                      if resource_type in {"xhr", "fetch", "script"} or any(token in response_url.lower() for token in ("rodada", "tabela", "classificacao", "fase", "jogo")):
-                          print(status, resource_type, response_url)
-                  browser.close()
-          PY
-      - name: Upload round diagnostic
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: serie-b-round-navigation
-          path: round-debug.txt
       - name: Run updater
         run: python3 serie_b_2026/main.py
+      - name: Validate all rounds
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+
+          data = json.loads(Path('data/serie_b_2026.json').read_text(encoding='utf-8'))
+          matches = data['matches']
+          rounds = {match['round'] for match in matches}
+          assert len(matches) == 380, f'Esperava 380 partidas, recebeu {len(matches)}'
+          assert rounds == set(range(1, 39)), f'Rodadas inválidas: {sorted(rounds)}'
+          assert all(sum(match['round'] == number for match in matches) == 10 for number in rounds)
+          print('38 rodadas e 380 partidas validadas.')
+          PY
+      - name: Upload generated pages
+        if: github.event_name == 'pull_request'
+        uses: actions/upload-artifact@v4
+        with:
+          name: serie-b-2026-generated
+          path: |
+            data/serie_b_2026.json
+            docs/serie_b_2026/index.html
       - name: Commit changes
         if: github.event_name != 'pull_request'
         run: |
