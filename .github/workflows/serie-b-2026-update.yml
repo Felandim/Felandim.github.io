@@ -15,6 +15,7 @@ permissions:
 jobs:
   update:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -33,6 +34,7 @@ jobs:
           with sync_playwright() as p:
               browser = p.chromium.launch(headless=True)
               page = browser.new_page(locale="pt-BR")
+              page.set_default_timeout(45_000)
               seen = []
 
               def record(response):
@@ -41,33 +43,31 @@ jobs:
                       seen.append((response.status, response.url))
 
               page.on("response", record)
-              page.goto(url, wait_until="networkidle", timeout=120_000)
-              page.wait_for_selector(".tabela-navegacao", timeout=60_000)
+              page.goto(url, wait_until="domcontentloaded", timeout=90_000)
+              page.wait_for_selector(".tabela-navegacao", state="visible")
+              page.wait_for_selector(".placar-jogo", state="attached")
 
               nav = page.locator(".tabela-navegacao")
+              games = page.locator(".placar-jogo")
+              selector = page.locator(".tabela-navegacao-seletor")
+              previous = page.locator(".tabela-navegacao-anterior")
+
               print("NAV_TEXT", nav.inner_text())
               print("NAV_HTML", nav.evaluate("element => element.outerHTML"))
-              games = page.locator(".placar-jogo")
               print("GAME_COUNT", games.count())
-              if games.count():
-                  print("FIRST_GAME_HTML", games.first.evaluate("element => element.outerHTML"))
+              print("FIRST_GAME_HTML", games.first.evaluate("element => element.outerHTML"))
 
-              selector = page.locator(".tabela-navegacao-seletor")
               before = selector.inner_text()
-              previous = page.locator(".tabela-navegacao-anterior")
-              print("PREVIOUS_COUNT", previous.count())
+              print("PREVIOUS_HTML", previous.evaluate("element => element.outerHTML"))
               previous.click()
               page.wait_for_function(
-                  "([selector, before]) => document.querySelector(selector)?.innerText !== before",
-                  arg=[".tabela-navegacao-seletor", before],
-                  timeout=60_000,
+                  "before => document.querySelector('.tabela-navegacao-seletor')?.innerText !== before",
+                  arg=before,
               )
-              page.wait_for_timeout(2_000)
+              page.wait_for_timeout(1_000)
               print("ROUND_BEFORE", before)
               print("ROUND_AFTER", selector.inner_text())
-              print("AFTER_GAME_COUNT", games.count())
-              if games.count():
-                  print("AFTER_FIRST_GAME_HTML", games.first.evaluate("element => element.outerHTML"))
+              print("AFTER_FIRST_GAME_HTML", games.first.evaluate("element => element.outerHTML"))
 
               print("NETWORK_URLS")
               for status, response_url in sorted(set(seen)):
