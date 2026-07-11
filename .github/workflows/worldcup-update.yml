@@ -1,0 +1,42 @@
+name: Update World Cup 2026 Data
+
+on:
+  schedule:
+    - cron: '0 */4 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      
+      - name: Run update script
+        run: python3 worldcup_2026/main.py
+      
+      - name: Check for changes
+        id: changed
+        run: |
+          if git diff --quiet data/worldcup_2026.json docs/worldcup_2026/index.html; then
+            echo "changes=false" >> $GITHUB_OUTPUT
+          else
+            echo "changes=true" >> $GITHUB_OUTPUT
+          fi
+      
+      - name: Commit changes
+        if: steps.changed.outputs.changes == 'true'
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add data/worldcup_2026.json docs/worldcup_2026/
+          git commit -m "Update World Cup 2026 data $(date -u '+%Y-%m-%d %H:%M')"
+          git push
