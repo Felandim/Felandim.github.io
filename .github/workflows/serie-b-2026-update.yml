@@ -1,6 +1,10 @@
 name: Update Serie B 2026 Data
 
 on:
+  pull_request:
+    paths:
+      - 'serie_b_2026/**'
+      - '.github/workflows/serie-b-2026-update.yml'
   schedule:
     - cron: '30 */6 * * *'
   workflow_dispatch:
@@ -17,10 +21,11 @@ jobs:
         with:
           python-version: '3.11'
       - name: Install dependencies
-        run: pip install pandas lxml
+        run: pip install beautifulsoup4 lxml
       - name: Run updater
         run: python3 serie_b_2026/main.py
       - name: Commit changes
+        if: github.event_name != 'pull_request'
         run: |
           if git diff --quiet data/serie_b_2026.json docs/serie_b_2026/index.html; then
             echo "No changes"
