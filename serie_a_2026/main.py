@@ -22,6 +22,7 @@ ROUND_LABEL = ".lista-jogos__navegacao--rodada"
 PREVIOUS_BUTTON = ".lista-jogos__navegacao--seta-esquerda"
 NEXT_BUTTON = ".lista-jogos__navegacao--seta-direita"
 GAME_SELECTOR = ".lista-jogos__jogo"
+# A tabela publicada omite o status redundante exibido pelo ge.
 
 
 def clean(value: Any) -> str:
