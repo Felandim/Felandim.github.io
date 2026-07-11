@@ -28,7 +28,14 @@ jobs:
           pip install playwright
           python -m playwright install --with-deps chromium
       - name: Run updater
-        run: python3 serie_b_2026/main.py
+        run: |
+          python3 serie_b_2026/main.py 2>&1 | tee serie-b-updater.log
+      - name: Upload updater log
+        if: always() && github.event_name == 'pull_request'
+        uses: actions/upload-artifact@v4
+        with:
+          name: serie-b-updater-log
+          path: serie-b-updater.log
       - name: Validate all rounds
         run: |
           python3 - <<'PY'
