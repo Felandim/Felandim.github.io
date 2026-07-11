@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Atualiza os jogos do Brasileirão Série B 2026 a partir do ge."""
+"""Atualiza jogos e resultados do Brasileirão Série B 2026 a partir do ge."""
 
 from __future__ import annotations
 
@@ -8,55 +8,38 @@ import json
 import os
 import re
 from datetime import datetime
-from typing import Any, Iterable
+from pathlib import Path
+from typing import Any
 from urllib.request import Request, urlopen
-
-from bs4 import BeautifulSoup, Tag
 
 SOURCE_URL = "https://ge.globo.com/futebol/brasileirao-serie-b/"
 DATA_FILE = "data/serie_b_2026.json"
 OUTPUT_HTML = "docs/serie_b_2026/index.html"
-USER_AGENT = (
-    "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 "
-    "(KHTML, like Gecko) Chrome/126.0 Safari/537.36"
-)
+USER_AGENT = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome/126 Safari/537.36"
 
 
 def clean(value: Any) -> str:
-    if value is None:
-        return ""
-    return re.sub(r"\s+", " ", str(value)).strip()
+    return re.sub(r"\s+", " ", str(value)).strip() if value is not None else ""
 
 
 def fetch_page() -> str:
+    local_file = os.getenv("SOURCE_HTML_FILE")
+    if local_file:
+        return Path(local_file).read_text(encoding="utf-8", errors="replace")
     request = Request(
         SOURCE_URL,
-        headers={
-            "User-Agent": USER_AGENT,
-            "Accept-Language": "pt-BR,pt;q=0.9",
-        },
+        headers={"User-Agent": USER_AGENT, "Accept-Language": "pt-BR,pt;q=0.9"},
     )
     with urlopen(request, timeout=45) as response:
         return response.read().decode("utf-8", errors="replace")
 
 
-def walk_json(value: Any) -> Iterable[dict[str, Any]]:
-    if isinstance(value, dict):
-        yield value
-        for child in value.values():
-            yield from walk_json(child)
-    elif isinstance(value, list):
-        for child in value:
-            yield from walk_json(child)
-
-
-def balanced_json(text: str, start: int) -> str | None:
+def balanced_json(text: str, start: int) -> str:
     opening = text[start]
     closing = "}" if opening == "{" else "]"
     depth = 0
     in_string = False
     escaped = False
-
     for index in range(start, len(text)):
         char = text[index]
         if in_string:
@@ -67,7 +50,6 @@ def balanced_json(text: str, start: int) -> str | None:
             elif char == '"':
                 in_string = False
             continue
-
         if char == '"':
             in_string = True
         elif char == opening:
@@ -76,228 +58,111 @@ def balanced_json(text: str, start: int) -> str | None:
             depth -= 1
             if depth == 0:
                 return text[start : index + 1]
-    return None
+    raise ValueError("JSON embutido no HTML está incompleto")
 
 
-def script_json_values(soup: BeautifulSoup) -> Iterable[Any]:
-    for script in soup.find_all("script"):
-        raw = script.string or script.get_text()
-        raw = raw.strip()
-        if not raw:
-            continue
-
-        if raw[0] in "[{":
-            try:
-                yield json.loads(raw)
-                continue
-            except json.JSONDecodeError:
-                pass
-
-        for match in re.finditer(r"(?:window\.)?__[A-Za-z0-9_]+__\s*=", raw):
-            position = match.end()
-            while position < len(raw) and raw[position].isspace():
-                position += 1
-            if position >= len(raw) or raw[position] not in "[{":
-                continue
-            payload = balanced_json(raw, position)
-            if payload:
-                try:
-                    yield json.loads(payload)
-                except json.JSONDecodeError:
-                    continue
+def extract_js_value(page: str, variable: str) -> Any:
+    match = re.search(rf"\b(?:const|let|var)\s+{re.escape(variable)}\s*=\s*", page)
+    if not match:
+        raise RuntimeError(f"Variável {variable!r} não encontrada no HTML do ge")
+    position = match.end()
+    while position < len(page) and page[position].isspace():
+        position += 1
+    if position >= len(page) or page[position] not in "[{":
+        raise RuntimeError(f"Valor de {variable!r} não é JSON")
+    return json.loads(balanced_json(page, position))
 
 
-def pick(mapping: dict[str, Any], *keys: str) -> Any:
-    for key in keys:
-        if key in mapping and mapping[key] not in (None, ""):
-            return mapping[key]
-    return None
+def current_round(page: str) -> int | None:
+    match = re.search(r'"rodada"\s*:\s*\{\s*"atual"\s*:\s*(\d+)', page)
+    return int(match.group(1)) if match else None
 
 
-def team_name(value: Any) -> str:
-    if isinstance(value, dict):
-        return clean(
-            pick(
-                value,
-                "nome_popular",
-                "nomePopular",
-                "nome",
-                "name",
-                "sigla",
-            )
-        )
-    return clean(value)
+def team_name(team: Any) -> str:
+    if not isinstance(team, dict):
+        return clean(team)
+    return clean(team.get("nome_popular") or team.get("nome") or team.get("sigla"))
 
 
-def stadium_name(value: Any) -> str:
-    if isinstance(value, dict):
-        return clean(pick(value, "nome_popular", "nomePopular", "nome", "name"))
-    return clean(value)
+def normalize_match(item: dict[str, Any], round_number: int | None) -> dict[str, str]:
+    teams = item.get("equipes") or {}
+    home = team_name(teams.get("mandante"))
+    away = team_name(teams.get("visitante"))
+    if not home or not away:
+        raise ValueError("Partida sem mandante ou visitante")
 
-
-def round_name(value: Any) -> str:
-    if isinstance(value, dict):
-        number = pick(value, "numero", "number", "rodada")
-        return f"{clean(number)}ª rodada" if clean(number).isdigit() else clean(number)
-    text = clean(value)
-    return f"{text}ª rodada" if text.isdigit() else text
-
-
-def score_values(item: dict[str, Any]) -> tuple[str, str]:
-    home = pick(
-        item,
-        "placar_oficial_mandante",
-        "placarOficialMandante",
-        "placar_mandante",
-        "gols_mandante",
-        "home_score",
-    )
-    away = pick(
-        item,
-        "placar_oficial_visitante",
-        "placarOficialVisitante",
-        "placar_visitante",
-        "gols_visitante",
-        "away_score",
+    home_score = item.get("placar_oficial_mandante")
+    away_score = item.get("placar_oficial_visitante")
+    score = (
+        f"{home_score} x {away_score}"
+        if home_score is not None and away_score is not None
+        else "-"
     )
 
-    score = item.get("placar") or item.get("score")
-    if isinstance(score, dict):
-        home = home if home is not None else pick(score, "mandante", "home", "home_score")
-        away = away if away is not None else pick(score, "visitante", "away", "away_score")
-
-    return clean(home), clean(away)
-
-
-def normalize_json_match(item: dict[str, Any]) -> dict[str, str] | None:
-    home_value = pick(item, "mandante", "home", "home_team", "time_mandante")
-    away_value = pick(item, "visitante", "away", "away_team", "time_visitante")
-    home = team_name(home_value)
-    away = team_name(away_value)
-    if not home or not away or home == away:
-        return None
-
-    home_score, away_score = score_values(item)
-    score = f"{home_score} x {away_score}" if home_score != "" and away_score != "" else "-"
-
-    date = clean(pick(item, "data_realizacao", "dataRealizacao", "data", "date"))
-    time = clean(pick(item, "hora_realizacao", "horaRealizacao", "hora", "time"))
-    stadium = stadium_name(pick(item, "estadio", "stadium", "local"))
-    round_value = pick(item, "rodada", "round", "numero_rodada", "numeroRodada")
-    identifier = clean(pick(item, "id", "jogo_id", "jogoId", "slug"))
-
-    if "T" in date:
+    raw_datetime = clean(item.get("data_realizacao"))
+    date = ""
+    match_time = clean(item.get("hora_realizacao"))
+    if raw_datetime:
         try:
-            parsed = datetime.fromisoformat(date.replace("Z", "+00:00"))
-            if not time:
-                time = parsed.strftime("%H:%M")
+            parsed = datetime.fromisoformat(raw_datetime)
             date = parsed.strftime("%d/%m/%Y")
+            match_time = match_time or parsed.strftime("%H:%M")
         except ValueError:
-            pass
+            date = raw_datetime
 
+    venue = item.get("sede") or {}
+    transmission = item.get("transmissao") or {}
     return {
-        "id": identifier,
-        "round": round_name(round_value),
+        "id": clean(item.get("id")),
+        "round": f"{round_number}ª rodada" if round_number else "",
         "date": date,
-        "time": time,
+        "time": match_time,
         "home": home,
         "score": score,
         "away": away,
-        "stadium": stadium,
+        "stadium": clean(venue.get("nome_popular") if isinstance(venue, dict) else venue),
+        "status": clean(transmission.get("label") if isinstance(transmission, dict) else ""),
+        "url": clean(transmission.get("url") if isinstance(transmission, dict) else ""),
     }
 
 
-def text_from(node: Tag, selectors: list[str]) -> str:
-    for selector in selectors:
-        found = node.select_one(selector)
-        if found:
-            value = clean(found.get_text(" ", strip=True))
-            if value:
-                return value
-    return ""
+def scrape_matches(page: str) -> list[dict[str, str]]:
+    raw_matches = extract_js_value(page, "listaJogos")
+    if not isinstance(raw_matches, list) or len(raw_matches) < 2:
+        raise RuntimeError("O ge não retornou uma rodada válida em listaJogos")
+    round_number = current_round(page)
+    return [normalize_match(item, round_number) for item in raw_matches]
 
 
-def parse_dom_matches(soup: BeautifulSoup) -> list[dict[str, str]]:
-    matches: list[dict[str, str]] = []
-    selectors = [
-        ".lista-jogos__jogo",
-        "[class*='lista-jogos'][class*='jogo']",
-        "article[class*='jogo']",
-    ]
-    nodes: list[Tag] = []
-    for selector in selectors:
-        nodes.extend(soup.select(selector))
-
-    for node in nodes:
-        team_nodes = node.select(".equipes__nome, [class*='equipe'][class*='nome']")
-        teams = [clean(team.get_text(" ", strip=True)) for team in team_nodes]
-        teams = [team for team in teams if team]
-        if len(teams) < 2:
-            continue
-
-        scores = [
-            clean(value.get_text(" ", strip=True))
-            for value in node.select(".placar-box, [class*='placar'][class*='valor']")
-        ]
-        scores = [value for value in scores if re.fullmatch(r"\d+", value)]
-        score = f"{scores[0]} x {scores[1]}" if len(scores) >= 2 else "-"
-
-        matches.append(
-            {
-                "id": clean(node.get("data-id", "")),
-                "round": text_from(node, ["[class*='rodada']"]),
-                "date": text_from(node, ["[class*='data']"]),
-                "time": text_from(node, ["[class*='hora']"]),
-                "home": teams[0],
-                "score": score,
-                "away": teams[1],
-                "stadium": text_from(node, ["[class*='estadio']", "[class*='local']"]),
-            }
-        )
-    return matches
+def load_existing_matches() -> list[dict[str, str]]:
+    if not os.path.exists(DATA_FILE):
+        return []
+    try:
+        with open(DATA_FILE, "r", encoding="utf-8") as file:
+            matches = json.load(file).get("matches", [])
+        return matches if isinstance(matches, list) else []
+    except (OSError, json.JSONDecodeError):
+        return []
 
 
-def deduplicate(matches: list[dict[str, str]]) -> list[dict[str, str]]:
-    unique: dict[str, dict[str, str]] = {}
-    for match in matches:
-        key = match.get("id") or "|".join(
-            clean(match.get(field, "")).casefold()
+def merge_matches(existing: list[dict[str, str]], scraped: list[dict[str, str]]) -> list[dict[str, str]]:
+    merged: dict[str, dict[str, str]] = {}
+    for match in existing + scraped:
+        key = clean(match.get("id")) or "|".join(
+            clean(match.get(field)).casefold()
             for field in ("date", "time", "home", "away")
         )
-        if not key.strip("|"):
-            continue
-        current = unique.get(key)
-        if current is None or current.get("score") == "-":
-            unique[key] = match
+        if key.strip("|"):
+            merged[key] = match
 
-    return sorted(
-        unique.values(),
-        key=lambda match: (
-            clean(match.get("date")),
-            clean(match.get("time")),
-            clean(match.get("home")),
-        ),
-    )
+    def sort_key(match: dict[str, str]) -> tuple[str, str, str]:
+        try:
+            date_key = datetime.strptime(match.get("date", ""), "%d/%m/%Y").strftime("%Y-%m-%d")
+        except ValueError:
+            date_key = match.get("date", "")
+        return date_key, match.get("time", ""), match.get("home", "")
 
-
-def parse_matches(page: str) -> list[dict[str, str]]:
-    soup = BeautifulSoup(page, "lxml")
-    matches: list[dict[str, str]] = []
-
-    for payload in script_json_values(soup):
-        for item in walk_json(payload):
-            match = normalize_json_match(item)
-            if match:
-                matches.append(match)
-
-    matches.extend(parse_dom_matches(soup))
-    matches = deduplicate(matches)
-    if not matches:
-        raise RuntimeError(
-            "Nenhuma partida foi encontrada no ge. O HTML pode ter mudado; "
-            "os arquivos existentes foram preservados."
-        )
-    return matches
+    return sorted(merged.values(), key=sort_key)
 
 
 def write_if_changed(path: str, content: str) -> bool:
@@ -316,33 +181,34 @@ def write_if_changed(path: str, content: str) -> bool:
 def build_html(matches: list[dict[str, str]]) -> str:
     rows = []
     for match in matches:
+        score = html.escape(match.get("score", "-"))
+        if match.get("url"):
+            score = f'<a href="{html.escape(match["url"], quote=True)}">{score}</a>'
         rows.append(
             "<tr>"
-            f"<td>{html.escape(match['round'])}</td>"
-            f"<td>{html.escape(match['date'])}</td>"
-            f"<td>{html.escape(match['time'])}</td>"
-            f"<td class=\"team\">{html.escape(match['home'])}</td>"
-            f"<td class=\"score\">{html.escape(match['score'])}</td>"
-            f"<td class=\"team\">{html.escape(match['away'])}</td>"
-            f"<td>{html.escape(match['stadium'])}</td>"
+            f"<td>{html.escape(match.get('round', ''))}</td>"
+            f"<td>{html.escape(match.get('date', ''))}</td>"
+            f"<td>{html.escape(match.get('time', ''))}</td>"
+            f"<td class=\"team\">{html.escape(match.get('home', ''))}</td>"
+            f"<td class=\"score\">{score}</td>"
+            f"<td class=\"team\">{html.escape(match.get('away', ''))}</td>"
+            f"<td>{html.escape(match.get('stadium', ''))}</td>"
+            f"<td>{html.escape(match.get('status', ''))}</td>"
             "</tr>"
         )
 
-    return """<!DOCTYPE html><html lang="pt-br"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Brasileirão Série B 2026</title><style>body{font-family:Arial,sans-serif;margin:20px;background:#fafafa;color:#333}h1,p{text-align:center}table{margin:auto;border-collapse:collapse;width:95%;max-width:1100px;background:white}th,td{padding:10px;border:1px solid #ddd;text-align:center}th{background:#1a1a2e;color:white}.team{text-align:left;font-weight:bold}.score{font-weight:bold}</style></head><body><h1>Brasileirão Série B 2026</h1><p>Jogos e resultados obtidos do ge</p><table><thead><tr><th>Rodada</th><th>Data</th><th>Hora</th><th>Mandante</th><th>Placar</th><th>Visitante</th><th>Estádio</th></tr></thead><tbody>""" + "\n".join(rows) + """</tbody></table><p><a href="../index.html">← Voltar ao site</a></p></body></html>\n"""
+    return """<!DOCTYPE html><html lang="pt-br"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Brasileirão Série B 2026</title><style>body{font-family:Arial,sans-serif;margin:20px;background:#fafafa;color:#333}h1,p{text-align:center}table{margin:auto;border-collapse:collapse;width:98%;max-width:1200px;background:white}th,td{padding:10px;border:1px solid #ddd;text-align:center}th{background:#1a1a2e;color:white}.team{text-align:left;font-weight:bold}.score{font-weight:bold}a{color:#007bff;text-decoration:none}</style></head><body><h1>Brasileirão Série B 2026</h1><p>Jogos e resultados obtidos do ge. O histórico é acumulado a cada rodada.</p><table><thead><tr><th>Rodada</th><th>Data</th><th>Hora</th><th>Mandante</th><th>Placar</th><th>Visitante</th><th>Estádio</th><th>Status</th></tr></thead><tbody>""" + "\n".join(rows) + """</tbody></table><p><a href="../index.html">← Voltar ao site</a></p></body></html>\n"""
 
 
 def main() -> None:
-    matches = parse_matches(fetch_page())
-    data = {
-        "name": "Brasileirão Série B 2026",
-        "source": SOURCE_URL,
-        "matches": matches,
-    }
+    scraped = scrape_matches(fetch_page())
+    matches = merge_matches(load_existing_matches(), scraped)
+    data = {"name": "Brasileirão Série B 2026", "source": SOURCE_URL, "matches": matches}
     json_content = json.dumps(data, indent=2, ensure_ascii=False, sort_keys=True) + "\n"
     json_changed = write_if_changed(DATA_FILE, json_content)
     html_changed = write_if_changed(OUTPUT_HTML, build_html(matches))
     print(
-        f"{len(matches)} partidas encontradas. "
+        f"{len(scraped)} partidas coletadas; {len(matches)} armazenadas. "
         f"JSON alterado: {json_changed}. HTML alterado: {html_changed}."
     )
 
