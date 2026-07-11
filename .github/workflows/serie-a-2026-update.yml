@@ -61,4 +61,5 @@ jobs:
           git config user.name "github-actions[bot]"
           git add data/serie_a_2026.json docs/serie_a_2026/index.html
           git commit -m "Update Serie A 2026 data"
+          git pull --rebase origin "${GITHUB_HEAD_REF:-${GITHUB_REF_NAME}}"
           git push
