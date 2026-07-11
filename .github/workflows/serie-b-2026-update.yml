@@ -20,46 +20,8 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-      - name: Install dependencies
-        run: pip install beautifulsoup4 lxml
-      - name: Capture ge page and updater log
-        run: |
-          python3 - <<'PY'
-          from urllib.request import Request, urlopen
-          from bs4 import BeautifulSoup
-          import json
-          import re
-
-          url = "https://ge.globo.com/futebol/brasileirao-serie-b/"
-          req = Request(url, headers={"User-Agent": "Mozilla/5.0", "Accept-Language": "pt-BR"})
-          page = urlopen(req, timeout=45).read().decode("utf-8", errors="replace")
-          open("ge-debug.html", "w", encoding="utf-8").write(page)
-          soup = BeautifulSoup(page, "lxml")
-          summary = {
-              "page_length": len(page),
-              "scripts": [(s.get("id"), s.get("type"), len(s.get_text())) for s in soup.find_all("script")],
-              "relevant_classes": sorted({
-                  c for tag in soup.find_all(True) for c in (tag.get("class") or [])
-                  if any(k in c.lower() for k in ("jogo", "placar", "equipe", "rodada"))
-              }),
-              "counts": {needle: page.lower().count(needle) for needle in (
-                  "mandante", "visitante", "placar_oficial", "lista-jogos", "rodada", "match"
-              )},
-          }
-          open("ge-debug.json", "w", encoding="utf-8").write(json.dumps(summary, ensure_ascii=False, indent=2))
-          PY
-          python3 serie_b_2026/main.py > updater.log 2>&1 || true
-      - name: Upload parser diagnostics
-        uses: actions/upload-artifact@v4
-        with:
-          name: serie-b-ge-debug
-          path: |
-            ge-debug.html
-            ge-debug.json
-            updater.log
-      - name: Fail if updater failed
-        run: |
-          python3 serie_b_2026/main.py
+      - name: Run updater
+        run: python3 serie_b_2026/main.py
       - name: Commit changes
         if: github.event_name != 'pull_request'
         run: |
