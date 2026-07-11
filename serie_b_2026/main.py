@@ -87,7 +87,6 @@ def scrape_visible_round(page: Page, number: int) -> list[dict[str, Any]]:
                   text('.placar__equipes--visitante .equipes__nome'),
             score,
             stadium: text('.jogo__informacoes--local'),
-            status: text('.jogo__transmissao--broadcast'),
             url: attribute('a.jogo__transmissao--link', 'href')
           };
         })
@@ -127,7 +126,6 @@ def scrape_visible_round(page: Page, number: int) -> list[dict[str, Any]]:
                 "score": clean(item.get("score")) or "-",
                 "away": away,
                 "stadium": clean(item.get("stadium")),
-                "status": clean(item.get("status")),
                 "url": clean(item.get("url")),
             }
         )
@@ -193,7 +191,7 @@ def build_html(matches: list[dict[str, Any]]) -> str:
         number = int(match["round"])
         if number != current_round:
             rows.append(
-                f'<tr class="round-header"><td colspan="8">{number}ª rodada</td></tr>'
+                f'<tr class="round-header"><td colspan="7">{number}ª rodada</td></tr>'
             )
             current_round = number
 
@@ -210,7 +208,6 @@ def build_html(matches: list[dict[str, Any]]) -> str:
             f"<td class=\"score\">{score}</td>"
             f"<td class=\"team\">{html.escape(clean(match.get('away')))}</td>"
             f"<td>{html.escape(clean(match.get('stadium')))}</td>"
-            f"<td>{html.escape(clean(match.get('status')))}</td>"
             "</tr>"
         )
 
@@ -219,7 +216,7 @@ def build_html(matches: list[dict[str, Any]]) -> str:
 <title>Brasileirão Série B 2026</title>
 <style>body{font-family:Arial,sans-serif;margin:20px;background:#fafafa;color:#333}h1,p{text-align:center}table{margin:auto;border-collapse:collapse;width:98%;max-width:1200px;background:white}th,td{padding:10px;border:1px solid #ddd;text-align:center}th{background:#1a1a2e;color:white}.team{text-align:left;font-weight:bold}.score{font-weight:bold}.round-header td{background:#e8e8e8;font-weight:bold;text-align:left}a{color:#007bff;text-decoration:none}</style></head>
 <body><h1>Brasileirão Série B 2026</h1><p>As 38 rodadas, atualizadas automaticamente a partir do ge.</p>
-<table><thead><tr><th>Rodada</th><th>Data</th><th>Hora</th><th>Mandante</th><th>Placar</th><th>Visitante</th><th>Estádio</th><th>Status</th></tr></thead><tbody>""" + "\n".join(rows) + """</tbody></table><p><a href="../index.html">← Voltar ao site</a></p></body></html>\n"""
+<table><thead><tr><th>Rodada</th><th>Data</th><th>Hora</th><th>Mandante</th><th>Placar</th><th>Visitante</th><th>Estádio</th></tr></thead><tbody>""" + "\n".join(rows) + """</tbody></table><p><a href="../index.html">← Voltar ao site</a></p></body></html>\n"""
 
 
 def main() -> None:
