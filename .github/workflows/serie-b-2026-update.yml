@@ -4,8 +4,6 @@ on:
   pull_request:
     paths:
       - 'serie_b_2026/**'
-      - 'data/serie_b_2026.json'
-      - 'docs/serie_b_2026/**'
       - '.github/workflows/serie-b-2026-update.yml'
   schedule:
     - cron: '30 */6 * * *'
