@@ -29,6 +29,7 @@ jobs:
           python -m playwright install --with-deps chromium
       - name: Run updater
         run: |
+          set -o pipefail
           python3 serie_b_2026/main.py 2>&1 | tee serie-b-updater.log
       - name: Upload updater log
         if: always() && github.event_name == 'pull_request'
