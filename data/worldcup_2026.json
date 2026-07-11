@@ -1,5 +1,5 @@
 {
-  "last_updated": "2026-07-11T03:40:00.727076+00:00",
+  "last_updated": "2026-07-11T03:48:36.797574+00:00",
   "source": "https://raw.githubusercontent.com/upbound-web/worldcup-live.json/master/2026/worldcup.json",
   "name": "World Cup 2026",
   "matches": [
@@ -33,7 +33,7 @@
       "group": "Group A",
       "ground": "Mexico City",
       "date_sp": "2026-06-11",
-      "time_sp": "16:00",
+      "time_sp": "04:00",
       "score_display": "2 x 0",
       "stage": "Group A"
     },
@@ -72,7 +72,7 @@
       "group": "Group A",
       "ground": "Guadalajara (Zapopan)",
       "date_sp": "2026-06-11",
-      "time_sp": "23:00",
+      "time_sp": "11:00",
       "score_display": "2 x 1",
       "stage": "Group A"
     },
@@ -107,7 +107,7 @@
       "group": "Group B",
       "ground": "Toronto",
       "date_sp": "2026-06-12",
-      "time_sp": "16:00",
+      "time_sp": "08:00",
       "score_display": "1 x 1",
       "stage": "Group B"
     },
@@ -157,7 +157,7 @@
       "group": "Group D",
       "ground": "Los Angeles (Inglewood)",
       "date_sp": "2026-06-12",
-      "time_sp": "22:00",
+      "time_sp": "08:00",
       "score_display": "4 x 1",
       "stage": "Group D"
     },
@@ -194,7 +194,7 @@
       "group": "Group B",
       "ground": "San Francisco Bay Area (Santa Clara)",
       "date_sp": "2026-06-13",
-      "time_sp": "16:00",
+      "time_sp": "02:00",
       "score_display": "1 x 1",
       "stage": "Group B"
     },
@@ -229,38 +229,8 @@
       "group": "Group C",
       "ground": "New York/New Jersey (East Rutherford)",
       "date_sp": "2026-06-13",
-      "time_sp": "19:00",
+      "time_sp": "11:00",
       "score_display": "1 x 1",
-      "stage": "Group C"
-    },
-    {
-      "round": "Matchday 3",
-      "date": "2026-06-13",
-      "time": "21:00 UTC-4",
-      "team1": "Haiti",
-      "team2": "Scotland",
-      "score": {
-        "ft": [
-          0,
-          1
-        ],
-        "ht": [
-          0,
-          1
-        ]
-      },
-      "goals1": [],
-      "goals2": [
-        {
-          "name": "John McGinn",
-          "minute": 28
-        }
-      ],
-      "group": "Group C",
-      "ground": "Boston (Foxborough)",
-      "date_sp": "2026-06-13",
-      "time_sp": "22:00",
-      "score_display": "0 x 1",
       "stage": "Group C"
     },
     {
@@ -292,10 +262,40 @@
       "goals2": [],
       "group": "Group D",
       "ground": "Vancouver",
-      "date_sp": "2026-06-14",
-      "time_sp": "01:00",
+      "date_sp": "2026-06-13",
+      "time_sp": "11:00",
       "score_display": "2 x 0",
       "stage": "Group D"
+    },
+    {
+      "round": "Matchday 3",
+      "date": "2026-06-13",
+      "time": "21:00 UTC-4",
+      "team1": "Haiti",
+      "team2": "Scotland",
+      "score": {
+        "ft": [
+          0,
+          1
+        ],
+        "ht": [
+          0,
+          1
+        ]
+      },
+      "goals1": [],
+      "goals2": [
+        {
+          "name": "John McGinn",
+          "minute": 28
+        }
+      ],
+      "group": "Group C",
+      "ground": "Boston (Foxborough)",
+      "date_sp": "2026-06-13",
+      "time_sp": "14:00",
+      "score_display": "0 x 1",
+      "stage": "Group C"
     },
     {
       "round": "Matchday 4",
@@ -354,7 +354,7 @@
       "group": "Group E",
       "ground": "Houston",
       "date_sp": "2026-06-14",
-      "time_sp": "14:00",
+      "time_sp": "04:00",
       "score_display": "7 x 1",
       "stage": "Group E"
     },
@@ -397,39 +397,9 @@
       "group": "Group F",
       "ground": "Dallas (Arlington)",
       "date_sp": "2026-06-14",
-      "time_sp": "17:00",
+      "time_sp": "07:00",
       "score_display": "2 x 2",
       "stage": "Group F"
-    },
-    {
-      "round": "Matchday 4",
-      "date": "2026-06-14",
-      "time": "19:00 UTC-4",
-      "team1": "Ivory Coast",
-      "team2": "Ecuador",
-      "score": {
-        "ft": [
-          1,
-          0
-        ],
-        "ht": [
-          0,
-          0
-        ]
-      },
-      "goals1": [
-        {
-          "name": "Amad Diallo",
-          "minute": 90
-        }
-      ],
-      "goals2": [],
-      "group": "Group E",
-      "ground": "Philadelphia",
-      "date_sp": "2026-06-14",
-      "time_sp": "20:00",
-      "score_display": "1 x 0",
-      "stage": "Group E"
     },
     {
       "round": "Matchday 4",
@@ -479,19 +449,19 @@
       "group": "Group F",
       "ground": "Monterrey (Guadalupe)",
       "date_sp": "2026-06-14",
-      "time_sp": "23:00",
+      "time_sp": "11:00",
       "score_display": "5 x 1",
       "stage": "Group F"
     },
     {
-      "round": "Matchday 5",
-      "date": "2026-06-15",
-      "time": "12:00 UTC-4",
-      "team1": "Spain",
-      "team2": "Cape Verde",
+      "round": "Matchday 4",
+      "date": "2026-06-14",
+      "time": "19:00 UTC-4",
+      "team1": "Ivory Coast",
+      "team2": "Ecuador",
       "score": {
         "ft": [
-          0,
+          1,
           0
         ],
         "ht": [
@@ -499,14 +469,19 @@
           0
         ]
       },
-      "goals1": [],
+      "goals1": [
+        {
+          "name": "Amad Diallo",
+          "minute": 90
+        }
+      ],
       "goals2": [],
-      "group": "Group H",
-      "ground": "Atlanta",
-      "date_sp": "2026-06-15",
-      "time_sp": "13:00",
-      "score_display": "0 x 0",
-      "stage": "Group H"
+      "group": "Group E",
+      "ground": "Philadelphia",
+      "date_sp": "2026-06-14",
+      "time_sp": "12:00",
+      "score_display": "1 x 0",
+      "stage": "Group E"
     },
     {
       "round": "Matchday 5",
@@ -540,43 +515,33 @@
       "group": "Group G",
       "ground": "Seattle",
       "date_sp": "2026-06-15",
-      "time_sp": "16:00",
+      "time_sp": "02:00",
       "score_display": "1 x 1",
       "stage": "Group G"
     },
     {
       "round": "Matchday 5",
       "date": "2026-06-15",
-      "time": "18:00 UTC-4",
-      "team1": "Saudi Arabia",
-      "team2": "Uruguay",
+      "time": "12:00 UTC-4",
+      "team1": "Spain",
+      "team2": "Cape Verde",
       "score": {
         "ft": [
-          1,
-          1
+          0,
+          0
         ],
         "ht": [
-          1,
+          0,
           0
         ]
       },
-      "goals1": [
-        {
-          "name": "Abdulelah Al-Amri",
-          "minute": 41
-        }
-      ],
-      "goals2": [
-        {
-          "name": "Maxi Araújo",
-          "minute": 80
-        }
-      ],
+      "goals1": [],
+      "goals2": [],
       "group": "Group H",
-      "ground": "Miami (Miami Gardens)",
+      "ground": "Atlanta",
       "date_sp": "2026-06-15",
-      "time_sp": "19:00",
-      "score_display": "1 x 1",
+      "time_sp": "05:00",
+      "score_display": "0 x 0",
       "stage": "Group H"
     },
     {
@@ -618,9 +583,44 @@
       "group": "Group G",
       "ground": "Los Angeles (Inglewood)",
       "date_sp": "2026-06-15",
-      "time_sp": "22:00",
+      "time_sp": "08:00",
       "score_display": "2 x 2",
       "stage": "Group G"
+    },
+    {
+      "round": "Matchday 5",
+      "date": "2026-06-15",
+      "time": "18:00 UTC-4",
+      "team1": "Saudi Arabia",
+      "team2": "Uruguay",
+      "score": {
+        "ft": [
+          1,
+          1
+        ],
+        "ht": [
+          1,
+          0
+        ]
+      },
+      "goals1": [
+        {
+          "name": "Abdulelah Al-Amri",
+          "minute": 41
+        }
+      ],
+      "goals2": [
+        {
+          "name": "Maxi Araújo",
+          "minute": 80
+        }
+      ],
+      "group": "Group H",
+      "ground": "Miami (Miami Gardens)",
+      "date_sp": "2026-06-15",
+      "time_sp": "11:00",
+      "score_display": "1 x 1",
+      "stage": "Group H"
     },
     {
       "round": "Matchday 6",
@@ -663,7 +663,7 @@
       "group": "Group I",
       "ground": "New York/New Jersey (East Rutherford)",
       "date_sp": "2026-06-16",
-      "time_sp": "16:00",
+      "time_sp": "08:00",
       "score_display": "3 x 1",
       "stage": "Group I"
     },
@@ -712,47 +712,9 @@
       "group": "Group I",
       "ground": "Boston (Foxborough)",
       "date_sp": "2026-06-16",
-      "time_sp": "19:00",
+      "time_sp": "11:00",
       "score_display": "1 x 4",
       "stage": "Group I"
-    },
-    {
-      "round": "Matchday 6",
-      "date": "2026-06-16",
-      "time": "20:00 UTC-5",
-      "team1": "Argentina",
-      "team2": "Algeria",
-      "score": {
-        "ft": [
-          3,
-          0
-        ],
-        "ht": [
-          1,
-          0
-        ]
-      },
-      "goals1": [
-        {
-          "name": "Lionel Messi",
-          "minute": 17
-        },
-        {
-          "name": "Lionel Messi",
-          "minute": 60
-        },
-        {
-          "name": "Lionel Messi",
-          "minute": 76
-        }
-      ],
-      "goals2": [],
-      "group": "Group J",
-      "ground": "Kansas City",
-      "date_sp": "2026-06-16",
-      "time_sp": "22:00",
-      "score_display": "3 x 0",
-      "stage": "Group J"
     },
     {
       "round": "Matchday 6",
@@ -795,9 +757,47 @@
       ],
       "group": "Group J",
       "ground": "San Francisco Bay Area (Santa Clara)",
-      "date_sp": "2026-06-17",
-      "time_sp": "01:00",
+      "date_sp": "2026-06-16",
+      "time_sp": "11:00",
       "score_display": "3 x 1",
+      "stage": "Group J"
+    },
+    {
+      "round": "Matchday 6",
+      "date": "2026-06-16",
+      "time": "20:00 UTC-5",
+      "team1": "Argentina",
+      "team2": "Algeria",
+      "score": {
+        "ft": [
+          3,
+          0
+        ],
+        "ht": [
+          1,
+          0
+        ]
+      },
+      "goals1": [
+        {
+          "name": "Lionel Messi",
+          "minute": 17
+        },
+        {
+          "name": "Lionel Messi",
+          "minute": 60
+        },
+        {
+          "name": "Lionel Messi",
+          "minute": 76
+        }
+      ],
+      "goals2": [],
+      "group": "Group J",
+      "ground": "Kansas City",
+      "date_sp": "2026-06-16",
+      "time_sp": "12:00",
+      "score_display": "3 x 0",
       "stage": "Group J"
     },
     {
@@ -832,7 +832,7 @@
       "group": "Group K",
       "ground": "Houston",
       "date_sp": "2026-06-17",
-      "time_sp": "14:00",
+      "time_sp": "04:00",
       "score_display": "1 x 1",
       "stage": "Group K"
     },
@@ -885,39 +885,8 @@
       "group": "Group L",
       "ground": "Dallas (Arlington)",
       "date_sp": "2026-06-17",
-      "time_sp": "17:00",
+      "time_sp": "07:00",
       "score_display": "4 x 2",
-      "stage": "Group L"
-    },
-    {
-      "round": "Matchday 7",
-      "date": "2026-06-17",
-      "time": "19:00 UTC-4",
-      "team1": "Ghana",
-      "team2": "Panama",
-      "score": {
-        "ft": [
-          1,
-          0
-        ],
-        "ht": [
-          0,
-          0
-        ]
-      },
-      "goals1": [
-        {
-          "name": "Caleb Yirenkyi",
-          "minute": 90,
-          "offset": 5
-        }
-      ],
-      "goals2": [],
-      "group": "Group L",
-      "ground": "Toronto",
-      "date_sp": "2026-06-17",
-      "time_sp": "20:00",
-      "score_display": "1 x 0",
       "stage": "Group L"
     },
     {
@@ -960,45 +929,40 @@
       "group": "Group K",
       "ground": "Mexico City",
       "date_sp": "2026-06-17",
-      "time_sp": "23:00",
+      "time_sp": "11:00",
       "score_display": "1 x 3",
       "stage": "Group K"
     },
     {
-      "round": "Matchday 8",
-      "date": "2026-06-18",
-      "time": "12:00 UTC-4",
-      "team1": "Czech Republic",
-      "team2": "South Africa",
+      "round": "Matchday 7",
+      "date": "2026-06-17",
+      "time": "19:00 UTC-4",
+      "team1": "Ghana",
+      "team2": "Panama",
       "score": {
         "ft": [
           1,
-          1
+          0
         ],
         "ht": [
-          1,
+          0,
           0
         ]
       },
       "goals1": [
         {
-          "name": "Michal Sadílek",
-          "minute": 6
+          "name": "Caleb Yirenkyi",
+          "minute": 90,
+          "offset": 5
         }
       ],
-      "goals2": [
-        {
-          "name": "Teboho Mokoena",
-          "minute": 83,
-          "penalty": true
-        }
-      ],
-      "group": "Group A",
-      "ground": "Atlanta",
-      "date_sp": "2026-06-18",
-      "time_sp": "13:00",
-      "score_display": "1 x 1",
-      "stage": "Group A"
+      "goals2": [],
+      "group": "Group L",
+      "ground": "Toronto",
+      "date_sp": "2026-06-17",
+      "time_sp": "12:00",
+      "score_display": "1 x 0",
+      "stage": "Group L"
     },
     {
       "round": "Matchday 8",
@@ -1046,9 +1010,45 @@
       "group": "Group B",
       "ground": "Los Angeles (Inglewood)",
       "date_sp": "2026-06-18",
-      "time_sp": "16:00",
+      "time_sp": "02:00",
       "score_display": "4 x 1",
       "stage": "Group B"
+    },
+    {
+      "round": "Matchday 8",
+      "date": "2026-06-18",
+      "time": "12:00 UTC-4",
+      "team1": "Czech Republic",
+      "team2": "South Africa",
+      "score": {
+        "ft": [
+          1,
+          1
+        ],
+        "ht": [
+          1,
+          0
+        ]
+      },
+      "goals1": [
+        {
+          "name": "Michal Sadílek",
+          "minute": 6
+        }
+      ],
+      "goals2": [
+        {
+          "name": "Teboho Mokoena",
+          "minute": 83,
+          "penalty": true
+        }
+      ],
+      "group": "Group A",
+      "ground": "Atlanta",
+      "date_sp": "2026-06-18",
+      "time_sp": "05:00",
+      "score_display": "1 x 1",
+      "stage": "Group A"
     },
     {
       "round": "Matchday 8",
@@ -1099,7 +1099,7 @@
       "group": "Group B",
       "ground": "Vancouver",
       "date_sp": "2026-06-18",
-      "time_sp": "19:00",
+      "time_sp": "05:00",
       "score_display": "6 x 0",
       "stage": "Group B"
     },
@@ -1129,7 +1129,7 @@
       "group": "Group A",
       "ground": "Guadalajara (Zapopan)",
       "date_sp": "2026-06-18",
-      "time_sp": "22:00",
+      "time_sp": "10:00",
       "score_display": "1 x 0",
       "stage": "Group A"
     },
@@ -1164,8 +1164,38 @@
       "group": "Group D",
       "ground": "Seattle",
       "date_sp": "2026-06-19",
-      "time_sp": "16:00",
+      "time_sp": "02:00",
       "score_display": "2 x 0",
+      "stage": "Group D"
+    },
+    {
+      "round": "Matchday 9",
+      "date": "2026-06-19",
+      "time": "20:00 UTC-7",
+      "team1": "Turkey",
+      "team2": "Paraguay",
+      "score": {
+        "ft": [
+          0,
+          1
+        ],
+        "ht": [
+          0,
+          1
+        ]
+      },
+      "goals1": [],
+      "goals2": [
+        {
+          "name": "Matías Galarza",
+          "minute": 2
+        }
+      ],
+      "group": "Group D",
+      "ground": "San Francisco Bay Area (Santa Clara)",
+      "date_sp": "2026-06-19",
+      "time_sp": "10:00",
+      "score_display": "0 x 1",
       "stage": "Group D"
     },
     {
@@ -1194,7 +1224,7 @@
       "group": "Group C",
       "ground": "Boston (Foxborough)",
       "date_sp": "2026-06-19",
-      "time_sp": "19:00",
+      "time_sp": "11:00",
       "score_display": "0 x 1",
       "stage": "Group C"
     },
@@ -1233,39 +1263,9 @@
       "group": "Group C",
       "ground": "Philadelphia",
       "date_sp": "2026-06-19",
-      "time_sp": "21:30",
+      "time_sp": "13:30",
       "score_display": "3 x 0",
       "stage": "Group C"
-    },
-    {
-      "round": "Matchday 9",
-      "date": "2026-06-19",
-      "time": "20:00 UTC-7",
-      "team1": "Turkey",
-      "team2": "Paraguay",
-      "score": {
-        "ft": [
-          0,
-          1
-        ],
-        "ht": [
-          0,
-          1
-        ]
-      },
-      "goals1": [],
-      "goals2": [
-        {
-          "name": "Matías Galarza",
-          "minute": 2
-        }
-      ],
-      "group": "Group D",
-      "ground": "San Francisco Bay Area (Santa Clara)",
-      "date_sp": "2026-06-20",
-      "time_sp": "00:00",
-      "score_display": "0 x 1",
-      "stage": "Group D"
     },
     {
       "round": "Matchday 10",
@@ -1314,7 +1314,7 @@
       "group": "Group F",
       "ground": "Houston",
       "date_sp": "2026-06-20",
-      "time_sp": "14:00",
+      "time_sp": "04:00",
       "score_display": "5 x 1",
       "stage": "Group F"
     },
@@ -1354,7 +1354,7 @@
       "group": "Group E",
       "ground": "Toronto",
       "date_sp": "2026-06-20",
-      "time_sp": "17:00",
+      "time_sp": "09:00",
       "score_display": "2 x 1",
       "stage": "Group E"
     },
@@ -1379,7 +1379,7 @@
       "group": "Group E",
       "ground": "Kansas City",
       "date_sp": "2026-06-20",
-      "time_sp": "21:00",
+      "time_sp": "11:00",
       "score_display": "0 x 0",
       "stage": "Group E"
     },
@@ -1420,10 +1420,35 @@
       ],
       "group": "Group F",
       "ground": "Monterrey (Guadalupe)",
-      "date_sp": "2026-06-21",
-      "time_sp": "01:00",
+      "date_sp": "2026-06-20",
+      "time_sp": "13:00",
       "score_display": "0 x 4",
       "stage": "Group F"
+    },
+    {
+      "round": "Matchday 11",
+      "date": "2026-06-21",
+      "time": "12:00 UTC-7",
+      "team1": "Belgium",
+      "team2": "Iran",
+      "score": {
+        "ft": [
+          0,
+          0
+        ],
+        "ht": [
+          0,
+          0
+        ]
+      },
+      "goals1": [],
+      "goals2": [],
+      "group": "Group G",
+      "ground": "Los Angeles (Inglewood)",
+      "date_sp": "2026-06-21",
+      "time_sp": "02:00",
+      "score_display": "0 x 0",
+      "stage": "Group G"
     },
     {
       "round": "Matchday 11",
@@ -1464,33 +1489,51 @@
       "group": "Group H",
       "ground": "Atlanta",
       "date_sp": "2026-06-21",
-      "time_sp": "13:00",
+      "time_sp": "05:00",
       "score_display": "4 x 0",
       "stage": "Group H"
     },
     {
       "round": "Matchday 11",
       "date": "2026-06-21",
-      "time": "12:00 UTC-7",
-      "team1": "Belgium",
-      "team2": "Iran",
+      "time": "18:00 UTC-7",
+      "team1": "New Zealand",
+      "team2": "Egypt",
       "score": {
         "ft": [
-          0,
-          0
+          1,
+          3
         ],
         "ht": [
-          0,
+          1,
           0
         ]
       },
-      "goals1": [],
-      "goals2": [],
+      "goals1": [
+        {
+          "name": "Finn Surman",
+          "minute": 15
+        }
+      ],
+      "goals2": [
+        {
+          "name": "Mostafa Zico",
+          "minute": 58
+        },
+        {
+          "name": "Mohamed Salah",
+          "minute": 67
+        },
+        {
+          "name": "Trézéguet",
+          "minute": 82
+        }
+      ],
       "group": "Group G",
-      "ground": "Los Angeles (Inglewood)",
+      "ground": "Vancouver",
       "date_sp": "2026-06-21",
-      "time_sp": "16:00",
-      "score_display": "0 x 0",
+      "time_sp": "08:00",
+      "score_display": "1 x 3",
       "stage": "Group G"
     },
     {
@@ -1533,52 +1576,9 @@
       "group": "Group H",
       "ground": "Miami (Miami Gardens)",
       "date_sp": "2026-06-21",
-      "time_sp": "19:00",
+      "time_sp": "11:00",
       "score_display": "2 x 2",
       "stage": "Group H"
-    },
-    {
-      "round": "Matchday 11",
-      "date": "2026-06-21",
-      "time": "18:00 UTC-7",
-      "team1": "New Zealand",
-      "team2": "Egypt",
-      "score": {
-        "ft": [
-          1,
-          3
-        ],
-        "ht": [
-          1,
-          0
-        ]
-      },
-      "goals1": [
-        {
-          "name": "Finn Surman",
-          "minute": 15
-        }
-      ],
-      "goals2": [
-        {
-          "name": "Mostafa Zico",
-          "minute": 58
-        },
-        {
-          "name": "Mohamed Salah",
-          "minute": 67
-        },
-        {
-          "name": "Trézéguet",
-          "minute": 82
-        }
-      ],
-      "group": "Group G",
-      "ground": "Vancouver",
-      "date_sp": "2026-06-21",
-      "time_sp": "22:00",
-      "score_display": "1 x 3",
-      "stage": "Group G"
     },
     {
       "round": "Matchday 12",
@@ -1611,7 +1611,7 @@
       "group": "Group J",
       "ground": "Dallas (Arlington)",
       "date_sp": "2026-06-22",
-      "time_sp": "14:00",
+      "time_sp": "04:00",
       "score_display": "2 x 0",
       "stage": "Group J"
     },
@@ -1649,9 +1649,48 @@
       "group": "Group I",
       "ground": "Philadelphia",
       "date_sp": "2026-06-22",
-      "time_sp": "18:00",
+      "time_sp": "10:00",
       "score_display": "3 x 0",
       "stage": "Group I"
+    },
+    {
+      "round": "Matchday 12",
+      "date": "2026-06-22",
+      "time": "20:00 UTC-7",
+      "team1": "Jordan",
+      "team2": "Algeria",
+      "score": {
+        "ft": [
+          1,
+          2
+        ],
+        "ht": [
+          1,
+          0
+        ]
+      },
+      "goals1": [
+        {
+          "name": "Nizar Al-Rashdan",
+          "minute": 36
+        }
+      ],
+      "goals2": [
+        {
+          "name": "Nadhir Benbouali",
+          "minute": 69
+        },
+        {
+          "name": "Amine Gouiri",
+          "minute": 82
+        }
+      ],
+      "group": "Group J",
+      "ground": "San Francisco Bay Area (Santa Clara)",
+      "date_sp": "2026-06-22",
+      "time_sp": "10:00",
+      "score_display": "1 x 2",
+      "stage": "Group J"
     },
     {
       "round": "Matchday 12",
@@ -1697,48 +1736,9 @@
       "group": "Group I",
       "ground": "New York/New Jersey (East Rutherford)",
       "date_sp": "2026-06-22",
-      "time_sp": "21:00",
+      "time_sp": "13:00",
       "score_display": "3 x 2",
       "stage": "Group I"
-    },
-    {
-      "round": "Matchday 12",
-      "date": "2026-06-22",
-      "time": "20:00 UTC-7",
-      "team1": "Jordan",
-      "team2": "Algeria",
-      "score": {
-        "ft": [
-          1,
-          2
-        ],
-        "ht": [
-          1,
-          0
-        ]
-      },
-      "goals1": [
-        {
-          "name": "Nizar Al-Rashdan",
-          "minute": 36
-        }
-      ],
-      "goals2": [
-        {
-          "name": "Nadhir Benbouali",
-          "minute": 69
-        },
-        {
-          "name": "Amine Gouiri",
-          "minute": 82
-        }
-      ],
-      "group": "Group J",
-      "ground": "San Francisco Bay Area (Santa Clara)",
-      "date_sp": "2026-06-23",
-      "time_sp": "00:00",
-      "score_display": "1 x 2",
-      "stage": "Group J"
     },
     {
       "round": "Matchday 13",
@@ -1783,7 +1783,7 @@
       "group": "Group K",
       "ground": "Houston",
       "date_sp": "2026-06-23",
-      "time_sp": "14:00",
+      "time_sp": "04:00",
       "score_display": "5 x 0",
       "stage": "Group K"
     },
@@ -1808,38 +1808,8 @@
       "group": "Group L",
       "ground": "Boston (Foxborough)",
       "date_sp": "2026-06-23",
-      "time_sp": "17:00",
+      "time_sp": "09:00",
       "score_display": "0 x 0",
-      "stage": "Group L"
-    },
-    {
-      "round": "Matchday 13",
-      "date": "2026-06-23",
-      "time": "19:00 UTC-4",
-      "team1": "Panama",
-      "team2": "Croatia",
-      "score": {
-        "ft": [
-          0,
-          1
-        ],
-        "ht": [
-          0,
-          0
-        ]
-      },
-      "goals1": [],
-      "goals2": [
-        {
-          "name": "Ante Budimir",
-          "minute": 54
-        }
-      ],
-      "group": "Group L",
-      "ground": "Toronto",
-      "date_sp": "2026-06-23",
-      "time_sp": "20:00",
-      "score_display": "0 x 1",
       "stage": "Group L"
     },
     {
@@ -1868,9 +1838,39 @@
       "group": "Group K",
       "ground": "Guadalajara (Zapopan)",
       "date_sp": "2026-06-23",
-      "time_sp": "23:00",
+      "time_sp": "11:00",
       "score_display": "1 x 0",
       "stage": "Group K"
+    },
+    {
+      "round": "Matchday 13",
+      "date": "2026-06-23",
+      "time": "19:00 UTC-4",
+      "team1": "Panama",
+      "team2": "Croatia",
+      "score": {
+        "ft": [
+          0,
+          1
+        ],
+        "ht": [
+          0,
+          0
+        ]
+      },
+      "goals1": [],
+      "goals2": [
+        {
+          "name": "Ante Budimir",
+          "minute": 54
+        }
+      ],
+      "group": "Group L",
+      "ground": "Toronto",
+      "date_sp": "2026-06-23",
+      "time_sp": "12:00",
+      "score_display": "0 x 1",
+      "stage": "Group L"
     },
     {
       "round": "Matchday 14",
@@ -1907,7 +1907,7 @@
       "group": "Group B",
       "ground": "Vancouver",
       "date_sp": "2026-06-24",
-      "time_sp": "16:00",
+      "time_sp": "02:00",
       "score_display": "2 x 1",
       "stage": "Group B"
     },
@@ -1951,9 +1951,78 @@
       "group": "Group B",
       "ground": "Seattle",
       "date_sp": "2026-06-24",
-      "time_sp": "16:00",
+      "time_sp": "02:00",
       "score_display": "3 x 1",
       "stage": "Group B"
+    },
+    {
+      "round": "Matchday 14",
+      "date": "2026-06-24",
+      "time": "19:00 UTC-6",
+      "team1": "Czech Republic",
+      "team2": "Mexico",
+      "score": {
+        "ft": [
+          0,
+          3
+        ],
+        "ht": [
+          0,
+          0
+        ]
+      },
+      "goals1": [],
+      "goals2": [
+        {
+          "name": "Mateo Chávez",
+          "minute": 55
+        },
+        {
+          "name": "Julián Quiñones",
+          "minute": 61
+        },
+        {
+          "name": "Álvaro Fidalgo",
+          "minute": 90,
+          "offset": 4
+        }
+      ],
+      "group": "Group A",
+      "ground": "Mexico City",
+      "date_sp": "2026-06-24",
+      "time_sp": "10:00",
+      "score_display": "0 x 3",
+      "stage": "Group A"
+    },
+    {
+      "round": "Matchday 14",
+      "date": "2026-06-24",
+      "time": "19:00 UTC-6",
+      "team1": "South Africa",
+      "team2": "South Korea",
+      "score": {
+        "ft": [
+          1,
+          0
+        ],
+        "ht": [
+          0,
+          0
+        ]
+      },
+      "goals1": [
+        {
+          "name": "Thapelo Maseko",
+          "minute": 63
+        }
+      ],
+      "goals2": [],
+      "group": "Group A",
+      "ground": "Monterrey (Guadalupe)",
+      "date_sp": "2026-06-24",
+      "time_sp": "10:00",
+      "score_display": "1 x 0",
+      "stage": "Group A"
     },
     {
       "round": "Matchday 14",
@@ -1990,7 +2059,7 @@
       "group": "Group C",
       "ground": "Miami (Miami Gardens)",
       "date_sp": "2026-06-24",
-      "time_sp": "19:00",
+      "time_sp": "11:00",
       "score_display": "0 x 3",
       "stage": "Group C"
     },
@@ -2043,230 +2112,9 @@
       "group": "Group C",
       "ground": "Atlanta",
       "date_sp": "2026-06-24",
-      "time_sp": "19:00",
+      "time_sp": "11:00",
       "score_display": "4 x 2",
       "stage": "Group C"
-    },
-    {
-      "round": "Matchday 14",
-      "date": "2026-06-24",
-      "time": "19:00 UTC-6",
-      "team1": "Czech Republic",
-      "team2": "Mexico",
-      "score": {
-        "ft": [
-          0,
-          3
-        ],
-        "ht": [
-          0,
-          0
-        ]
-      },
-      "goals1": [],
-      "goals2": [
-        {
-          "name": "Mateo Chávez",
-          "minute": 55
-        },
-        {
-          "name": "Julián Quiñones",
-          "minute": 61
-        },
-        {
-          "name": "Álvaro Fidalgo",
-          "minute": 90,
-          "offset": 4
-        }
-      ],
-      "group": "Group A",
-      "ground": "Mexico City",
-      "date_sp": "2026-06-24",
-      "time_sp": "22:00",
-      "score_display": "0 x 3",
-      "stage": "Group A"
-    },
-    {
-      "round": "Matchday 14",
-      "date": "2026-06-24",
-      "time": "19:00 UTC-6",
-      "team1": "South Africa",
-      "team2": "South Korea",
-      "score": {
-        "ft": [
-          1,
-          0
-        ],
-        "ht": [
-          0,
-          0
-        ]
-      },
-      "goals1": [
-        {
-          "name": "Thapelo Maseko",
-          "minute": 63
-        }
-      ],
-      "goals2": [],
-      "group": "Group A",
-      "ground": "Monterrey (Guadalupe)",
-      "date_sp": "2026-06-24",
-      "time_sp": "22:00",
-      "score_display": "1 x 0",
-      "stage": "Group A"
-    },
-    {
-      "round": "Matchday 15",
-      "date": "2026-06-25",
-      "time": "16:00 UTC-4",
-      "team1": "Curaçao",
-      "team2": "Ivory Coast",
-      "score": {
-        "ft": [
-          0,
-          2
-        ],
-        "ht": [
-          0,
-          1
-        ]
-      },
-      "goals1": [],
-      "goals2": [
-        {
-          "name": "Nicolas Pépé",
-          "minute": 7
-        },
-        {
-          "name": "Nicolas Pépé",
-          "minute": 64
-        }
-      ],
-      "group": "Group E",
-      "ground": "Philadelphia",
-      "date_sp": "2026-06-25",
-      "time_sp": "17:00",
-      "score_display": "0 x 2",
-      "stage": "Group E"
-    },
-    {
-      "round": "Matchday 15",
-      "date": "2026-06-25",
-      "time": "16:00 UTC-4",
-      "team1": "Ecuador",
-      "team2": "Germany",
-      "score": {
-        "ft": [
-          2,
-          1
-        ],
-        "ht": [
-          1,
-          1
-        ]
-      },
-      "goals1": [
-        {
-          "name": "Nilson Angulo",
-          "minute": 9
-        },
-        {
-          "name": "Gonzalo Plata",
-          "minute": 77
-        }
-      ],
-      "goals2": [
-        {
-          "name": "Leroy Sané",
-          "minute": 2
-        }
-      ],
-      "group": "Group E",
-      "ground": "New York/New Jersey (East Rutherford)",
-      "date_sp": "2026-06-25",
-      "time_sp": "17:00",
-      "score_display": "2 x 1",
-      "stage": "Group E"
-    },
-    {
-      "round": "Matchday 15",
-      "date": "2026-06-25",
-      "time": "18:00 UTC-5",
-      "team1": "Japan",
-      "team2": "Sweden",
-      "score": {
-        "ft": [
-          1,
-          1
-        ],
-        "ht": [
-          0,
-          0
-        ]
-      },
-      "goals1": [
-        {
-          "name": "Daizen Maeda",
-          "minute": 56
-        }
-      ],
-      "goals2": [
-        {
-          "name": "Anthony Elanga",
-          "minute": 62
-        }
-      ],
-      "group": "Group F",
-      "ground": "Dallas (Arlington)",
-      "date_sp": "2026-06-25",
-      "time_sp": "20:00",
-      "score_display": "1 x 1",
-      "stage": "Group F"
-    },
-    {
-      "round": "Matchday 15",
-      "date": "2026-06-25",
-      "time": "18:00 UTC-5",
-      "team1": "Tunisia",
-      "team2": "Netherlands",
-      "score": {
-        "ft": [
-          1,
-          3
-        ],
-        "ht": [
-          0,
-          2
-        ]
-      },
-      "goals1": [
-        {
-          "name": "Hazem Mastouri",
-          "minute": 54
-        }
-      ],
-      "goals2": [
-        {
-          "name": "Ellyes Skhiri",
-          "minute": 3,
-          "owngoal": true
-        },
-        {
-          "name": "Brian Brobbey",
-          "minute": 7
-        },
-        {
-          "name": "Jan Paul van Hecke",
-          "minute": 62
-        }
-      ],
-      "group": "Group F",
-      "ground": "Kansas City",
-      "date_sp": "2026-06-25",
-      "time_sp": "20:00",
-      "score_display": "1 x 3",
-      "stage": "Group F"
     },
     {
       "round": "Matchday 15",
@@ -2312,7 +2160,7 @@
       "group": "Group D",
       "ground": "Los Angeles (Inglewood)",
       "date_sp": "2026-06-25",
-      "time_sp": "23:00",
+      "time_sp": "09:00",
       "score_display": "3 x 2",
       "stage": "Group D"
     },
@@ -2337,9 +2185,161 @@
       "group": "Group D",
       "ground": "San Francisco Bay Area (Santa Clara)",
       "date_sp": "2026-06-25",
-      "time_sp": "23:00",
+      "time_sp": "09:00",
       "score_display": "0 x 0",
       "stage": "Group D"
+    },
+    {
+      "round": "Matchday 15",
+      "date": "2026-06-25",
+      "time": "16:00 UTC-4",
+      "team1": "Curaçao",
+      "team2": "Ivory Coast",
+      "score": {
+        "ft": [
+          0,
+          2
+        ],
+        "ht": [
+          0,
+          1
+        ]
+      },
+      "goals1": [],
+      "goals2": [
+        {
+          "name": "Nicolas Pépé",
+          "minute": 7
+        },
+        {
+          "name": "Nicolas Pépé",
+          "minute": 64
+        }
+      ],
+      "group": "Group E",
+      "ground": "Philadelphia",
+      "date_sp": "2026-06-25",
+      "time_sp": "09:00",
+      "score_display": "0 x 2",
+      "stage": "Group E"
+    },
+    {
+      "round": "Matchday 15",
+      "date": "2026-06-25",
+      "time": "16:00 UTC-4",
+      "team1": "Ecuador",
+      "team2": "Germany",
+      "score": {
+        "ft": [
+          2,
+          1
+        ],
+        "ht": [
+          1,
+          1
+        ]
+      },
+      "goals1": [
+        {
+          "name": "Nilson Angulo",
+          "minute": 9
+        },
+        {
+          "name": "Gonzalo Plata",
+          "minute": 77
+        }
+      ],
+      "goals2": [
+        {
+          "name": "Leroy Sané",
+          "minute": 2
+        }
+      ],
+      "group": "Group E",
+      "ground": "New York/New Jersey (East Rutherford)",
+      "date_sp": "2026-06-25",
+      "time_sp": "09:00",
+      "score_display": "2 x 1",
+      "stage": "Group E"
+    },
+    {
+      "round": "Matchday 15",
+      "date": "2026-06-25",
+      "time": "18:00 UTC-5",
+      "team1": "Japan",
+      "team2": "Sweden",
+      "score": {
+        "ft": [
+          1,
+          1
+        ],
+        "ht": [
+          0,
+          0
+        ]
+      },
+      "goals1": [
+        {
+          "name": "Daizen Maeda",
+          "minute": 56
+        }
+      ],
+      "goals2": [
+        {
+          "name": "Anthony Elanga",
+          "minute": 62
+        }
+      ],
+      "group": "Group F",
+      "ground": "Dallas (Arlington)",
+      "date_sp": "2026-06-25",
+      "time_sp": "10:00",
+      "score_display": "1 x 1",
+      "stage": "Group F"
+    },
+    {
+      "round": "Matchday 15",
+      "date": "2026-06-25",
+      "time": "18:00 UTC-5",
+      "team1": "Tunisia",
+      "team2": "Netherlands",
+      "score": {
+        "ft": [
+          1,
+          3
+        ],
+        "ht": [
+          0,
+          2
+        ]
+      },
+      "goals1": [
+        {
+          "name": "Hazem Mastouri",
+          "minute": 54
+        }
+      ],
+      "goals2": [
+        {
+          "name": "Ellyes Skhiri",
+          "minute": 3,
+          "owngoal": true
+        },
+        {
+          "name": "Brian Brobbey",
+          "minute": 7
+        },
+        {
+          "name": "Jan Paul van Hecke",
+          "minute": 62
+        }
+      ],
+      "group": "Group F",
+      "ground": "Kansas City",
+      "date_sp": "2026-06-25",
+      "time_sp": "10:00",
+      "score_display": "1 x 3",
+      "stage": "Group F"
     },
     {
       "round": "Matchday 16",
@@ -2385,7 +2385,7 @@
       "group": "Group I",
       "ground": "Boston (Foxborough)",
       "date_sp": "2026-06-26",
-      "time_sp": "16:00",
+      "time_sp": "08:00",
       "score_display": "1 x 4",
       "stage": "Group I"
     },
@@ -2431,34 +2431,9 @@
       "group": "Group I",
       "ground": "Toronto",
       "date_sp": "2026-06-26",
-      "time_sp": "16:00",
+      "time_sp": "08:00",
       "score_display": "5 x 0",
       "stage": "Group I"
-    },
-    {
-      "round": "Matchday 16",
-      "date": "2026-06-26",
-      "time": "19:00 UTC-5",
-      "team1": "Cape Verde",
-      "team2": "Saudi Arabia",
-      "score": {
-        "ft": [
-          0,
-          0
-        ],
-        "ht": [
-          0,
-          0
-        ]
-      },
-      "goals1": [],
-      "goals2": [],
-      "group": "Group H",
-      "ground": "Houston",
-      "date_sp": "2026-06-26",
-      "time_sp": "21:00",
-      "score_display": "0 x 0",
-      "stage": "Group H"
     },
     {
       "round": "Matchday 16",
@@ -2486,7 +2461,7 @@
       "group": "Group H",
       "ground": "Guadalajara (Zapopan)",
       "date_sp": "2026-06-26",
-      "time_sp": "21:00",
+      "time_sp": "09:00",
       "score_display": "0 x 1",
       "stage": "Group H"
     },
@@ -2520,8 +2495,8 @@
       ],
       "group": "Group G",
       "ground": "Seattle",
-      "date_sp": "2026-06-27",
-      "time_sp": "00:00",
+      "date_sp": "2026-06-26",
+      "time_sp": "10:00",
       "score_display": "1 x 1",
       "stage": "Group G"
     },
@@ -2572,10 +2547,35 @@
       ],
       "group": "Group G",
       "ground": "Vancouver",
-      "date_sp": "2026-06-27",
-      "time_sp": "00:00",
+      "date_sp": "2026-06-26",
+      "time_sp": "10:00",
       "score_display": "1 x 5",
       "stage": "Group G"
+    },
+    {
+      "round": "Matchday 16",
+      "date": "2026-06-26",
+      "time": "19:00 UTC-5",
+      "team1": "Cape Verde",
+      "team2": "Saudi Arabia",
+      "score": {
+        "ft": [
+          0,
+          0
+        ],
+        "ht": [
+          0,
+          0
+        ]
+      },
+      "goals1": [],
+      "goals2": [],
+      "group": "Group H",
+      "ground": "Houston",
+      "date_sp": "2026-06-26",
+      "time_sp": "11:00",
+      "score_display": "0 x 0",
+      "stage": "Group H"
     },
     {
       "round": "Matchday 17",
@@ -2607,7 +2607,7 @@
       "group": "Group L",
       "ground": "New York/New Jersey (East Rutherford)",
       "date_sp": "2026-06-27",
-      "time_sp": "18:00",
+      "time_sp": "10:00",
       "score_display": "0 x 2",
       "stage": "Group L"
     },
@@ -2646,7 +2646,7 @@
       "group": "Group L",
       "ground": "Philadelphia",
       "date_sp": "2026-06-27",
-      "time_sp": "18:00",
+      "time_sp": "10:00",
       "score_display": "2 x 1",
       "stage": "Group L"
     },
@@ -2671,7 +2671,7 @@
       "group": "Group K",
       "ground": "Miami (Miami Gardens)",
       "date_sp": "2026-06-27",
-      "time_sp": "20:30",
+      "time_sp": "12:30",
       "score_display": "0 x 0",
       "stage": "Group K"
     },
@@ -2716,7 +2716,7 @@
       "group": "Group K",
       "ground": "Atlanta",
       "date_sp": "2026-06-27",
-      "time_sp": "20:30",
+      "time_sp": "12:30",
       "score_display": "3 x 1",
       "stage": "Group K"
     },
@@ -2769,7 +2769,7 @@
       "group": "Group J",
       "ground": "Kansas City",
       "date_sp": "2026-06-27",
-      "time_sp": "23:00",
+      "time_sp": "13:00",
       "score_display": "3 x 3",
       "stage": "Group J"
     },
@@ -2813,7 +2813,7 @@
       "group": "Group J",
       "ground": "Dallas (Arlington)",
       "date_sp": "2026-06-27",
-      "time_sp": "23:00",
+      "time_sp": "13:00",
       "score_display": "1 x 3",
       "stage": "Group J"
     },
@@ -2844,7 +2844,7 @@
       ],
       "ground": "Los Angeles (Inglewood)",
       "date_sp": "2026-06-28",
-      "time_sp": "16:00",
+      "time_sp": "02:00",
       "score_display": "0 x 1",
       "stage": "Round of 32"
     },
@@ -2884,7 +2884,7 @@
       ],
       "ground": "Houston",
       "date_sp": "2026-06-29",
-      "time_sp": "14:00",
+      "time_sp": "04:00",
       "score_display": "2 x 1",
       "stage": "Round of 32"
     },
@@ -2927,8 +2927,8 @@
       ],
       "ground": "Boston (Foxborough)",
       "date_sp": "2026-06-29",
-      "time_sp": "17:30",
-      "score_display": "1 x 1",
+      "time_sp": "09:30",
+      "score_display": "1 x 1 (pênaltis: 3 x 4)",
       "stage": "Round of 32"
     },
     {
@@ -2971,8 +2971,8 @@
       ],
       "ground": "Monterrey (Guadalupe)",
       "date_sp": "2026-06-29",
-      "time_sp": "22:00",
-      "score_display": "1 x 1",
+      "time_sp": "10:00",
+      "score_display": "1 x 1 (pênaltis: 2 x 3)",
       "stage": "Round of 32"
     },
     {
@@ -3010,7 +3010,7 @@
       ],
       "ground": "Dallas (Arlington)",
       "date_sp": "2026-06-30",
-      "time_sp": "14:00",
+      "time_sp": "04:00",
       "score_display": "1 x 2",
       "stage": "Round of 32"
     },
@@ -3048,7 +3048,7 @@
       "goals2": [],
       "ground": "New York/New Jersey (East Rutherford)",
       "date_sp": "2026-06-30",
-      "time_sp": "18:00",
+      "time_sp": "10:00",
       "score_display": "3 x 0",
       "stage": "Round of 32"
     },
@@ -3082,47 +3082,8 @@
       "goals2": [],
       "ground": "Mexico City",
       "date_sp": "2026-06-30",
-      "time_sp": "22:00",
+      "time_sp": "10:00",
       "score_display": "2 x 0",
-      "stage": "Round of 32"
-    },
-    {
-      "num": 80,
-      "round": "Round of 32",
-      "date": "2026-07-01",
-      "time": "12:00 UTC-4",
-      "team1": "England",
-      "team2": "DR Congo",
-      "score": {
-        "ft": [
-          2,
-          1
-        ],
-        "ht": [
-          0,
-          1
-        ]
-      },
-      "goals1": [
-        {
-          "name": "Harry Kane",
-          "minute": 75
-        },
-        {
-          "name": "Harry Kane",
-          "minute": 86
-        }
-      ],
-      "goals2": [
-        {
-          "name": "Brian Cipenga",
-          "minute": 7
-        }
-      ],
-      "ground": "Atlanta",
-      "date_sp": "2026-07-01",
-      "time_sp": "13:00",
-      "score_display": "2 x 1",
       "stage": "Round of 32"
     },
     {
@@ -3174,8 +3135,47 @@
       ],
       "ground": "Seattle",
       "date_sp": "2026-07-01",
-      "time_sp": "17:00",
-      "score_display": "2 x 2",
+      "time_sp": "03:00",
+      "score_display": "2 x 2 (prorrogação: 3 x 2)",
+      "stage": "Round of 32"
+    },
+    {
+      "num": 80,
+      "round": "Round of 32",
+      "date": "2026-07-01",
+      "time": "12:00 UTC-4",
+      "team1": "England",
+      "team2": "DR Congo",
+      "score": {
+        "ft": [
+          2,
+          1
+        ],
+        "ht": [
+          0,
+          1
+        ]
+      },
+      "goals1": [
+        {
+          "name": "Harry Kane",
+          "minute": 75
+        },
+        {
+          "name": "Harry Kane",
+          "minute": 86
+        }
+      ],
+      "goals2": [
+        {
+          "name": "Brian Cipenga",
+          "minute": 7
+        }
+      ],
+      "ground": "Atlanta",
+      "date_sp": "2026-07-01",
+      "time_sp": "05:00",
+      "score_display": "2 x 1",
       "stage": "Round of 32"
     },
     {
@@ -3208,7 +3208,7 @@
       "goals2": [],
       "ground": "San Francisco Bay Area (Santa Clara)",
       "date_sp": "2026-07-01",
-      "time_sp": "21:00",
+      "time_sp": "07:00",
       "score_display": "2 x 0",
       "stage": "Round of 32"
     },
@@ -3246,8 +3246,42 @@
       "goals2": [],
       "ground": "Los Angeles (Inglewood)",
       "date_sp": "2026-07-02",
-      "time_sp": "16:00",
+      "time_sp": "02:00",
       "score_display": "3 x 0",
+      "stage": "Round of 32"
+    },
+    {
+      "num": 85,
+      "round": "Round of 32",
+      "date": "2026-07-02",
+      "time": "20:00 UTC-7",
+      "team1": "Switzerland",
+      "team2": "Algeria",
+      "score": {
+        "ft": [
+          2,
+          0
+        ],
+        "ht": [
+          1,
+          0
+        ]
+      },
+      "goals1": [
+        {
+          "name": "Breel Embolo",
+          "minute": 10
+        },
+        {
+          "name": "Dan Ndoye",
+          "minute": 46
+        }
+      ],
+      "goals2": [],
+      "ground": "Vancouver",
+      "date_sp": "2026-07-02",
+      "time_sp": "10:00",
+      "score_display": "2 x 0",
       "stage": "Round of 32"
     },
     {
@@ -3287,42 +3321,8 @@
       ],
       "ground": "Toronto",
       "date_sp": "2026-07-02",
-      "time_sp": "20:00",
+      "time_sp": "12:00",
       "score_display": "2 x 1",
-      "stage": "Round of 32"
-    },
-    {
-      "num": 85,
-      "round": "Round of 32",
-      "date": "2026-07-02",
-      "time": "20:00 UTC-7",
-      "team1": "Switzerland",
-      "team2": "Algeria",
-      "score": {
-        "ft": [
-          2,
-          0
-        ],
-        "ht": [
-          1,
-          0
-        ]
-      },
-      "goals1": [
-        {
-          "name": "Breel Embolo",
-          "minute": 10
-        },
-        {
-          "name": "Dan Ndoye",
-          "minute": 46
-        }
-      ],
-      "goals2": [],
-      "ground": "Vancouver",
-      "date_sp": "2026-07-03",
-      "time_sp": "00:00",
-      "score_display": "2 x 0",
       "stage": "Round of 32"
     },
     {
@@ -3365,8 +3365,8 @@
       ],
       "ground": "Dallas (Arlington)",
       "date_sp": "2026-07-03",
-      "time_sp": "15:00",
-      "score_display": "1 x 1",
+      "time_sp": "05:00",
+      "score_display": "1 x 1 (pênaltis: 2 x 4)",
       "stage": "Round of 32"
     },
     {
@@ -3417,8 +3417,8 @@
       ],
       "ground": "Miami (Miami Gardens)",
       "date_sp": "2026-07-03",
-      "time_sp": "19:00",
-      "score_display": "1 x 1",
+      "time_sp": "11:00",
+      "score_display": "1 x 1 (prorrogação: 3 x 2)",
       "stage": "Round of 32"
     },
     {
@@ -3447,7 +3447,7 @@
       "goals2": [],
       "ground": "Kansas City",
       "date_sp": "2026-07-03",
-      "time_sp": "22:30",
+      "time_sp": "12:30",
       "score_display": "1 x 0",
       "stage": "Round of 32"
     },
@@ -3486,7 +3486,7 @@
       ],
       "ground": "Houston",
       "date_sp": "2026-07-04",
-      "time_sp": "14:00",
+      "time_sp": "04:00",
       "score_display": "0 x 3",
       "stage": "Round of 16"
     },
@@ -3517,7 +3517,7 @@
       ],
       "ground": "Philadelphia",
       "date_sp": "2026-07-04",
-      "time_sp": "18:00",
+      "time_sp": "10:00",
       "score_display": "0 x 1",
       "stage": "Round of 16"
     },
@@ -3558,7 +3558,7 @@
       ],
       "ground": "New York/New Jersey (East Rutherford)",
       "date_sp": "2026-07-05",
-      "time_sp": "17:00",
+      "time_sp": "09:00",
       "score_display": "1 x 2",
       "stage": "Round of 16"
     },
@@ -3607,7 +3607,7 @@
       ],
       "ground": "Mexico City",
       "date_sp": "2026-07-05",
-      "time_sp": "21:00",
+      "time_sp": "09:00",
       "score_display": "2 x 3",
       "stage": "Round of 16"
     },
@@ -3638,7 +3638,7 @@
       ],
       "ground": "Dallas (Arlington)",
       "date_sp": "2026-07-06",
-      "time_sp": "16:00",
+      "time_sp": "06:00",
       "score_display": "0 x 1",
       "stage": "Round of 16"
     },
@@ -3686,8 +3686,41 @@
       ],
       "ground": "Seattle",
       "date_sp": "2026-07-06",
-      "time_sp": "21:00",
+      "time_sp": "07:00",
       "score_display": "1 x 4",
+      "stage": "Round of 16"
+    },
+    {
+      "num": 96,
+      "round": "Round of 16",
+      "date": "2026-07-07",
+      "time": "13:00 UTC-7",
+      "team1": "Switzerland",
+      "team2": "Colombia",
+      "score": {
+        "p": [
+          4,
+          3
+        ],
+        "et": [
+          0,
+          0
+        ],
+        "ft": [
+          0,
+          0
+        ],
+        "ht": [
+          0,
+          0
+        ]
+      },
+      "goals1": [],
+      "goals2": [],
+      "ground": "Vancouver",
+      "date_sp": "2026-07-07",
+      "time_sp": "03:00",
+      "score_display": "0 x 0 (pênaltis: 4 x 3)",
       "stage": "Round of 16"
     },
     {
@@ -3734,41 +3767,8 @@
       ],
       "ground": "Atlanta",
       "date_sp": "2026-07-07",
-      "time_sp": "13:00",
+      "time_sp": "05:00",
       "score_display": "3 x 2",
-      "stage": "Round of 16"
-    },
-    {
-      "num": 96,
-      "round": "Round of 16",
-      "date": "2026-07-07",
-      "time": "13:00 UTC-7",
-      "team1": "Switzerland",
-      "team2": "Colombia",
-      "score": {
-        "p": [
-          4,
-          3
-        ],
-        "et": [
-          0,
-          0
-        ],
-        "ft": [
-          0,
-          0
-        ],
-        "ht": [
-          0,
-          0
-        ]
-      },
-      "goals1": [],
-      "goals2": [],
-      "ground": "Vancouver",
-      "date_sp": "2026-07-07",
-      "time_sp": "17:00",
-      "score_display": "0 x 0",
       "stage": "Round of 16"
     },
     {
@@ -3801,7 +3801,7 @@
       "goals2": [],
       "ground": "Boston (Foxborough)",
       "date_sp": "2026-07-09",
-      "time_sp": "17:00",
+      "time_sp": "09:00",
       "score_display": "2 x 0",
       "stage": "Quarterfinals"
     },
@@ -3840,7 +3840,7 @@
       ],
       "ground": "Los Angeles (Inglewood)",
       "date_sp": "2026-07-10",
-      "time_sp": "16:00",
+      "time_sp": "02:00",
       "score_display": "2 x 1",
       "stage": "Quarterfinals"
     },
@@ -3853,7 +3853,7 @@
       "team2": "England",
       "ground": "Miami (Miami Gardens)",
       "date_sp": "2026-07-11",
-      "time_sp": "18:00",
+      "time_sp": "10:00",
       "score_display": "-",
       "stage": "Quarterfinals"
     },
@@ -3866,7 +3866,7 @@
       "team2": "Switzerland",
       "ground": "Kansas City",
       "date_sp": "2026-07-11",
-      "time_sp": "22:00",
+      "time_sp": "12:00",
       "score_display": "-",
       "stage": "Quarterfinals"
     },
@@ -3879,7 +3879,7 @@
       "team2": "Spain",
       "ground": "Dallas (Arlington)",
       "date_sp": "2026-07-14",
-      "time_sp": "16:00",
+      "time_sp": "06:00",
       "score_display": "-",
       "stage": "Semifinals"
     },
@@ -3892,7 +3892,7 @@
       "team2": "W100",
       "ground": "Atlanta",
       "date_sp": "2026-07-15",
-      "time_sp": "16:00",
+      "time_sp": "08:00",
       "score_display": "-",
       "stage": "Semifinals"
     },
@@ -3904,7 +3904,7 @@
       "team2": "L102",
       "ground": "Miami (Miami Gardens)",
       "date_sp": "2026-07-18",
-      "time_sp": "18:00",
+      "time_sp": "10:00",
       "score_display": "-",
       "stage": "Third Place"
     },
@@ -3916,7 +3916,7 @@
       "team2": "W102",
       "ground": "New York/New Jersey (East Rutherford)",
       "date_sp": "2026-07-19",
-      "time_sp": "16:00",
+      "time_sp": "08:00",
       "score_display": "-",
       "stage": "Final"
     }

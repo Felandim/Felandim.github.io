@@ -7,7 +7,7 @@ Fonte: upbound-web/worldcup-live.json
 import json
 import re
 import os
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from urllib.request import urlopen, Request
 from zoneinfo import ZoneInfo
@@ -36,12 +36,22 @@ def parse_utc_offset(time_str: str) -> int:
 
 
 def convert_to_sao_paulo(date_str: str, time_str: str, utc_offset: int) -> tuple[str, str]:
-    """Converte data/hora para o fuso de São Paulo."""
+    """Converte data/hora para o fuso de São Paulo usando timezone-aware datetime."""
     try:
         time_part = time_str.split()[0]
-        dt = datetime.strptime(f"{date_str} {time_part}", "%Y-%m-%d %H:%M")
-        dt_utc = dt - timedelta(hours=utc_offset)
-        dt_sp = dt_utc.astimezone(TIMEZONE_SP)
+        hour, minute = map(int, time_part.split(":"))
+        
+        # Criar datetime consciente do fuso local do jogo
+        local_tz = timezone(timedelta(hours=-utc_offset))
+        dt_local = datetime(
+            int(date_str[:4]),
+            int(date_str[5:7]),
+            int(date_str[8:10]),
+            hour, minute, 0, tzinfo=local_tz
+        )
+        
+        # Converter para São Paulo
+        dt_sp = dt_local.astimezone(TIMEZONE_SP)
         
         date_sp = dt_sp.strftime("%Y-%m-%d")
         time_sp = dt_sp.strftime("%H:%M")
@@ -53,7 +63,27 @@ def convert_to_sao_paulo(date_str: str, time_str: str, utc_offset: int) -> tuple
 
 
 def format_score(score: dict) -> str:
-    """Formata o placar para exibição."""
+    """Formata o placar para exibição, incluindo prorrogação e pênaltis se disponíveis."""
+    ft = score.get("ft", [])
+    if len(ft) == 2:
+        result = f"{ft[0]} x {ft[1]}"
+        
+        # Adicionar prorrogação se existir
+        et = score.get("et", [])
+        if len(et) == 2 and et != ft:
+            result += f" (prorrogação: {et[0]} x {et[1]})"
+        
+        # Adicionar pênaltis se existir
+        p = score.get("p", [])
+        if len(p) == 2:
+            result += f" (pênaltis: {p[0]} x {p[1]})"
+        
+        return result
+    return "-"
+
+
+def format_score_short(score: dict) -> str:
+    """Formata placar curto para classificação."""
     ft = score.get("ft", [])
     if len(ft) == 2:
         return f"{ft[0]} x {ft[1]}"
@@ -88,9 +118,48 @@ def format_date_br(date_str: str) -> str:
         return date_str
 
 
-def save_json(data: dict, filepath: str):
-    """Salva o JSON processado."""
+def load_existing_data(filepath: str) -> dict:
+    """Carrega dados existentes do arquivo JSON."""
+    if os.path.exists(filepath):
+        with open(filepath, "r", encoding="utf-8") as f:
+            return json.load(f)
+    return {}
+
+
+def matches_are_equal(existing: list, new: list) -> bool:
+    """Compara se os dados das partidas são iguais, ignorando campos calculados."""
+    if len(existing) != len(new):
+        return False
+    
+    for exp, new_match in zip(existing, new):
+        # Comparar campos da fonte (não os calculados)
+        source_fields = ["round", "date", "time", "team1", "team2", "score", "goals1", "goals2", "group", "ground", "num"]
+        for field in source_fields:
+            if exp.get(field) != new_match.get(field):
+                return False
+    
+    return True
+
+
+def save_json(data: dict, filepath: str, force: bool = False):
+    """Salva o JSON processado. Retorna True se houve alteração."""
     os.makedirs(os.path.dirname(filepath), exist_ok=True)
+    
+    # Dados das partidas para comparação (sem campos calculados)
+    new_matches_for_compare = []
+    for m in data.get("matches", []):
+        match_copy = {k: v for k, v in m.items() if k in [
+            "round", "date", "time", "team1", "team2", "score", 
+            "goals1", "goals2", "group", "ground", "num"
+        ]}
+        new_matches_for_compare.append(match_copy)
+    
+    existing_data = load_existing_data(filepath)
+    existing_matches = existing_data.get("matches", [])
+    
+    if not force and matches_are_equal(existing_matches, new_matches_for_compare):
+        print("Dados das partidas inalterados. Pulando gravação.")
+        return False
     
     output = {
         "last_updated": datetime.now(ZoneInfo("UTC")).isoformat(),
@@ -103,10 +172,11 @@ def save_json(data: dict, filepath: str):
         json.dump(output, f, indent=2, ensure_ascii=False)
     
     print(f"JSON salvo em: {filepath}")
+    return True
 
 
 def generate_html(data: dict):
-    """Gera a página HTML com as partidas."""
+    """Gera a página HTML com as partidas. Retorna True se houve alteração."""
     matches = data.get("matches", [])
     
     html = '''<!DOCTYPE html>
@@ -160,6 +230,12 @@ def generate_html(data: dict):
             font-weight: bold;
             color: #1a1a2e;
         }
+        .score-detail {
+            font-size: 12px;
+            color: #666;
+            display: block;
+            margin-top: 2px;
+        }
         .stage-header {
             background-color: #e8e8e8;
             font-weight: bold;
@@ -172,12 +248,6 @@ def generate_html(data: dict):
         .time {
             color: #444;
             font-size: 14px;
-        }
-        .updated {
-            text-align: center;
-            color: #888;
-            font-size: 12px;
-            margin-top: 20px;
         }
         .footer {
             text-align: center;
@@ -228,8 +298,25 @@ def generate_html(data: dict):
         time_sp = match.get("time_sp", "-")
         team1 = match.get("team1", "-")
         team2 = match.get("team2", "-")
-        score = match.get("score_display", "-")
+        score_obj = match.get("score", {})
+        score_display = format_score(score_obj)
         ground = match.get("ground", "-")
+        
+        # Separar placar principal e detalhes
+        ft = score_obj.get("ft", [])
+        et = score_obj.get("et", [])
+        p = score_obj.get("p", [])
+        
+        if et or p:
+            main_score = f"{ft[0]} x {ft[1]}" if len(ft) == 2 else "-"
+            extra_parts = []
+            if et and et != ft:
+                extra_parts.append(f"PR: {et[0]}x{et[1]}")
+            if p:
+                extra_parts.append(f"PEN: {p[0]}x{p[1]}")
+            score_html = f'{main_score}<span class="score-detail">{" | ".join(extra_parts)}</span>'
+        else:
+            score_html = score_display
         
         date_formatted = format_date_br(date_sp)
         
@@ -237,7 +324,7 @@ def generate_html(data: dict):
                 <td>{date_formatted}</td>
                 <td class="time">{time_sp}</td>
                 <td class="team">{team1}</td>
-                <td class="score">{score}</td>
+                <td class="score">{score_html}</td>
                 <td class="team">{team2}</td>
                 <td class="group">{stage}</td>
                 <td>{ground}</td>
@@ -248,16 +335,26 @@ def generate_html(data: dict):
     
     html += f'''        </tbody>
     </table>
-    <p class="updated">Última atualização: {last_updated} (horário de Brasília)</p>
-    <p class="footer"><a href="../index.html">← Voltar ao site</a></p>
+    <p class="footer">Dados atualizados em: {last_updated} (horário de Brasília) | <a href="../index.html">← Voltar ao site</a></p>
 </body>
 </html>'''
+    
+    # Verificar se o HTML mudou
+    existing_html = ""
+    if os.path.exists(OUTPUT_HTML):
+        with open(OUTPUT_HTML, "r", encoding="utf-8") as f:
+            existing_html = f.read()
+    
+    if existing_html == html:
+        print("HTML inalterado.")
+        return False
     
     os.makedirs(OUTPUT_DIR, exist_ok=True)
     with open(OUTPUT_HTML, "w", encoding="utf-8") as f:
         f.write(html)
     
     print(f"HTML gerado em: {OUTPUT_HTML}")
+    return True
 
 
 def main():
@@ -288,9 +385,17 @@ def main():
     
     matches.sort(key=lambda m: f"{m.get('date_sp', '')} {m.get('time_sp', '')}")
     
-    save_json(data, DATA_FILE)
+    # Salvar JSON apenas se dados das partidas mudaram
+    json_changed = save_json(data, DATA_FILE)
     
-    generate_html(data)
+    # Gerar HTML apenas se dados mudaram
+    html_changed = generate_html(data)
+    
+    if not json_changed and not html_changed:
+        print("\n" + "=" * 50)
+        print("Nenhuma alteração detectada. Encerrando.")
+        print("=" * 50)
+        return
     
     print("\n" + "=" * 50)
     print("Atualização concluída com sucesso!")
