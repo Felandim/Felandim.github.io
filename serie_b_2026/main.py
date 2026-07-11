@@ -38,14 +38,16 @@ def round_number(label: str) -> int:
 def wait_for_round_change(page: Page, old_label: str, old_first_game: str) -> None:
     page.wait_for_function(
         """
-        ([labelSelector, gameSelector, previousLabel, previousGame]) => {
+        ([labelSelector, gameSelector, previousLabel, previousGame, expectedGames]) => {
           const label = document.querySelector(labelSelector)?.textContent?.trim() || '';
+          const games = document.querySelectorAll(gameSelector);
           const firstGame = document.querySelector(`${gameSelector} meta[itemprop='startDate']`)
             ?.getAttribute('content') || '';
-          return label !== previousLabel && firstGame !== previousGame;
+          return label !== previousLabel && games.length === expectedGames &&
+                 firstGame !== '' && firstGame !== previousGame;
         }
         """,
-        arg=[ROUND_LABEL, GAME_SELECTOR, old_label, old_first_game],
+        arg=[ROUND_LABEL, GAME_SELECTOR, old_label, old_first_game, MATCHES_PER_ROUND],
         timeout=45_000,
     )
 
@@ -59,6 +61,11 @@ def navigate(page: Page, selector: str) -> None:
 
 
 def scrape_visible_round(page: Page, number: int) -> list[dict[str, Any]]:
+    page.wait_for_function(
+        "([selector, expected]) => document.querySelectorAll(selector).length === expected",
+        arg=[GAME_SELECTOR, MATCHES_PER_ROUND],
+        timeout=45_000,
+    )
     raw_matches = page.locator(GAME_SELECTOR).evaluate_all(
         """
         (nodes) => nodes.map((node) => {
