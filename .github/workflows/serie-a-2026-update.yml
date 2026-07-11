@@ -1,0 +1,64 @@
+name: Update Serie A 2026 Data
+
+on:
+  pull_request:
+    paths:
+      - 'serie_a_2026/**'
+      - '.github/workflows/serie-a-2026-update.yml'
+  schedule:
+    - cron: '0 */6 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.ref || github.ref_name }}
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install Playwright
+        run: |
+          pip install playwright
+          python -m playwright install --with-deps chromium
+      - name: Run updater
+        run: |
+          set -o pipefail
+          python3 serie_a_2026/main.py 2>&1 | tee serie-a-updater.log
+      - name: Upload updater log
+        if: always() && github.event_name == 'pull_request'
+        uses: actions/upload-artifact@v4
+        with:
+          name: serie-a-updater-log
+          path: serie-a-updater.log
+      - name: Validate all rounds
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+
+          data = json.loads(Path('data/serie_a_2026.json').read_text(encoding='utf-8'))
+          matches = data['matches']
+          rounds = {match['round'] for match in matches}
+          assert len(matches) == 380, f'Esperava 380 partidas, recebeu {len(matches)}'
+          assert rounds == set(range(1, 39)), f'Rodadas inválidas: {sorted(rounds)}'
+          assert all(sum(match['round'] == number for match in matches) == 10 for number in rounds)
+          print('38 rodadas e 380 partidas validadas.')
+          PY
+      - name: Commit generated data
+        run: |
+          if git diff --quiet data/serie_a_2026.json docs/serie_a_2026/index.html; then
+            echo "No changes"
+            exit 0
+          fi
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git config user.name "github-actions[bot]"
+          git add data/serie_a_2026.json docs/serie_a_2026/index.html
+          git commit -m "Update Serie A 2026 data"
+          git push
