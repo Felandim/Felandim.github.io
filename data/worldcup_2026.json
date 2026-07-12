@@ -3993,11 +3993,46 @@
       "time": "20:00 UTC-5",
       "team1": "Argentina",
       "team2": "Switzerland",
+      "score": {
+        "et": [
+          3,
+          1
+        ],
+        "ft": [
+          1,
+          1
+        ],
+        "ht": [
+          1,
+          0
+        ]
+      },
+      "goals1": [
+        {
+          "name": "Alexis Mac Allister",
+          "minute": 10
+        },
+        {
+          "name": "Julián Álvarez",
+          "minute": 112
+        },
+        {
+          "name": "Lautaro Martínez",
+          "minute": 120,
+          "offset": 1
+        }
+      ],
+      "goals2": [
+        {
+          "name": "Dan Ndoye",
+          "minute": 67
+        }
+      ],
       "ground": "Kansas City",
       "date_sp": "2026-07-11",
       "time_sp": "22:00",
-      "score_display": "-",
-      "score_detail": "",
+      "score_display": "1 x 1",
+      "score_detail": "PR: 3x1",
       "stage": "Quarterfinals"
     },
     {
@@ -4020,7 +4055,7 @@
       "date": "2026-07-15",
       "time": "15:00 UTC-4",
       "team1": "England",
-      "team2": "W100",
+      "team2": "Argentina",
       "ground": "Atlanta",
       "date_sp": "2026-07-15",
       "time_sp": "16:00",
