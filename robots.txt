@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://felandim.github.io/sitemap.xml

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>https://felandim.github.io/</loc><priority>1.0</priority></url>
+  <url><loc>https://felandim.github.io/projetos.html</loc><priority>0.9</priority></url>
+  <url><loc>https://felandim.github.io/dados-futebol.html</loc><priority>0.9</priority></url>
+  <url><loc>https://felandim.github.io/docs/worldcup_2026/</loc><changefreq>daily</changefreq><priority>0.9</priority></url>
+  <url><loc>https://felandim.github.io/docs/serie_a_2026/</loc><changefreq>daily</changefreq><priority>0.9</priority></url>
+  <url><loc>https://felandim.github.io/docs/serie_b_2026/</loc><changefreq>daily</changefreq><priority>0.9</priority></url>
+  <url><loc>https://felandim.github.io/artigos.html</loc><priority>0.8</priority></url>
+  <url><loc>https://felandim.github.io/idor.html</loc><priority>0.7</priority></url>
+  <url><loc>https://felandim.github.io/ssrf.html</loc><priority>0.7</priority></url>
+  <url><loc>https://felandim.github.io/csrf.html</loc><priority>0.7</priority></url>
+  <url><loc>https://felandim.github.io/dns_poisoning.html</loc><priority>0.7</priority></url>
+  <url><loc>https://felandim.github.io/about.html</loc><priority>0.7</priority></url>
+</urlset>

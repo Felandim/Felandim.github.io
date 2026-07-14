@@ -191,7 +191,7 @@ def build_html(matches: list[dict[str, Any]]) -> str:
         number = int(match["round"])
         if number != current_round:
             rows.append(
-                f'<tr class="round-header"><td colspan="7">{number}ª rodada</td></tr>'
+                f'<tr class="group-row"><td colspan="7">{number}ª rodada</td></tr>'
             )
             current_round = number
 
@@ -200,7 +200,7 @@ def build_html(matches: list[dict[str, Any]]) -> str:
         if url:
             score = f'<a href="{html.escape(url, quote=True)}">{score}</a>'
         rows.append(
-            "<tr>"
+            "<tr data-match-row>"
             f"<td>{number}ª</td>"
             f"<td>{html.escape(clean(match.get('date')))}</td>"
             f"<td>{html.escape(clean(match.get('time')))}</td>"
@@ -213,10 +213,14 @@ def build_html(matches: list[dict[str, Any]]) -> str:
 
     return """<!DOCTYPE html>
 <html lang="pt-br"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Brasileirão Série B 2026</title>
-<style>body{font-family:Arial,sans-serif;margin:20px;background:#fafafa;color:#333}h1,p{text-align:center}table{margin:auto;border-collapse:collapse;width:98%;max-width:1200px;background:white}th,td{padding:10px;border:1px solid #ddd;text-align:center}th{background:#1a1a2e;color:white}.team{text-align:left;font-weight:bold}.score{font-weight:bold}.round-header td{background:#e8e8e8;font-weight:bold;text-align:left}a{color:#007bff;text-decoration:none}</style></head>
-<body><h1>Brasileirão Série B 2026</h1><p>As 38 rodadas, atualizadas automaticamente a partir do ge.</p>
-<table><thead><tr><th>Rodada</th><th>Data</th><th>Hora</th><th>Mandante</th><th>Placar</th><th>Visitante</th><th>Estádio</th></tr></thead><tbody>""" + "\n".join(rows) + """</tbody></table><p><a href="../index.html">← Voltar ao site</a></p></body></html>\n"""
+<title>Jogos do Brasileirão Série B 2026: tabela completa</title>
+<meta name="description" content="Consulte as 38 rodadas e os 380 jogos do Brasileirão Série B 2026, com datas, horários, placares e estádios.">
+<link rel="canonical" href="https://felandim.github.io/docs/serie_b_2026/"><link rel="stylesheet" href="../../style.css"></head>
+<body class="football-page"><header class="site-header"><div class="container nav-wrap"><a class="brand" href="../../index.html"><span>FL</span> Felipe Landim</a><nav class="site-nav"><a href="../../projetos.html">Projetos</a><a href="../../dados-futebol.html" aria-current="page">Dados de futebol</a><a href="../../artigos.html">Artigos</a><a href="../../about.html">Sobre</a></nav></div></header>
+<main><section class="football-header"><div class="container football-intro"><div class="breadcrumb"><a href="../../index.html">Início</a><span>/</span><a href="../../dados-futebol.html">Dados de futebol</a><span>/</span><span>Série B 2026</span></div><p class="eyebrow">Atualização automática a cada 6 horas</p><h1>Brasileirão Série B 2026</h1><p>As 38 rodadas em uma tabela pesquisável.</p></div></section>
+<section class="container"><div class="football-toolbar"><div class="search-field"><label for="match-search">Buscar time, estádio, data ou rodada</label><input id="match-search" type="search" placeholder="Ex.: estádio, clube ou 12ª" data-match-search autocomplete="off"></div><div class="result-count" data-result-count aria-live="polite"></div></div><aside class="ad-slot" data-ad-slot="football-top" hidden aria-label="Publicidade"></aside>
+<div class="table-shell"><div class="table-scroll"><table class="data-table"><thead><tr><th scope="col">Rodada</th><th scope="col">Data</th><th scope="col">Hora</th><th scope="col">Mandante</th><th scope="col">Placar</th><th scope="col">Visitante</th><th scope="col">Estádio</th></tr></thead><tbody>""" + "\n".join(rows) + """</tbody></table></div><div class="source-note">Dados de origem: ge. A página é gerada automaticamente. <a href="../../dados-futebol.html">Entenda o pipeline.</a></div></div></section></main>
+<footer class="site-footer"><div class="container footer-bottom"><span>© Felipe Landim</span><a href="../../dados-futebol.html">Mais dados de futebol</a></div></footer><script src="../../football.js" defer></script></body></html>\n"""
 
 
 def main() -> None:
