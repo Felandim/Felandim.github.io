@@ -145,7 +145,7 @@ def generate_html(data: dict) -> str:
     for match in data.get("matches", []):
         stage = match.get("stage", "")
         if stage != current_stage:
-            rows.append(f'<tr class="stage-header"><td colspan="7">{html.escape(stage)}</td></tr>')
+            rows.append(f'<tr class="group-row"><td colspan="7">{html.escape(stage)}</td></tr>')
             current_stage = stage
 
         score = html.escape(match.get("score_display", "-"))
@@ -154,7 +154,7 @@ def generate_html(data: dict) -> str:
             score += f'<span class="score-detail">{html.escape(detail)}</span>'
 
         rows.append(
-            "<tr>"
+            "<tr data-match-row>"
             f"<td>{html.escape(format_date_br(match.get('date_sp', '')))}</td>"
             f"<td>{html.escape(match.get('time_sp', '-'))}</td>"
             f"<td class=\"team\">{html.escape(match.get('team1', '-'))}</td>"
@@ -170,22 +170,27 @@ def generate_html(data: dict) -> str:
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Copa do Mundo FIFA 2026</title>
-<style>
-body{font-family:Arial,sans-serif;margin:20px;background:#fafafa;color:#333}
-h1,.subtitle,.footer{text-align:center}table{margin:auto;border-collapse:collapse;width:95%;max-width:1000px;background:#fff}th,td{padding:12px 15px;border:1px solid #ddd;text-align:center}th{background:#1a1a2e;color:#fff}.team{text-align:left;font-weight:bold}.score{font-weight:bold}.score-detail{display:block;font-size:12px;color:#666}.stage-header{background:#e8e8e8;font-weight:bold}.footer{margin-top:30px}
-</style>
+<title>Jogos da Copa do Mundo 2026: horários e resultados</title>
+<meta name="description" content="Consulte os 104 jogos da Copa do Mundo 2026, com horários de São Paulo, grupos, resultados e estádios. Dados atualizados automaticamente.">
+<link rel="canonical" href="https://felandim.github.io/docs/worldcup_2026/">
+<link rel="stylesheet" href="../../style.css">
 </head>
-<body>
-<h1>Copa do Mundo FIFA 2026</h1>
-<p class="subtitle">Estados Unidos · México · Canadá | Horários de São Paulo</p>
-<table>
-<thead><tr><th>Data</th><th>Horário (SP)</th><th>Equipe 1</th><th>Placar</th><th>Equipe 2</th><th>Fase/Grupo</th><th>Estádio</th></tr></thead>
+<body class="football-page">
+<header class="site-header"><div class="container nav-wrap"><a class="brand" href="../../index.html"><span>FL</span> Felipe Landim</a><nav class="site-nav"><a href="../../projetos.html">Projetos</a><a href="../../dados-futebol.html" aria-current="page">Dados de futebol</a><a href="../../artigos.html">Artigos</a><a href="../../about.html">Sobre</a></nav></div></header>
+<main>
+<section class="football-header"><div class="container football-intro"><div class="breadcrumb"><a href="../../index.html">Início</a><span>/</span><a href="../../dados-futebol.html">Dados de futebol</a><span>/</span><span>Copa 2026</span></div><p class="eyebrow">Atualização automática a cada 4 horas</p><h1>Jogos da Copa do Mundo 2026</h1><p>Estados Unidos · México · Canadá · Horários convertidos para São Paulo</p></div></section>
+<section class="container">
+<div class="football-toolbar"><div class="search-field"><label for="match-search">Buscar seleção, estádio ou fase</label><input id="match-search" type="search" placeholder="Ex.: Brasil, Miami ou Grupo C" data-match-search autocomplete="off"></div><div class="result-count" data-result-count aria-live="polite"></div></div>
+<aside class="ad-slot" data-ad-slot="football-top" hidden aria-label="Publicidade"></aside>
+<div class="table-shell"><div class="table-scroll"><table class="data-table">
+<thead><tr><th scope="col">Data</th><th scope="col">Horário (SP)</th><th scope="col">Equipe 1</th><th scope="col">Placar</th><th scope="col">Equipe 2</th><th scope="col">Fase/Grupo</th><th scope="col">Estádio</th></tr></thead>
 <tbody>
 """ + "\n".join(rows) + """
 </tbody>
-</table>
-<p class="footer"><a href="../index.html">← Voltar ao site</a></p>
+</table></div><div class="source-note">Dados de origem: <a href="https://github.com/upbound-web/worldcup-live.json">upbound-web/worldcup-live.json</a>. Horários tratados para o fuso de São Paulo. <a href="../../dados-futebol.html">Entenda o pipeline.</a></div></div>
+</section></main>
+<footer class="site-footer"><div class="container footer-bottom"><span>© Felipe Landim</span><a href="../../dados-futebol.html">Mais dados de futebol</a></div></footer>
+<script src="../../football.js" defer></script>
 </body>
 </html>
 """

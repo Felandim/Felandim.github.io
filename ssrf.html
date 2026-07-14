@@ -1,29 +1,10 @@
 <!DOCTYPE html>
-<html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
-    <title>SSRF</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-            line-height: 1.6;
-        }
-        h1 {
-            font-size: 28px;
-            margin-bottom: 10px;
-        }
-    </style>
-</head>
-<body>
-    <h1>Server Side Request Forgery (SSRF)</h1>
-    <p>A vulnerabilidade SSRF ocorre quando uma aplicação Web permite que o atacante force o servidor a realizar requisições HTTP em seu nome. Isso pode levar ao acesso a recursos internos, escaneamento de portas ou mesmo acesso a serviços protegidos não expostos ao público.</p>
-    <h2>Exemplos notáveis</h2>
-    <ul>
-        <li><strong>2019 – Capital One:</strong> Uma falha em serviço de metadata AWS permitiu que atacantes coletassem chaves e acessassem dados de clientes.</li>
-        <li><strong>2021 – Exchange ProxyLogon:</strong> Um conjunto de vulnerabilidades explorava solicitações falsificadas para acessar emails internos.</li>
-        <li><strong>2017 – Uber:</strong> Pesquisadores exploraram um endpoint que acessava recursos internos via URL controlada, possibilitando leitura de arquivos locais.</li>
-    </ul>
-    <p>Para mitigar SSRF, é essencial validar e sanitizar todos os URLs fornecidos pelo usuário, restringir saídas do servidor e empregar listas de permissão ao invés de listas de bloqueio.</p>
-</body>
-</html>
+<html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>O que é SSRF? Riscos e prevenção | Felipe Landim</title><meta name="description" content="Entenda SSRF, quando uma aplicação faz requisições controladas pelo usuário, e veja medidas práticas de prevenção."><link rel="canonical" href="https://felandim.github.io/ssrf.html"><link rel="stylesheet" href="style.css"></head>
+<body><a class="skip-link" href="#conteudo">Pular para o conteúdo</a><header class="site-header"><div class="container nav-wrap"><a class="brand" href="index.html"><span>FL</span> Felipe Landim</a><nav class="site-nav" aria-label="Navegação principal"><a href="projetos.html">Projetos</a><a href="dados-futebol.html">Dados de futebol</a><a href="artigos.html" aria-current="page">Artigos</a><a href="about.html">Sobre</a></nav></div></header>
+<main id="conteudo"><section class="page-section"><div class="container article-layout"><article class="article-body"><div class="breadcrumb"><a href="index.html">Início</a><span>/</span><a href="artigos.html">Artigos</a><span>/</span><span>SSRF</span></div><p class="eyebrow">Segurança no servidor</p><h1>O que é SSRF?</h1><div class="article-meta"><span>Felipe Landim</span><span>Atualizado em 14/07/2026</span><span>6 min de leitura</span></div><div class="article-summary"><p>SSRF (Server-Side Request Forgery) ocorre quando uma entrada controlada pelo usuário faz o servidor enviar uma requisição a um destino que não deveria ser alcançado.</p></div>
+<h2 id="fluxo">Como a falha aparece</h2><p>Recursos como importar uma imagem por URL, validar um webhook ou gerar uma prévia de link precisam buscar conteúdo externo. O risco surge quando a aplicação aceita qualquer endereço e o servidor faz a requisição sem restrições suficientes.</p><p>Como o pedido parte do servidor, ele pode alcançar serviços internos, painéis administrativos, endpoints de metadados em nuvem ou outros destinos invisíveis para a internet pública. Redirecionamentos e diferenças entre a validação e a resolução real do endereço aumentam a complexidade.</p>
+<h2 id="impacto">Qual é o impacto</h2><p>O resultado depende de onde o servidor está e do que ele consegue acessar. A falha pode permitir leitura de informações internas, interação com serviços protegidos apenas pela rede, varredura indireta ou uso do servidor como intermediário.</p><p>Mesmo quando a resposta não é exibida, tempo, status e tamanho podem revelar se um destino existe. Esse cenário é chamado frequentemente de SSRF cego.</p>
+<h2 id="prevenir">Como prevenir</h2><ul><li>Prefira uma lista explícita de destinos, esquemas e portas permitidos.</li><li>Resolva e valide o endereço final, inclusive depois de redirecionamentos.</li><li>Bloqueie acesso a faixas locais, privadas, link-local e endpoints de metadados.</li><li>Separe o componente que faz requisições e limite sua saída de rede.</li><li>Defina tempo limite, tamanho máximo de resposta e número máximo de redirecionamentos.</li><li>Registre destinos recusados e padrões anormais para investigação.</li></ul>
+<h2 id="teste">Teste defensivo</h2><p>Mapeie todas as funcionalidades que recebem URLs e documente os destinos realmente necessários. Em ambiente autorizado, verifique se o componente recusa endereços locais, protocolos inesperados e redirecionamentos para destinos proibidos. O teste deve considerar tanto a validação inicial quanto o endereço efetivamente acessado.</p>
+<h2 id="fonte">Referência</h2><p>Consulte a <a href="https://cheatsheetseries.owasp.org/cheatsheets/Server_Side_Request_Forgery_Prevention_Cheat_Sheet.html">cheat sheet de prevenção de SSRF da OWASP</a> para estratégias por arquitetura.</p></article>
+<aside class="article-aside"><nav aria-label="Neste artigo"><strong>Neste artigo</strong><a href="#fluxo">Como aparece</a><a href="#impacto">Impacto</a><a href="#prevenir">Prevenção</a><a href="#teste">Teste defensivo</a><a href="#fonte">Referência</a></nav><div class="related-box"><strong>Leia também</strong><a href="idor.html">IDOR</a><a href="csrf.html">CSRF</a><a href="dns_poisoning.html">DNS poisoning</a></div></aside></div></section></main><footer class="site-footer"><div class="container footer-bottom"><span>© <span data-current-year>2026</span> Felipe Landim</span><a href="artigos.html">Todos os artigos</a></div></footer><script src="site.js" defer></script></body></html>

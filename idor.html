@@ -1,30 +1,10 @@
 <!DOCTYPE html>
-<html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
-    <title>IDOR</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-            line-height: 1.6;
-        }
-        h1 {
-            font-size: 28px;
-            margin-bottom: 10px;
-        }
-    </style>
-</head>
-<body>
-    <h1>Insecure Direct Object Reference (IDOR)</h1>
-    <p>O IDOR &eacute; uma vulnerabilidade comum em aplica&ccedil;&otilde;es web. Ela ocorre quando um sistema referencia diretamente um objeto interno (como IDs em URLs) sem checar se o usu&aacute;rio possui permiss&atilde;o para acess&aacute;-lo. Como resultado &eacute; poss&iacute;vel manipular par&acirc;metros e acessar informa&ccedil;&otilde;es de outros usu&aacute;rios.</p>
-    <p>Geralmente essa falha surge em URLs com IDs sequenciais ou previs&iacute;veis. Se um usu&aacute;rio l&oacute;gico possui acesso a <code>/profile?id=10</code>, nada impede que teste <code>id=11</code> e visualize dados de outra conta caso n&atilde;o exista valida&ccedil;&atilde;o adequada.</p>
-    <h2>Exemplos not&aacute;veis</h2>
-    <ul>
-        <li><strong>Facebook (2012):</strong> Um pesquisador acessou fotos privadas alterando os IDs dos &aacute;lbuns, explorando um endpoint que n&atilde;o verificava permiss&otilde;es corretamente.</li>
-        <li><strong>Instagram (2019):</strong> A plataforma corrigiu uma falha onde &eacute; poss&iacute;vel visualizar stories privados modificando o ID da requisi&ccedil;&atilde;o de download.</li>
-        <li><strong>India Aadhaar (2018):</strong> Um bug em um portal governamental permitiu que informa&ccedil;&otilde;es sens&iacute;veis de cidad&atilde;os fossem extra&iacute;das alterando par&acirc;metros de URL.</li>
-    </ul>
-    <p>Para prevenir IDOR, as aplica&ccedil;&otilde;es devem validar sempre se o usu&aacute;rio autenticado possui permiss&atilde;o para cada objeto solicitado, al&eacute;m de evitar IDs facilmente enumer&aacute;veis.</p>
-</body>
-</html>
+<html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>O que é IDOR? Exemplos e prevenção | Felipe Landim</title><meta name="description" content="Entenda IDOR, a falha de autorização que permite acessar objetos de outros usuários, com exemplos conceituais, testes autorizados e prevenção."><link rel="canonical" href="https://felandim.github.io/idor.html"><link rel="stylesheet" href="style.css"><script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"O que é IDOR?","dateModified":"2026-07-14","author":{"@type":"Person","name":"Felipe Landim"},"mainEntityOfPage":"https://felandim.github.io/idor.html"}</script></head>
+<body><a class="skip-link" href="#conteudo">Pular para o conteúdo</a><header class="site-header"><div class="container nav-wrap"><a class="brand" href="index.html"><span>FL</span> Felipe Landim</a><nav class="site-nav" aria-label="Navegação principal"><a href="projetos.html">Projetos</a><a href="dados-futebol.html">Dados de futebol</a><a href="artigos.html" aria-current="page">Artigos</a><a href="about.html">Sobre</a></nav></div></header>
+<main id="conteudo"><section class="page-section"><div class="container article-layout"><article class="article-body"><div class="breadcrumb"><a href="index.html">Início</a><span>/</span><a href="artigos.html">Artigos</a><span>/</span><span>IDOR</span></div><p class="eyebrow">Controle de acesso</p><h1>O que é IDOR?</h1><div class="article-meta"><span>Felipe Landim</span><span>Atualizado em 14/07/2026</span><span>6 min de leitura</span></div><div class="article-summary"><p>IDOR (Insecure Direct Object Reference) acontece quando uma aplicação expõe uma referência a um objeto e não verifica, no servidor, se o usuário pode acessá-lo.</p></div>
+<h2 id="conceito">O conceito em um exemplo</h2><p>Imagine uma área autenticada na qual cada cliente consulta uma fatura por uma URL como <code>/faturas/1042</code>. O número identifica um objeto interno. Se trocar 1042 por 1043 retorna a fatura de outra pessoa, o problema não é o número ser previsível: é a ausência de uma verificação de autorização para aquele objeto.</p><p>O identificador também pode aparecer em parâmetros, cabeçalhos ou no corpo de uma API. Pode ser um número, UUID, nome de arquivo ou qualquer outra chave. Um identificador difícil de adivinhar reduz enumeração, mas não substitui autorização.</p>
+<h2 id="diferenca">Autenticação não é autorização</h2><p>Autenticação responde “quem é você?”. Autorização responde “o que você pode fazer?”. Uma sessão válida não autoriza automaticamente o usuário a consultar todo registro que o endpoint consegue localizar.</p><p>Por isso, a validação deve ocorrer no servidor em cada operação de leitura, alteração ou exclusão. Esconder um botão na interface ou confiar no identificador enviado pelo navegador não resolve.</p>
+<h2 id="prevenir">Como prevenir</h2><ul><li>Vincule a busca ao usuário ou tenant (organização) autenticado, em vez de buscar apenas pelo ID.</li><li>Aplique negação por padrão e valide a permissão em toda requisição.</li><li>Centralize regras de autorização para evitar comportamentos diferentes entre endpoints.</li><li>Use identificadores não sequenciais como camada adicional, nunca como defesa principal.</li><li>Crie testes automatizados com usuários e perfis diferentes.</li></ul>
+<h2 id="testar">Como verificar com segurança</h2><p>Em um ambiente autorizado, use duas contas de teste. Crie um objeto com a primeira, copie sua referência e tente consultá-lo com a segunda. Repita o teste para leitura, edição e exclusão. O resultado esperado é uma resposta de acesso negado ou recurso não encontrado, sem revelar dados.</p><p>Faça esse tipo de teste apenas em sistemas próprios, laboratórios ou programas que tenham autorizado explicitamente a avaliação.</p>
+<h2 id="fonte">Referência</h2><p>A <a href="https://cheatsheetseries.owasp.org/cheatsheets/Insecure_Direct_Object_Reference_Prevention_Cheat_Sheet.html">OWASP mantém um guia de prevenção de IDOR</a> com exemplos e recomendações para desenvolvimento seguro.</p></article>
+<aside class="article-aside"><nav aria-label="Neste artigo"><strong>Neste artigo</strong><a href="#conceito">O conceito</a><a href="#diferenca">Autenticação x autorização</a><a href="#prevenir">Como prevenir</a><a href="#testar">Teste seguro</a><a href="#fonte">Referência</a></nav><div class="related-box"><strong>Leia também</strong><a href="ssrf.html">SSRF</a><a href="csrf.html">CSRF</a><a href="dns_poisoning.html">DNS poisoning</a></div></aside></div></section></main><footer class="site-footer"><div class="container footer-bottom"><span>© <span data-current-year>2026</span> Felipe Landim</span><a href="artigos.html">Todos os artigos</a></div></footer><script src="site.js" defer></script></body></html>

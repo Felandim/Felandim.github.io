@@ -1,97 +1,184 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <title>Felipe Landim</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background: #fafafa;
-            color: #333;
-        }
-        header {
-            background: #f2f2f2;
-            padding: 20px;
-            text-align: center;
-        }
-        main {
-            max-width: 800px;
-            margin: auto;
-            padding: 20px;
-        }
-        section {
-            margin-bottom: 40px;
-        }
-        .section-title {
-            font-size: 24px;
-            margin-bottom: 20px;
-            border-bottom: 2px solid #333;
-            display: inline-block;
-        }
-        .link-destaque {
-            display: block;
-            margin-bottom: 10px;
-            font-size: 18px;
-        }
-        .link-destaque a {
-            text-decoration: none;
-            color: #333;
-        }
-        .link-destaque a:hover {
-            color: #007BFF;
-        }
-    </style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Felipe Landim | Dados, crédito e automação</title>
+  <meta name="description" content="Portfólio de Felipe Landim: projetos de dados, crédito, automação em Python e SQL, visualizações e pipelines públicos.">
+  <meta name="author" content="Felipe Landim">
+  <meta name="theme-color" content="#08111f">
+  <link rel="canonical" href="https://felandim.github.io/">
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="pt_BR">
+  <meta property="og:title" content="Felipe Landim | Dados, crédito e automação">
+  <meta property="og:description" content="Projetos que conectam análise, engenharia e decisões de negócio.">
+  <meta property="og:url" content="https://felandim.github.io/">
+  <meta name="twitter:card" content="summary">
+  <link rel="stylesheet" href="style.css">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    "name": "Felipe Landim",
+    "url": "https://felandim.github.io/",
+    "sameAs": [
+      "https://github.com/Felandim",
+      "https://www.linkedin.com/in/landimfelipe"
+    ],
+    "jobTitle": "Analista de Dados e Crédito",
+    "knowsAbout": ["Python", "SQL", "Políticas de crédito", "Analytics", "Automação de dados"]
+  }
+  </script>
 </head>
 <body>
+  <a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
+  <header class="site-header">
+    <div class="container nav-wrap">
+      <a class="brand" href="index.html" aria-label="Página inicial de Felipe Landim"><span>FL</span> Felipe Landim</a>
+      <nav class="site-nav" aria-label="Navegação principal">
+        <a href="#projetos">Projetos</a>
+        <a href="dados-futebol.html">Dados de futebol</a>
+        <a href="artigos.html">Artigos</a>
+        <a href="about.html">Sobre</a>
+      </nav>
+    </div>
+  </header>
 
-    <header>
-        <h1>Bem-vindo ao meu site</h1>
-        <p>Sou Felipe Landim. Aqui compartilho alguns projetos e materiais de estudo.</p>
-    </header>
+  <main id="conteudo">
+    <section class="hero">
+      <div class="container hero-grid">
+        <div class="hero-copy">
+          <p class="eyebrow">Analista de Dados e Crédito · São Paulo</p>
+          <h1>Portfólio de dados, crédito e automação.</h1>
+          <p class="hero-lead">Sou analista de dados e crédito. Este site reúne projetos públicos de analytics, automação em Python e SQL, visualização e pipelines de dados.</p>
+          <div class="button-row">
+            <a class="button button-primary" href="#projetos">Ver projetos <span aria-hidden="true">→</span></a>
+            <a class="button button-secondary" href="about.html">Conhecer trajetória</a>
+          </div>
+          <ul class="stack-list" aria-label="Principais tecnologias">
+            <li>Python</li><li>SQL</li><li>Databricks</li><li>Power BI</li><li>Git</li>
+          </ul>
+        </div>
+        <aside class="hero-panel" aria-label="Resumo profissional">
+          <p class="panel-label">Áreas do portfólio</p>
+          <div class="signal-list">
+            <div><strong>Analytics aplicado</strong><span>Crédito, produto e comportamento</span></div>
+            <div><strong>Pipelines públicos</strong><span>Coleta, validação e publicação automática</span></div>
+            <div><strong>Comunicação visual</strong><span>Dashboards e narrativas para decisão</span></div>
+          </div>
+          <div class="availability">
+            <span class="status-dot" aria-hidden="true"></span>
+            Projetos documentados e código público
+          </div>
+        </aside>
+      </div>
+    </section>
 
-    <main>
-        <section>
-            <h2 class="section-title">Projetos</h2>
-            <p class="link-destaque"><a href="pato.html">Foto de um Pato</a></p>
-            <p class="link-destaque"><a href="meu_primeiro_dash.html">Meu Primeiro Dashboard</a></p>
-            <p class="link-destaque"><a href="about.html">Sobre o Site</a></p>
-        </section>
-        <section>
-            <h2 class="section-title">Projetos Pessoais</h2>
-            <p class="link-destaque"><a href="brasileirao_2025.html">Brasileirão 2025</a></p>
-            <p class="link-destaque"><a href="palmeiras_mundial.html">Palmeiras no Mundial 2025</a></p>
-            <p class="link-destaque"><a href="docs/worldcup_2026/index.html">Copa do Mundo FIFA 2026</a></p>
-            <p class="link-destaque"><a href="docs/serie_a_2026/index.html">Brasileirão Série A 2026</a></p>
-            <p class="link-destaque"><a href="docs/serie_b_2026/index.html">Brasileirão Série B 2026</a></p>
-        </section>
-        <section>
-            <h2 class="section-title">Projetos - Data Science</h2>
-            <p class="link-destaque"><a href="projec-index.html">Mapa de CO2</a></p>
-            <p class="link-destaque"><a href="meu_primeiro_dash.html">Meu Primeiro Dashboard</a></p>
-            <p class="link-destaque"><a href="iris_pca/index.html">Iris PCA Visualizer</a></p>
-            <p class="link-destaque"><a href="docs/b3_prices/index.html">B3 Daily Prices Snapshot</a></p>
-            <p class="link-destaque"><a href="docs/sidra_dashboard/index.html">SIDRA Inflation Dashboard</a></p>
-            <p class="link-destaque"><a href="docs/nyc_tips/index.html">NYC Taxi Tip Histogram</a></p>
-            <p class="link-destaque"><a href="docs/imdb_wordcloud/index.html">IMDb Top 100 Word Cloud</a></p>
-            <p class="link-destaque"><a href="docs/covid_heatmap/index.html">COVID-19 Brasil Heatmap</a></p>
-        </section>
-        <section>
-            <h2 class="section-title">WebHacking/Bug Bounty</h2>
-            <p class="link-destaque"><a href="dns_poisoning.html">DNS Poisoning</a></p>
-            <p class="link-destaque"><a href="idor.html">IDOR</a></p>
-            <p class="link-destaque"><a href="ssrf.html">SSRF</a></p>
-            <p class="link-destaque"><a href="csrf.html">CSRF</a></p>
-        </section>
-        <section>
-            <h2 class="section-title">Estudos prova Seguro Saúde</h2>
+    <section class="section" id="projetos">
+      <div class="container">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Trabalhos selecionados</p>
+            <h2>Projetos em destaque</h2>
+          </div>
+          <a class="text-link" href="projetos.html">Ver portfólio completo <span aria-hidden="true">→</span></a>
+        </div>
 
-            <p class="link-destaque"><a href="quiz_saude.html">Quiz Capítulo 20</a></p>
-            <p class="link-destaque"><a href="quiz_cap21.html">Quiz Capítulo 21</a></p>
-            <p class="link-destaque"><a href="quiz_experiencia.html">Quiz Avaliação de Experiência</a></p>
-        </section>
-    </main>
+        <article class="featured-project">
+          <div class="featured-copy">
+            <div class="tag-row"><span class="tag tag-live">Automação ativa</span><span class="tag">Python</span><span class="tag">GitHub Actions</span></div>
+            <h3>Pipeline automatizado de dados de futebol</h3>
+            <p>Um pipeline de ponta a ponta que coleta, trata e publica calendário e resultados da Copa de 2026 e das Séries A e B do Brasileirão.</p>
+            <dl class="metric-grid">
+              <div><dt>864</dt><dd>partidas cobertas</dd></div>
+              <div><dt>3</dt><dd>competições</dd></div>
+              <div><dt>4–6h</dt><dd>ciclo de atualização</dd></div>
+            </dl>
+            <a class="button button-primary" href="dados-futebol.html">Explorar o projeto <span aria-hidden="true">→</span></a>
+          </div>
+          <div class="pipeline-card">
+            <p class="panel-label">Pipeline publicado</p>
+            <ol class="pipeline-list">
+              <li><span>01</span><div><strong>Fontes públicas</strong><small>Dados de jogos e competições</small></div></li>
+              <li><span>02</span><div><strong>Coleta e regras</strong><small>Python, Playwright e validações</small></div></li>
+              <li><span>03</span><div><strong>Artefatos versionados</strong><small>JSON e páginas estáticas</small></div></li>
+              <li><span>04</span><div><strong>Publicação automática</strong><small>GitHub Actions e Pages</small></div></li>
+            </ol>
+          </div>
+        </article>
 
+        <div class="project-grid project-grid-two">
+          <article class="project-card">
+            <div class="project-number">01</div>
+            <div class="tag-row"><span class="tag">Go</span><span class="tag">Dados públicos</span></div>
+            <h3>Inflação no SIDRA</h3>
+            <p>Série histórica do IPCA construída com dados do IBGE e apresentada em uma visualização interativa.</p>
+            <a class="card-link" href="docs/sidra_dashboard/index.html">Abrir visualização <span aria-hidden="true">↗</span></a>
+          </article>
+          <article class="project-card">
+            <div class="project-number">02</div>
+            <div class="tag-row"><span class="tag">D3.js</span><span class="tag">Visualização</span></div>
+            <h3>Mapa global de CO₂</h3>
+            <p>Mapa interativo para comparar emissões de CO₂ per capita entre países e anos.</p>
+            <a class="card-link" href="projec-index.html">Explorar o mapa <span aria-hidden="true">↗</span></a>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section-muted">
+      <div class="container split-heading">
+        <div>
+          <p class="eyebrow">Processo</p>
+          <h2>Método de trabalho</h2>
+        </div>
+        <div class="principles-grid">
+          <article><span>01</span><h3>Entender a decisão</h3><p>Começo pelo problema, pela regra e pelo impacto esperado.</p></article>
+          <article><span>02</span><h3>Tornar reproduzível</h3><p>Automatizo rotinas, documento critérios e valido a saída.</p></article>
+          <article><span>03</span><h3>Comunicar com clareza</h3><p>Entrego a análise no formato que facilita a próxima ação.</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <div class="section-heading">
+          <div><p class="eyebrow">Conteúdo útil</p><h2>Guias e ferramentas</h2></div>
+          <a class="text-link" href="artigos.html">Todos os artigos <span aria-hidden="true">→</span></a>
+        </div>
+        <div class="content-grid">
+          <a class="content-card content-card-accent" href="docs/worldcup_2026/index.html">
+            <span class="content-type">Ferramenta</span><h3>Tabela da Copa do Mundo 2026</h3><p>Jogos, horários de São Paulo, estádios e placares.</p><span class="card-link">Consultar tabela →</span>
+          </a>
+          <a class="content-card" href="idor.html">
+            <span class="content-type">Segurança web</span><h3>O que é IDOR?</h3><p>Como falhas de autorização expõem objetos de outros usuários.</p><span class="card-link">Ler guia →</span>
+          </a>
+          <a class="content-card" href="ssrf.html">
+            <span class="content-type">Segurança web</span><h3>Entendendo SSRF</h3><p>Riscos, exemplos conceituais e práticas de prevenção.</p><span class="card-link">Ler guia →</span>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <section class="contact-band">
+      <div class="container contact-inner">
+        <div><p class="eyebrow">Contato</p><h2>Contato profissional</h2></div>
+        <div class="button-row">
+          <a class="button button-light" href="mailto:landimdb@gmail.com">Enviar e-mail</a>
+          <a class="button button-outline-light" href="https://www.linkedin.com/in/landimfelipe" rel="me">LinkedIn ↗</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-grid">
+      <div><a class="brand" href="index.html"><span>FL</span> Felipe Landim</a><p>Analista de Dados e Crédito.</p></div>
+      <div class="footer-links"><a href="projetos.html">Projetos</a><a href="dados-futebol.html">Dados de futebol</a><a href="artigos.html">Artigos</a><a href="privacy.html">Privacidade</a></div>
+      <div class="footer-links"><a href="https://github.com/Felandim" rel="me">GitHub ↗</a><a href="https://www.linkedin.com/in/landimfelipe" rel="me">LinkedIn ↗</a><a href="mailto:landimdb@gmail.com">E-mail</a></div>
+    </div>
+    <div class="container footer-bottom"><span>© <span data-current-year>2026</span> Felipe Landim</span><span>Feito com HTML, CSS e dados públicos.</span></div>
+  </footer>
+  <script src="site.js" defer></script>
 </body>
 </html>

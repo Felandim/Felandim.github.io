@@ -1,30 +1,10 @@
 <!DOCTYPE html>
-<html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
-    <title>DNS Poisoning</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-            line-height: 1.6;
-        }
-        h1 {
-            font-size: 28px;
-            margin-bottom: 10px;
-        }
-    </style>
-</head>
-<body>
-    <h1>DNS Poisoning</h1>
-    <p>DNS Poisoning, ou envenenamento de DNS, ocorre quando entradas de um servidor DNS são alteradas maliciosamente para redirecionar usuários para sites falsos.</p>
-    <p>A técnica é bastante utilizada em ataques de phishing e para disseminar malware. Ao resolver o domínio de forma incorreta, a vítima acaba acessando um servidor controlado pelo atacante sem perceber.</p>
-    <h2>Exemplos reais</h2>
-    <ul>
-        <li><strong>2008 &ndash; Paquistão vs. YouTube:</strong> Um bloco governamental redirecionou o domínio do YouTube para endereços próprios, retirando o serviço do ar em diversas regiões.</li>
-        <li><strong>2010 &ndash; China:</strong> Problemas na configuração de servidores provocaram o redirecionamento de diversos sites globais para domínios chineses.</li>
-        <li><strong>2014 &ndash; Google Brasil:</strong> Um ataque de DNS hijacking direcionou usuários do Google para uma página de propaganda, comprometendo temporariamente o acesso ao serviço.</li>
-    </ul>
-    <p>Em ambientes corporativos, é essencial monitorar e proteger os servidores DNS para evitar esse tipo de ataque. Uso de DNSSEC e atualizações constantes são práticas recomendadas.</p>
-</body>
-</html>
+<html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>DNS poisoning: o que é e como reduzir o risco | Felipe Landim</title><meta name="description" content="Entenda DNS cache poisoning, como respostas falsas podem redirecionar usuários e qual é o papel do DNSSEC."><link rel="canonical" href="https://felandim.github.io/dns_poisoning.html"><link rel="stylesheet" href="style.css"></head>
+<body><a class="skip-link" href="#conteudo">Pular para o conteúdo</a><header class="site-header"><div class="container nav-wrap"><a class="brand" href="index.html"><span>FL</span> Felipe Landim</a><nav class="site-nav" aria-label="Navegação principal"><a href="projetos.html">Projetos</a><a href="dados-futebol.html">Dados de futebol</a><a href="artigos.html" aria-current="page">Artigos</a><a href="about.html">Sobre</a></nav></div></header>
+<main id="conteudo"><section class="page-section"><div class="container article-layout"><article class="article-body"><div class="breadcrumb"><a href="index.html">Início</a><span>/</span><a href="artigos.html">Artigos</a><span>/</span><span>DNS poisoning</span></div><p class="eyebrow">Infraestrutura</p><h1>O que é DNS poisoning?</h1><div class="article-meta"><span>Felipe Landim</span><span>Atualizado em 14/07/2026</span><span>5 min de leitura</span></div><div class="article-summary"><p>DNS cache poisoning acontece quando dados falsos entram no cache de um resolvedor e fazem um nome de domínio apontar para o endereço incorreto.</p></div>
+<h2 id="dns">O papel do DNS</h2><p>O DNS (Domain Name System, ou Sistema de Nomes de Domínio) traduz nomes legíveis, como um endereço de site, em informações usadas para localizar o serviço. Resolvedores recursivos guardam respostas em cache para acelerar consultas seguintes.</p><p>Se uma resposta forjada for aceita e armazenada, outras pessoas que dependem daquele cache podem ser encaminhadas ao destino errado até a expiração do registro ou correção do cache.</p>
+<h2 id="impacto">O que pode acontecer</h2><p>O redirecionamento pode levar a uma página de phishing, interromper o acesso ao serviço real ou desviar tráfego. HTTPS ainda oferece uma camada importante: um servidor falso não deveria apresentar um certificado válido para o domínio legítimo. Alertas de certificado, portanto, não devem ser ignorados.</p>
+<h2 id="dnssec">Onde entra o DNSSEC</h2><p>DNSSEC (Domain Name System Security Extensions) adiciona assinaturas criptográficas aos dados do DNS. Um resolvedor que valida DNSSEC consegue verificar se a resposta veio da zona esperada e se foi alterada. Ele protege autenticidade e integridade dos dados, mas não criptografa a consulta.</p>
+<h2 id="prevenir">Como reduzir o risco</h2><ul><li>Assine zonas com DNSSEC e use resolvedores que façam validação.</li><li>Mantenha software de DNS atualizado e restrinja recursão a clientes autorizados.</li><li>Monitore mudanças inesperadas em registros e servidores autoritativos.</li><li>Proteja contas do registrador com autenticação multifator e controle de alterações.</li><li>Use HTTPS corretamente e trate avisos de certificado como sinal de risco.</li></ul>
+<h2 id="fonte">Referências</h2><p>A ICANN explica <a href="https://www.icann.org/resources/pages/dnssec-what-is-it-why-important-2019-03-05-en">por que DNSSEC é importante</a> e define <a href="https://www.icann.org/en/icann-acronyms-and-terms?nav-letter=c&page=1">cache poisoning</a> em seu glossário.</p></article>
+<aside class="article-aside"><nav aria-label="Neste artigo"><strong>Neste artigo</strong><a href="#dns">O papel do DNS</a><a href="#impacto">Impacto</a><a href="#dnssec">DNSSEC</a><a href="#prevenir">Prevenção</a><a href="#fonte">Referências</a></nav><div class="related-box"><strong>Leia também</strong><a href="idor.html">IDOR</a><a href="ssrf.html">SSRF</a><a href="csrf.html">CSRF</a></div></aside></div></section></main><footer class="site-footer"><div class="container footer-bottom"><span>© <span data-current-year>2026</span> Felipe Landim</span><a href="artigos.html">Todos os artigos</a></div></footer><script src="site.js" defer></script></body></html>
