@@ -1,0 +1,72 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" role="img" aria-labelledby="title desc">
+  <title id="title">Capa visual do pipeline de dados de futebol</title>
+  <desc id="desc">Fluxo entre coleta, validação, arquivos JSON e publicação automática, ao lado de uma tabela de partidas.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0" stop-color="#0c1c33"/>
+      <stop offset="1" stop-color="#16365e"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="24" stdDeviation="28" flood-color="#06101f" flood-opacity=".32"/>
+    </filter>
+  </defs>
+  <rect width="1600" height="900" fill="url(#bg)"/>
+  <circle cx="1375" cy="86" r="250" fill="#3778ff" opacity=".16"/>
+  <circle cx="110" cy="820" r="220" fill="#42d6c6" opacity=".09"/>
+  <text x="92" y="112" fill="#77e0d3" font-family="Arial, sans-serif" font-size="24" font-weight="700" letter-spacing="5">DADOS PÚBLICOS • AUTOMAÇÃO</text>
+  <text x="92" y="205" fill="#ffffff" font-family="Arial, sans-serif" font-size="66" font-weight="700">Pipeline de dados</text>
+  <text x="92" y="278" fill="#ffffff" font-family="Arial, sans-serif" font-size="66" font-weight="700">de futebol</text>
+  <text x="94" y="332" fill="#b9c8da" font-family="Arial, sans-serif" font-size="27">Coleta, validação e publicação em ciclos de 4–6 horas.</text>
+
+  <g transform="translate(92 410)" font-family="Arial, sans-serif">
+    <g>
+      <rect width="238" height="126" rx="18" fill="#ffffff" opacity=".08" stroke="#ffffff" stroke-opacity=".18"/>
+      <text x="24" y="43" fill="#77e0d3" font-size="18" font-weight="700">01</text>
+      <text x="24" y="83" fill="#ffffff" font-size="27" font-weight="700">Coleta</text>
+      <text x="24" y="108" fill="#aebed0" font-size="18">Fontes públicas</text>
+    </g>
+    <path d="M254 63h50" stroke="#77e0d3" stroke-width="3"/>
+    <path d="m294 53 12 10-12 10" fill="none" stroke="#77e0d3" stroke-width="3"/>
+    <g transform="translate(322)">
+      <rect width="238" height="126" rx="18" fill="#ffffff" opacity=".08" stroke="#ffffff" stroke-opacity=".18"/>
+      <text x="24" y="43" fill="#77e0d3" font-size="18" font-weight="700">02</text>
+      <text x="24" y="83" fill="#ffffff" font-size="27" font-weight="700">Validação</text>
+      <text x="24" y="108" fill="#aebed0" font-size="18">Regras e consistência</text>
+    </g>
+    <path d="M576 63h50" stroke="#77e0d3" stroke-width="3"/>
+    <path d="m616 53 12 10-12 10" fill="none" stroke="#77e0d3" stroke-width="3"/>
+    <g transform="translate(644)">
+      <rect width="238" height="126" rx="18" fill="#ffffff" opacity=".08" stroke="#ffffff" stroke-opacity=".18"/>
+      <text x="24" y="43" fill="#77e0d3" font-size="18" font-weight="700">03</text>
+      <text x="24" y="83" fill="#ffffff" font-size="27" font-weight="700">Publicação</text>
+      <text x="24" y="108" fill="#aebed0" font-size="18">JSON e páginas</text>
+    </g>
+  </g>
+
+  <g transform="translate(1010 370)" filter="url(#shadow)" font-family="Arial, sans-serif">
+    <rect width="500" height="388" rx="24" fill="#ffffff"/>
+    <rect width="500" height="72" rx="24" fill="#edf3f8"/>
+    <rect y="48" width="500" height="24" fill="#edf3f8"/>
+    <circle cx="38" cy="36" r="8" fill="#3778ff"/>
+    <text x="60" y="44" fill="#20334d" font-size="22" font-weight="700">Partidas publicadas</text>
+    <g fill="#6d7c90" font-size="17">
+      <text x="30" y="114">RODADA</text><text x="170" y="114">MANDANTE</text><text x="370" y="114">PLACAR</text>
+    </g>
+    <g stroke="#e4eaf0">
+      <path d="M30 133h440M30 205h440M30 277h440M30 349h440"/>
+    </g>
+    <g fill="#263b58" font-size="21">
+      <text x="30" y="178">01</text><text x="170" y="178">Time A</text><text x="388" y="178" font-weight="700">2 × 1</text>
+      <text x="30" y="250">01</text><text x="170" y="250">Time B</text><text x="388" y="250" font-weight="700">0 × 0</text>
+      <text x="30" y="322">02</text><text x="170" y="322">Time C</text><text x="388" y="322" font-weight="700">—</text>
+    </g>
+  </g>
+
+  <g transform="translate(94 704)" font-family="Arial, sans-serif">
+    <text y="0" fill="#ffffff" font-size="45" font-weight="700">864</text>
+    <text y="32" fill="#aebed0" font-size="18">partidas cobertas</text>
+    <path d="M170-45v88" stroke="#ffffff" stroke-opacity=".16"/>
+    <text x="210" y="0" fill="#ffffff" font-size="45" font-weight="700">3</text>
+    <text x="210" y="32" fill="#aebed0" font-size="18">competições</text>
+  </g>
+</svg>

@@ -30,7 +30,7 @@
   }
   </script>
 </head>
-<body>
+<body class="home-page">
   <a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
   <header class="site-header">
     <div class="container nav-wrap">
@@ -49,8 +49,8 @@
       <div class="container hero-grid">
         <div class="hero-copy">
           <p class="eyebrow">Analista de Dados e Crédito · São Paulo</p>
-          <h1>Portfólio de dados, crédito e automação.</h1>
-          <p class="hero-lead">Sou analista de dados e crédito. Este site reúne projetos públicos de analytics, automação em Python e SQL, visualização e pipelines de dados.</p>
+          <h1>Felipe Landim.<br>Dados, crédito e automação.</h1>
+          <p class="hero-lead">Projetos públicos de analytics, automação em Python e SQL, visualização e pipelines de dados.</p>
           <div class="button-row">
             <a class="button button-primary" href="#projetos">Ver projetos <span aria-hidden="true">→</span></a>
             <a class="button button-secondary" href="about.html">Conhecer trajetória</a>
@@ -59,18 +59,10 @@
             <li>Python</li><li>SQL</li><li>Databricks</li><li>Power BI</li><li>Git</li>
           </ul>
         </div>
-        <aside class="hero-panel" aria-label="Resumo profissional">
-          <p class="panel-label">Áreas do portfólio</p>
-          <div class="signal-list">
-            <div><strong>Analytics aplicado</strong><span>Crédito, produto e comportamento</span></div>
-            <div><strong>Pipelines públicos</strong><span>Coleta, validação e publicação automática</span></div>
-            <div><strong>Comunicação visual</strong><span>Dashboards e narrativas para decisão</span></div>
-          </div>
-          <div class="availability">
-            <span class="status-dot" aria-hidden="true"></span>
-            Projetos documentados e código público
-          </div>
-        </aside>
+        <figure class="hero-showcase">
+          <img src="assets/dashboard.jpeg" alt="Dashboard financeiro com fluxo de caixa, receitas, despesas e saldo" width="1310" height="727">
+          <figcaption><span>Visualização em destaque</span><strong>Dashboard financeiro · Power BI</strong></figcaption>
+        </figure>
       </div>
     </section>
 
@@ -96,31 +88,33 @@
             </dl>
             <a class="button button-primary" href="dados-futebol.html">Explorar o projeto <span aria-hidden="true">→</span></a>
           </div>
-          <div class="pipeline-card">
-            <p class="panel-label">Pipeline publicado</p>
-            <ol class="pipeline-list">
-              <li><span>01</span><div><strong>Fontes públicas</strong><small>Dados de jogos e competições</small></div></li>
-              <li><span>02</span><div><strong>Coleta e regras</strong><small>Python, Playwright e validações</small></div></li>
-              <li><span>03</span><div><strong>Artefatos versionados</strong><small>JSON e páginas estáticas</small></div></li>
-              <li><span>04</span><div><strong>Publicação automática</strong><small>GitHub Actions e Pages</small></div></li>
-            </ol>
-          </div>
+          <a class="featured-visual" href="dados-futebol.html" aria-label="Explorar o pipeline automatizado de dados de futebol">
+            <img src="assets/football-pipeline.svg" alt="Capa visual do pipeline de coleta, validação e publicação de dados de futebol" width="1600" height="900">
+          </a>
         </article>
 
         <div class="project-grid project-grid-two">
           <article class="project-card">
+            <a class="project-thumb project-thumb-dashboard" href="meu_primeiro_dash.html" aria-label="Abrir dashboard financeiro">
+              <img src="assets/dashboard.jpeg" alt="Prévia do dashboard financeiro" width="1310" height="727" loading="lazy">
+            </a>
             <div class="project-number">01</div>
+            <div class="tag-row"><span class="tag">Power BI</span><span class="tag">Visualização</span></div>
+            <h3>Dashboard financeiro</h3>
+            <p>Painel de fluxo de caixa com visão de receitas, despesas, saldo e filtros por período e setor.</p>
+            <a class="card-link" href="meu_primeiro_dash.html">Ver projeto <span aria-hidden="true">↗</span></a>
+          </article>
+          <article class="project-card">
+            <a class="project-thumb project-thumb-data" href="docs/sidra_dashboard/index.html" aria-label="Abrir visualização de inflação no SIDRA">
+              <span class="mini-kicker">IBGE · SIDRA</span>
+              <strong>IPCA<br>em série histórica</strong>
+              <span class="mini-chart" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></span>
+            </a>
+            <div class="project-number">02</div>
             <div class="tag-row"><span class="tag">Go</span><span class="tag">Dados públicos</span></div>
             <h3>Inflação no SIDRA</h3>
             <p>Série histórica do IPCA construída com dados do IBGE e apresentada em uma visualização interativa.</p>
             <a class="card-link" href="docs/sidra_dashboard/index.html">Abrir visualização <span aria-hidden="true">↗</span></a>
-          </article>
-          <article class="project-card">
-            <div class="project-number">02</div>
-            <div class="tag-row"><span class="tag">D3.js</span><span class="tag">Visualização</span></div>
-            <h3>Mapa global de CO₂</h3>
-            <p>Mapa interativo para comparar emissões de CO₂ per capita entre países e anos.</p>
-            <a class="card-link" href="projec-index.html">Explorar o mapa <span aria-hidden="true">↗</span></a>
           </article>
         </div>
       </div>
