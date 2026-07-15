@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Gerador de card de futebol para Stories | Felipe Landim</title>
+  <meta name="description" content="Escolha seu time e crie gratuitamente um card vertical com os próximos jogos para baixar ou compartilhar nos Stories.">
+  <meta name="theme-color" content="#101a2d">
+  <link rel="canonical" href="https://felandim.github.io/gerador-card-futebol.html">
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="pt_BR">
+  <meta property="og:title" content="Crie seu card de jogos para os Stories">
+  <meta property="og:description" content="Selecione o campeonato e o time. O card fica pronto para baixar e compartilhar.">
+  <meta property="og:url" content="https://felandim.github.io/gerador-card-futebol.html">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="generator-page">
+  <a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
+  <header class="site-header">
+    <div class="container nav-wrap">
+      <a class="brand" href="index.html" aria-label="Página inicial de Felipe Landim"><span>FL</span> Felipe Landim</a>
+      <nav class="site-nav" aria-label="Navegação principal">
+        <a href="projetos.html">Projetos</a>
+        <a href="dados-futebol.html" aria-current="page">Dados de futebol</a>
+        <a href="artigos.html">Artigos</a>
+        <a href="about.html">Sobre</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="conteudo">
+    <section class="generator-hero">
+      <div class="container generator-heading">
+        <div>
+          <div class="breadcrumb"><a href="index.html">Início</a><span>/</span><a href="dados-futebol.html">Dados de futebol</a><span>/</span><span>Gerador de card</span></div>
+          <p class="eyebrow">Ferramenta gratuita</p>
+          <h1>Seu time.<br>Seus próximos jogos.<br>Seu Story.</h1>
+        </div>
+        <p>Escolha o campeonato e o time. O site monta uma imagem vertical pronta para baixar ou compartilhar pelo celular.</p>
+      </div>
+    </section>
+
+    <section class="generator-workspace">
+      <div class="container generator-grid">
+        <form class="generator-controls" data-card-form>
+          <div>
+            <p class="panel-label">Personalize o card</p>
+            <h2>Escolha os dados</h2>
+          </div>
+
+          <label for="competition">Campeonato</label>
+          <select id="competition" data-competition>
+            <option value="worldcup">Copa do Mundo 2026</option>
+            <option value="serie-a">Brasileirão Série A 2026</option>
+            <option value="serie-b">Brasileirão Série B 2026</option>
+          </select>
+
+          <label for="team">Time ou seleção</label>
+          <select id="team" data-team disabled>
+            <option>Carregando times…</option>
+          </select>
+
+          <fieldset>
+            <legend>Estilo</legend>
+            <div class="theme-options">
+              <label><input type="radio" name="theme" value="night" checked><span class="theme-swatch theme-night"></span>Noite</label>
+              <label><input type="radio" name="theme" value="energy"><span class="theme-swatch theme-energy"></span>Vibrante</label>
+              <label><input type="radio" name="theme" value="classic"><span class="theme-swatch theme-classic"></span>Clássico</label>
+            </div>
+          </fieldset>
+
+          <p class="generator-status" data-generator-status role="status" aria-live="polite">Preparando os jogos…</p>
+
+          <div class="generator-actions">
+            <button class="button button-primary" type="button" data-download disabled>Baixar PNG</button>
+            <button class="button button-secondary" type="button" data-share disabled>Compartilhar</button>
+          </div>
+          <p class="privacy-note">A imagem é criada no seu aparelho. Nenhum dado pessoal é enviado.</p>
+        </form>
+
+        <div class="story-stage" aria-label="Prévia do card para Stories">
+          <div class="story-phone">
+            <canvas width="1080" height="1920" data-story-canvas>Seu navegador não oferece suporte à geração do card.</canvas>
+          </div>
+          <p>Formato 9:16 · 1080 × 1920 px</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="page-section generator-how"><div class="container">
+      <p class="eyebrow">Como usar</p>
+      <div class="generator-steps">
+        <article><span>01</span><h2>Escolha</h2><p>Selecione o campeonato, o time e o estilo visual.</p></article>
+        <article><span>02</span><h2>Baixe</h2><p>Salve o PNG no tamanho certo para Stories.</p></article>
+        <article><span>03</span><h2>Compartilhe</h2><p>Use o menu do celular para publicar onde quiser.</p></article>
+      </div>
+    </div></section>
+  </main>
+
+  <footer class="site-footer"><div class="container footer-bottom"><span>© <span data-current-year>2026</span> Felipe Landim</span><span><a href="privacy.html">Privacidade</a> · <a href="dados-futebol.html">Mais dados de futebol</a></span></div></footer>
+  <script src="site.js" defer></script>
+  <script src="story-card.js" defer></script>
+</body>
+</html>

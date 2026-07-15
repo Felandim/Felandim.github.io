@@ -3,6 +3,7 @@
   <url><loc>https://felandim.github.io/</loc><priority>1.0</priority></url>
   <url><loc>https://felandim.github.io/projetos.html</loc><priority>0.9</priority></url>
   <url><loc>https://felandim.github.io/dados-futebol.html</loc><priority>0.9</priority></url>
+  <url><loc>https://felandim.github.io/gerador-card-futebol.html</loc><changefreq>daily</changefreq><priority>0.9</priority></url>
   <url><loc>https://felandim.github.io/docs/worldcup_2026/</loc><changefreq>daily</changefreq><priority>0.9</priority></url>
   <url><loc>https://felandim.github.io/docs/serie_a_2026/</loc><changefreq>daily</changefreq><priority>0.9</priority></url>
   <url><loc>https://felandim.github.io/docs/serie_b_2026/</loc><changefreq>daily</changefreq><priority>0.9</priority></url>
