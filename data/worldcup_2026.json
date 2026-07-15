@@ -4042,10 +4042,32 @@
       "time": "14:00 UTC-5",
       "team1": "France",
       "team2": "Spain",
+      "score": {
+        "ft": [
+          0,
+          2
+        ],
+        "ht": [
+          0,
+          1
+        ]
+      },
+      "goals1": [],
+      "goals2": [
+        {
+          "name": "Mikel Oyarzabal",
+          "minute": 22,
+          "penalty": true
+        },
+        {
+          "name": "Pedro Porro",
+          "minute": 58
+        }
+      ],
       "ground": "Dallas (Arlington)",
       "date_sp": "2026-07-14",
       "time_sp": "16:00",
-      "score_display": "-",
+      "score_display": "0 x 2",
       "score_detail": "",
       "stage": "Semifinals"
     },
@@ -4067,7 +4089,7 @@
       "round": "Match for third place",
       "date": "2026-07-18",
       "time": "17:00 UTC-4",
-      "team1": "L101",
+      "team1": "France",
       "team2": "L102",
       "ground": "Miami (Miami Gardens)",
       "date_sp": "2026-07-18",
@@ -4080,7 +4102,7 @@
       "round": "Final",
       "date": "2026-07-19",
       "time": "15:00 UTC-4",
-      "team1": "W101",
+      "team1": "Spain",
       "team2": "W102",
       "ground": "New York/New Jersey (East Rutherford)",
       "date_sp": "2026-07-19",
