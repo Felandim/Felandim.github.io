@@ -1,10 +1,12 @@
 # Felandim.github.io
 
-Site pessoal e portfólio de Felipe Landim, com foco em dados, crédito e automação.
+Site de evolução rodada a rodada do Brasileirão, com o portfólio profissional de Felipe Landim em páginas secundárias.
 
 ## Estrutura
 
-- `index.html`: página principal do portfólio.
+- `index.html`: página principal do produto Rodada a Rodada.
+- `brasileirao/`: classificação, artilharia, páginas de times e resumos por rodada.
+- `brasileirao_2026/`: coleta de artilheiros e gerador das análises e páginas.
 - `projetos.html`: seleção de projetos públicos.
 - `dados-futebol.html`: estudo de caso e hub das competições.
 - `artigos.html`: conteúdo técnico para busca orgânica.
@@ -14,12 +16,12 @@ Site pessoal e portfólio de Felipe Landim, com foco em dados, crédito e automa
 
 ## Atualizações automáticas
 
-Os workflows do GitHub Actions atualizam a Copa do Mundo a cada quatro horas e as Séries A e B a cada seis horas. Os geradores salvam dados em JSON e reescrevem o HTML apenas quando há mudança.
+Os workflows do GitHub Actions atualizam a Copa do Mundo a cada quatro horas e as Séries A e B a cada seis horas. A atualização da Série A também consolida os autores dos gols, recalcula classificação, artilharia e movimentos de cada rodada e reescreve as páginas do produto.
 
 ## Validação
 
 ```bash
-python3 -m py_compile worldcup_2026/main.py serie_a_2026/main.py serie_b_2026/main.py
+python3 -m py_compile worldcup_2026/main.py serie_a_2026/main.py serie_b_2026/main.py brasileirao_2026/build.py brasileirao_2026/update_scorers.py
 ```
 
 ```bash

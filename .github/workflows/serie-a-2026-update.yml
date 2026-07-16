@@ -4,6 +4,7 @@ on:
   pull_request:
     paths:
       - 'serie_a_2026/**'
+      - 'brasileirao_2026/**'
       - '.github/workflows/serie-a-2026-update.yml'
   schedule:
     - cron: '0 */6 * * *'
@@ -15,7 +16,7 @@ permissions:
 jobs:
   update:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
         with:
@@ -31,6 +32,8 @@ jobs:
         run: |
           set -o pipefail
           python3 serie_a_2026/main.py 2>&1 | tee serie-a-updater.log
+          python3 brasileirao_2026/update_scorers.py 2>&1 | tee -a serie-a-updater.log
+          python3 brasileirao_2026/build.py 2>&1 | tee -a serie-a-updater.log
       - name: Upload updater log
         if: always() && github.event_name == 'pull_request'
         uses: actions/upload-artifact@v4
@@ -53,13 +56,13 @@ jobs:
           PY
       - name: Commit generated data
         run: |
-          if git diff --quiet data/serie_a_2026.json docs/serie_a_2026/index.html; then
+          if git diff --quiet data/serie_a_2026.json data/serie_a_2026_scorers.json data/brasileirao_2026_insights.json docs/serie_a_2026/index.html index.html brasileirao sitemap.xml; then
             echo "No changes"
             exit 0
           fi
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git config user.name "github-actions[bot]"
-          git add data/serie_a_2026.json docs/serie_a_2026/index.html
+          git add data/serie_a_2026.json data/serie_a_2026_scorers.json data/brasileirao_2026_insights.json docs/serie_a_2026/index.html index.html brasileirao sitemap.xml
           git commit -m "Update Serie A 2026 data"
           git pull --rebase origin "${GITHUB_HEAD_REF:-${GITHUB_REF_NAME}}"
           git push
