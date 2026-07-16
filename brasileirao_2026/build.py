@@ -186,7 +186,11 @@ def nav(prefix: str = "../", current: str = "") -> str:
         ("rodadas", f"{prefix}brasileirao/#rodadas", "Rodadas"),
         ("portfolio", f"{prefix}projetos.html", "Portfólio"),
     ]
-    items = "".join(f'<a href="{href}"{(" aria-current=\"page\"" if key == current else "")}>{label}</a>' for key, href, label in links)
+    items_list = []
+    for key, href, label in links:
+        current_attribute = ' aria-current="page"' if key == current else ""
+        items_list.append(f'<a href="{href}"{current_attribute}>{label}</a>')
+    items = "".join(items_list)
     return f'<header class="br-header"><div class="br-shell br-nav"><a class="br-brand" href="{prefix}index.html" aria-label="Rodada a Rodada — página inicial"><span>R/R</span><strong>Rodada a Rodada</strong></a><nav aria-label="Navegação principal">{items}</nav></div></header>'
 
 
