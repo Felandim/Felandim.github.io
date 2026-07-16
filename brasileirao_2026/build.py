@@ -216,7 +216,9 @@ def line_chart(history: list[dict[str, Any]], label: str) -> str:
         x = pad + index * (width - 2 * pad) / max(len(history) - 1, 1)
         y = pad + (row["position"] - 1) * (height - 2 * pad) / 19
         points.append(f"{x:.1f},{y:.1f}")
-    return f'<svg class="br-line-chart" viewBox="0 0 {width} {height}" role="img" aria-label="{esc(label, True)}"><line x1="{pad}" y1="{pad}" x2="{pad}" y2="{height-pad}"/><line x1="{pad}" y1="{pad}" x2="{width-pad}" y2="{pad}"/><line x1="{pad}" y1="{height-pad}" x2="{width-pad}" y2="{height-pad}"/><text x="4" y="{pad+5}">1º</text><text x="4" y="{height-pad+5}">20º</text><polyline points="{' '.join(points)}"/><circle cx="{points[-1].split(',')[0]}" cy="{points[-1].split(',')[1]}" r="7"/></svg>'
+    path_points = " ".join(points)
+    last_x, last_y = points[-1].split(",")
+    return f'<svg class="br-line-chart" viewBox="0 0 {width} {height}" role="img" aria-label="{esc(label, True)}"><line x1="{pad}" y1="{pad}" x2="{pad}" y2="{height-pad}"/><line x1="{pad}" y1="{pad}" x2="{width-pad}" y2="{pad}"/><line x1="{pad}" y1="{height-pad}" x2="{width-pad}" y2="{height-pad}"/><text x="4" y="{pad+5}">1º</text><text x="4" y="{height-pad+5}">20º</text><polyline points="{path_points}"/><circle cx="{last_x}" cy="{last_y}" r="7"/></svg>'
 
 
 def table_html(rows: list[dict[str, Any]], limit: int | None = None, team_prefix: str = "times/") -> str:
