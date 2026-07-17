@@ -543,7 +543,7 @@ h3 { margin-bottom: 12px; font-size: 1.35rem; }
 .br-page-hero h1, .br-team-hero h1, .br-round-hero h1 { max-width: 1020px; margin: 0 0 24px; font-size: clamp(3.7rem, 8vw, 7rem); font-weight: 930; line-height: .88; letter-spacing: -.075em; }
 .br-page-hero p:last-child, .br-round-hero p:last-child { max-width: 720px; margin: 0; color: #b1bbb4; font-size: 1.08rem; }
 .br-page-hero-hot p:last-child { color: #fff; }
-.br-feature-links { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+.br-feature-links { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
 .br-feature-links > a { min-height: 410px; display: flex; flex-direction: column; padding: 38px; color: inherit; background: #fff; border: 1px solid var(--br-line); text-decoration: none; }
 .br-feature-links > a:last-child { background: var(--br-hot); }
 .br-feature-links span { font: 900 .75rem ui-monospace, monospace; }
@@ -576,6 +576,47 @@ h3 { margin-bottom: 12px; font-size: 1.35rem; }
 .br-goal-bars small { color: #849087; font-size: .62rem; }
 .br-goal-bars i { position: absolute; left: 0; bottom: -4px; height: 4px; background: var(--br-hot); }
 .br-goal-bars b { color: var(--br-hot); font-size: 1.2rem; }
+
+
+.br-compare-promo { padding-block: 82px; color: var(--br-ink); background: var(--br-hot); }
+.br-compare-promo-grid { display: grid; grid-template-columns: 1fr auto; gap: 56px; align-items: end; }
+.br-compare-promo h2 { max-width: 850px; margin: 0 0 18px; font-size: clamp(2.8rem, 6vw, 5.4rem); font-weight: 930; line-height: .9; letter-spacing: -.07em; }
+.br-compare-promo p:not(.br-kicker) { max-width: 680px; margin: 0; color: #4f5a53; }
+.br-compare-promo .br-button { color: var(--br-ink); border-color: var(--br-ink); white-space: nowrap; }
+.br-compare-hero { background: var(--br-coral); }
+.br-compare-hero .br-kicker { color: var(--br-ink); }
+.br-compare-hero p:last-child { color: #fff; }
+.br-compare-controls { display: grid; grid-template-columns: 1fr auto 1fr; gap: 22px; align-items: end; margin-bottom: 10px; padding: 28px; color: #f6f4ec; background: var(--br-ink); }
+.br-compare-controls label { display: grid; gap: 9px; font-size: .7rem; font-weight: 900; letter-spacing: .12em; text-transform: uppercase; }
+.br-compare-controls select { width: 100%; padding: 14px; color: var(--br-ink); background: var(--br-hot); border: 0; border-radius: 0; font-weight: 850; }
+.br-compare-controls > span { padding-bottom: 9px; color: var(--br-coral); font-size: 2.4rem; font-weight: 950; }
+.br-compare-error { min-height: 28px; margin: 0 0 10px; color: #b7382a; font-size: .82rem; font-weight: 800; }
+.br-compare-summary { display: grid; grid-template-columns: 1fr .9fr 1fr; margin-bottom: 28px; border: 1px solid var(--br-line); background: #fff; }
+.br-compare-summary article, .br-compare-summary > div { min-height: 250px; display: flex; flex-direction: column; justify-content: center; padding: 30px; }
+.br-compare-summary article:last-child { text-align: right; }
+.br-compare-summary > div { color: #f6f4ec; background: var(--br-ink); text-align: center; }
+.br-compare-summary span { color: var(--br-coral); font-size: 3.8rem; font-weight: 950; letter-spacing: -.07em; }
+.br-compare-summary h2 { margin: 8px 0; font-size: clamp(2rem, 4vw, 3.6rem); overflow-wrap: anywhere; }
+.br-compare-summary p { margin: 0; color: #69746c; }
+.br-compare-summary > div p { color: #aeb8b1; }
+.br-compare-summary > div strong { color: var(--br-hot); font-size: 1.5rem; }
+.br-compare-layout { display: grid; grid-template-columns: 1.15fr .85fr; gap: 28px; align-items: start; }
+.br-duel-chart .team-a { stroke: var(--br-hot); }
+.br-duel-chart .team-b { stroke: var(--br-coral); }
+.br-duel-legend { display: flex; flex-wrap: wrap; gap: 18px; margin: 18px 0 0; padding: 0; list-style: none; }
+.br-duel-legend li { display: flex; align-items: center; gap: 8px; color: #c1cac4; font-size: .75rem; font-weight: 800; }
+.br-duel-legend i { width: 22px; height: 4px; background: var(--br-hot); }
+.br-duel-legend li + li i { background: var(--br-coral); }
+.br-compare-stats { padding: 30px; background: #fff; border: 1px solid var(--br-line); }
+.br-compare-stats h2 { margin-bottom: 22px; font-size: 2rem; }
+.br-compare-stats > div { display: grid; grid-template-columns: 1fr 1.15fr 1fr; align-items: center; gap: 14px; padding: 16px 0; border-bottom: 1px solid #e0e2da; text-align: center; }
+.br-compare-stats span { color: #727e76; font-size: .68rem; font-weight: 850; letter-spacing: .08em; text-transform: uppercase; }
+.br-compare-stats strong { font-size: 1.25rem; }
+.br-compare-stats .is-best { color: #b94a39; }
+.br-compare-share { display: grid; grid-template-columns: 1fr auto; gap: 30px; align-items: center; margin-top: 28px; padding: 32px; color: #f6f4ec; background: var(--br-coral); }
+.br-compare-share h2 { margin: 0 0 6px; font-size: 2rem; }
+.br-compare-share p { margin: 0; }
+.br-compare-share > p { grid-column: 1 / -1; min-height: 20px; font-size: .75rem; }
 
 /* Team and round pages */
 .br-team-hero { background: var(--br-hot); color: var(--br-ink); }
@@ -623,7 +664,8 @@ h3 { margin-bottom: 12px; font-size: 1.35rem; }
 .br-section-soft { background: var(--br-soft); }
 
 @media (max-width: 980px) {
-  .br-hero-grid, .br-dashboard, .br-analysis-grid, .br-team-grid, .br-share-grid, .br-round-grid { grid-template-columns: 1fr; }
+  .br-hero-grid, .br-dashboard, .br-analysis-grid, .br-team-grid, .br-share-grid, .br-round-grid, .br-compare-layout { grid-template-columns: 1fr; }
+  .br-feature-links { grid-template-columns: 1fr; }
   .br-hero-grid { gap: 60px; }
   .br-cover { max-width: 650px; }
   .br-dashboard { border-bottom: 0; }
@@ -644,7 +686,10 @@ h3 { margin-bottom: 12px; font-size: 1.35rem; }
   .br-cover > span { top: 28px; left: 30px; }
   .br-section { padding-block: 70px; }
   .br-section-head { align-items: flex-start; flex-direction: column; }
-  .br-change-grid, .br-feature-links, .br-split-stats { grid-template-columns: 1fr; }
+  .br-change-grid, .br-feature-links, .br-split-stats, .br-compare-promo-grid, .br-compare-summary, .br-compare-share { grid-template-columns: 1fr; }
+  .br-compare-controls { grid-template-columns: 1fr; }
+  .br-compare-controls > span { padding: 0; text-align: center; }
+  .br-compare-summary article, .br-compare-summary article:last-child { min-height: 190px; text-align: left; }
   .br-change-grid article { min-height: 220px; border-right: 0; border-bottom: 1px solid #48544d; }
   .br-change-grid h3 { margin-top: 64px; }
   .br-team-cloud { grid-template-columns: 1fr 1fr; }
