@@ -73,6 +73,106 @@
     }).catch(error => document.querySelector("[data-scorer-chart]").textContent = error.message);
   }
 
+
+  const comparisonRoot = document.querySelector("[data-comparison]");
+  if (comparisonRoot) {
+    const teamASelect = comparisonRoot.querySelector("[data-team-a]");
+    const teamBSelect = comparisonRoot.querySelector("[data-team-b]");
+    const summary = comparisonRoot.querySelector("[data-compare-summary]");
+    const chart = comparisonRoot.querySelector("[data-compare-chart]");
+    const stats = comparisonRoot.querySelector("[data-compare-stats]");
+    const error = comparisonRoot.querySelector("[data-compare-error]");
+    const status = comparisonRoot.querySelector("[data-compare-status]");
+    const safe = value => String(value).replace(/[&<>"']/g, char => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[char]));
+
+    function duelChart(profileA, profileB) {
+      const width = 820, height = 430, left = 48, right = 28, top = 34, bottom = 46;
+      const xFor = (index, length) => left + index * (width - left - right) / Math.max(length - 1, 1);
+      const yFor = position => top + (position - 1) * (height - top - bottom) / 19;
+      const line = profile => profile.history.map((row, index) => `${xFor(index, profile.history.length).toFixed(1)},${yFor(row.position).toFixed(1)}`).join(" ");
+      const guides = [1, 5, 10, 15, 20].map(position => {
+        const y = yFor(position);
+        return `<line x1="${left}" y1="${y}" x2="${width - right}" y2="${y}"/><text x="8" y="${y + 4}">${position}º</text>`;
+      }).join("");
+      return `<svg class="br-multi-chart br-duel-chart" viewBox="0 0 ${width} ${height}" role="img" aria-label="Comparação da evolução de ${safe(profileA.team)} e ${safe(profileB.team)}">${guides}<polyline class="team-a" points="${line(profileA)}"/><polyline class="team-b" points="${line(profileB)}"/></svg><ul class="br-duel-legend"><li><i></i>${safe(profileA.team)}</li><li><i></i>${safe(profileB.team)}</li></ul>`;
+    }
+
+    function metricRow(label, valueA, valueB, lowerIsBetter = false, suffix = "") {
+      const aWins = lowerIsBetter ? valueA < valueB : valueA > valueB;
+      const bWins = lowerIsBetter ? valueB < valueA : valueB > valueA;
+      return `<div><strong class="${aWins ? "is-best" : ""}">${valueA}${suffix}</strong><span>${label}</span><strong class="${bWins ? "is-best" : ""}">${valueB}${suffix}</strong></div>`;
+    }
+
+    loadInsights().then(data => {
+      const params = new URLSearchParams(location.search);
+      if (data.team_profiles[params.get("a")]) teamASelect.value = params.get("a");
+      if (data.team_profiles[params.get("b")]) teamBSelect.value = params.get("b");
+
+      const render = () => {
+        const slugA = teamASelect.value;
+        const slugB = teamBSelect.value;
+        if (slugA === slugB) {
+          error.textContent = "Escolha dois times diferentes.";
+          summary.innerHTML = "";
+          chart.innerHTML = "";
+          stats.innerHTML = "";
+          return;
+        }
+        error.textContent = "";
+        const profileA = data.team_profiles[slugA];
+        const profileB = data.team_profiles[slugB];
+        const a = profileA.current;
+        const b = profileB.current;
+        const rateA = a.played ? Math.round(a.points / (a.played * 3) * 100) : 0;
+        const rateB = b.played ? Math.round(b.points / (b.played * 3) * 100) : 0;
+        const leader = a.position < b.position ? profileA : profileB;
+        const trailer = leader === profileA ? profileB : profileA;
+        const positionGap = Math.abs(a.position - b.position);
+        const pointGap = Math.abs(a.points - b.points);
+
+        summary.innerHTML = `<article><span>${a.position}º</span><h2>${safe(profileA.team)}</h2><p>${a.points} pontos · ${rateA}% de aproveitamento</p></article><div><strong>${safe(leader.team)}</strong><p>está ${positionGap} ${positionGap === 1 ? "posição" : "posições"} e ${pointGap} ${pointGap === 1 ? "ponto" : "pontos"} à frente de ${safe(trailer.team)}.</p></div><article><span>${b.position}º</span><h2>${safe(profileB.team)}</h2><p>${b.points} pontos · ${rateB}% de aproveitamento</p></article>`;
+        chart.innerHTML = duelChart(profileA, profileB);
+        stats.innerHTML = `<h2>Números atuais</h2>${metricRow("Posição", a.position, b.position, true, "º")}${metricRow("Pontos", a.points, b.points)}${metricRow("Vitórias", a.wins, b.wins)}${metricRow("Saldo de gols", a.gd, b.gd)}${metricRow("Gols marcados", a.gf, b.gf)}${metricRow("Aproveitamento", rateA, rateB, false, "%")}`;
+        const url = new URL(location.href);
+        url.searchParams.set("a", slugA);
+        url.searchParams.set("b", slugB);
+        history.replaceState(null, "", url);
+        status.textContent = "";
+      };
+
+      teamASelect.addEventListener("change", render);
+      teamBSelect.addEventListener("change", render);
+      render();
+
+      comparisonRoot.querySelector("[data-copy-comparison]")?.addEventListener("click", async () => {
+        try {
+          await navigator.clipboard.writeText(location.href);
+          status.textContent = "Link copiado.";
+        } catch {
+          status.textContent = "Não foi possível copiar automaticamente.";
+        }
+      });
+      comparisonRoot.querySelector("[data-share-comparison]")?.addEventListener("click", async () => {
+        const shareData = { title: "Comparador de times do Brasileirão 2026", text: `${teamASelect.options[teamASelect.selectedIndex].text} × ${teamBSelect.options[teamBSelect.selectedIndex].text}`, url: location.href };
+        if (navigator.share) {
+          try {
+            await navigator.share(shareData);
+            status.textContent = "Comparação compartilhada.";
+          } catch (shareError) {
+            if (shareError.name !== "AbortError") status.textContent = "Não foi possível compartilhar.";
+          }
+        } else {
+          try {
+            await navigator.clipboard.writeText(location.href);
+            status.textContent = "Link copiado.";
+          } catch {
+            status.textContent = "Use “Copiar link”.";
+          }
+        }
+      });
+    }).catch(loadError => error.textContent = loadError.message);
+  }
+
   function drawCard(canvas) {
     const context = canvas.getContext("2d");
     const team = canvas.dataset.team;
