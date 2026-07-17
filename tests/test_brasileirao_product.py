@@ -54,3 +54,43 @@ def test_home_prioritizes_brasileirao_and_keeps_portfolio_navigable():
     assert "Artilharia" in source
     assert 'href="projetos.html"' in source
     assert 'href="about.html"' in source
+
+
+def test_generated_pages_have_social_images_and_large_twitter_cards():
+    insights = load("brasileirao_2026_insights.json")
+    pages = [
+        ROOT / "index.html",
+        ROOT / "brasileirao" / "classificacao-rodada-a-rodada.html",
+        ROOT / "brasileirao" / "artilharia-rodada-a-rodada.html",
+        ROOT / "brasileirao" / "comparador-times.html",
+        ROOT / "brasileirao" / "times" / "palmeiras.html",
+        ROOT / "brasileirao" / "rodadas" / f'rodada-{insights["current_round"]}.html',
+    ]
+    for path in pages:
+        source = path.read_text(encoding="utf-8")
+        assert '<meta property="og:image"' in source
+        assert '<meta name="twitter:card" content="summary_large_image">' in source
+
+
+def test_social_images_exist_with_expected_dimensions():
+    from PIL import Image
+
+    insights = load("brasileirao_2026_insights.json")
+    paths = [
+        ROOT / "assets" / "og" / "rodada-a-rodada.png",
+        ROOT / "assets" / "og" / "classificacao.png",
+        ROOT / "assets" / "og" / "artilharia.png",
+        ROOT / "assets" / "og" / "comparador.png",
+        ROOT / "assets" / "og" / "times" / "palmeiras.png",
+        ROOT / "assets" / "og" / "rodadas" / f'rodada-{insights["current_round"]}.png',
+    ]
+    for path in paths:
+        assert path.exists()
+        with Image.open(path) as image:
+            assert image.size == (1200, 630)
+
+
+def test_shared_site_script_loads_plausible_only_on_production():
+    source = (ROOT / "site.js").read_text(encoding="utf-8")
+    assert "location.hostname === 'felandim.github.io'" in source
+    assert "https://plausible.io/js/script.js" in source

@@ -31,3 +31,7 @@ pytest
 ## Publicidade
 
 As páginas de maior tráfego possuem espaços de anúncio ocultos, prontos para integração depois da aprovação em uma rede de anúncios. Nenhum identificador de publicador fictício é mantido no repositório.
+
+## Compartilhamento e audiência
+
+O gerador cria imagens Open Graph de 1200 × 630 pixels para a página principal, classificação, artilharia, comparador, times e rodadas. O `site.js` carrega o Plausible Analytics apenas no domínio de produção, sem afetar a navegação local.
