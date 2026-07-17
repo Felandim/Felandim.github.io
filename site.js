@@ -2,6 +2,14 @@ document.querySelectorAll('[data-current-year]').forEach((node) => {
   node.textContent = new Date().getFullYear();
 });
 
+if (location.hostname === 'felandim.github.io' && !document.querySelector('script[data-domain="felandim.github.io"]')) {
+  const analytics = document.createElement('script');
+  analytics.defer = true;
+  analytics.dataset.domain = 'felandim.github.io';
+  analytics.src = 'https://plausible.io/js/script.js';
+  document.head.append(analytics);
+}
+
 const filterButtons = document.querySelectorAll('[data-project-filter]');
 const filterCards = document.querySelectorAll('[data-project-category]');
 

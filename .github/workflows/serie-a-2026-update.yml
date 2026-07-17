@@ -24,9 +24,9 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-      - name: Install Playwright
+      - name: Install Python dependencies
         run: |
-          pip install playwright
+          pip install pillow playwright
           python -m playwright install --with-deps chromium
       - name: Run updater
         run: |
@@ -56,13 +56,13 @@ jobs:
           PY
       - name: Commit generated data
         run: |
-          if git diff --quiet data/serie_a_2026.json data/serie_a_2026_scorers.json data/brasileirao_2026_insights.json docs/serie_a_2026/index.html index.html brasileirao sitemap.xml; then
+          if git diff --quiet data/serie_a_2026.json data/serie_a_2026_scorers.json data/brasileirao_2026_insights.json docs/serie_a_2026/index.html index.html brasileirao assets/og sitemap.xml; then
             echo "No changes"
             exit 0
           fi
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git config user.name "github-actions[bot]"
-          git add data/serie_a_2026.json data/serie_a_2026_scorers.json data/brasileirao_2026_insights.json docs/serie_a_2026/index.html index.html brasileirao sitemap.xml
+          git add data/serie_a_2026.json data/serie_a_2026_scorers.json data/brasileirao_2026_insights.json docs/serie_a_2026/index.html index.html brasileirao assets/og sitemap.xml
           git commit -m "Update Serie A 2026 data"
           git pull --rebase origin "${GITHUB_HEAD_REF:-${GITHUB_REF_NAME}}"
           git push

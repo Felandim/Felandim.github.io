@@ -11,6 +11,8 @@ from collections import defaultdict
 from pathlib import Path
 from typing import Any
 
+from og_cards import build_og_cards
+
 ROOT = Path(__file__).resolve().parents[1]
 MATCHES_FILE = ROOT / "data" / "serie_a_2026.json"
 SCORERS_FILE = ROOT / "data" / "serie_a_2026_scorers.json"
@@ -199,13 +201,20 @@ def footer(prefix: str = "../") -> str:
     return f'<footer class="br-footer"><div class="br-shell"><strong>Rodada a Rodada · Brasileirão {SEASON}</strong><p>Leitura independente construída com resultados públicos. Critérios: pontos, vitórias, saldo de gols e gols marcados.</p><div><a href="{prefix}projetos.html">Projetos</a><a href="{prefix}about.html">Sobre Felipe Landim</a><a href="{prefix}privacy.html">Privacidade</a></div></div></footer>'
 
 
-def head(title: str, description: str, canonical: str, depth: str = "../") -> str:
-    return f'''<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>{esc(title)}</title><meta name="description" content="{esc(description, True)}"><meta name="theme-color" content="#101714"><link rel="canonical" href="{canonical}"><meta property="og:type" content="website"><meta property="og:locale" content="pt_BR"><meta property="og:title" content="{esc(title, True)}"><meta property="og:description" content="{esc(description, True)}"><meta property="og:url" content="{canonical}"><link rel="stylesheet" href="{depth}style.css"></head>'''
+def head(
+    title: str,
+    description: str,
+    canonical: str,
+    depth: str = "../",
+    social_image: str = f"{SITE_URL}/assets/og/rodada-a-rodada.png",
+    social_image_alt: str = "Rodada a Rodada — Brasileirão 2026 em números",
+) -> str:
+    return f'''<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>{esc(title)}</title><meta name="description" content="{esc(description, True)}"><meta name="theme-color" content="#101714"><link rel="canonical" href="{canonical}"><meta property="og:type" content="website"><meta property="og:locale" content="pt_BR"><meta property="og:title" content="{esc(title, True)}"><meta property="og:description" content="{esc(description, True)}"><meta property="og:url" content="{canonical}"><meta property="og:image" content="{social_image}"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta property="og:image:alt" content="{esc(social_image_alt, True)}"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="{esc(title, True)}"><meta name="twitter:description" content="{esc(description, True)}"><meta name="twitter:image" content="{social_image}"><meta name="twitter:image:alt" content="{esc(social_image_alt, True)}"><link rel="stylesheet" href="{depth}style.css"></head>'''
 
 
-def page(title: str, description: str, canonical: str, content: str, *, depth: str = "../", current: str = "", body_class: str = "br-page", script: bool = False) -> str:
+def page(title: str, description: str, canonical: str, content: str, *, depth: str = "../", current: str = "", body_class: str = "br-page", script: bool = False, social_image: str = f"{SITE_URL}/assets/og/rodada-a-rodada.png", social_image_alt: str = "Rodada a Rodada — Brasileirão 2026 em números") -> str:
     script_tag = f'<script src="{depth}brasileirao.js" defer></script>' if script else ""
-    return f'{head(title, description, canonical, depth)}<body class="{body_class}"><a class="skip-link" href="#conteudo">Pular para o conteúdo</a>{nav(depth, current)}<main id="conteudo">{content}</main>{footer(depth)}{script_tag}<script src="{depth}site.js" defer></script></body></html>\n'
+    return f'{head(title, description, canonical, depth, social_image, social_image_alt)}<body class="{body_class}"><a class="skip-link" href="#conteudo">Pular para o conteúdo</a>{nav(depth, current)}<main id="conteudo">{content}</main>{footer(depth)}{script_tag}<script src="{depth}site.js" defer></script></body></html>\n'
 
 
 def line_chart(history: list[dict[str, Any]], label: str) -> str:
@@ -323,23 +332,24 @@ def main() -> None:
     matches, scorer_data = load_data()
     insights = build_insights(matches, scorer_data)
     write(INSIGHTS_FILE, json.dumps(insights, ensure_ascii=False, separators=(",", ":")) + "\n")
+    build_og_cards(ROOT, insights)
     home = page("Rodada a Rodada | Brasileirão 2026 em números", "Veja a evolução da classificação, artilharia, times e rodadas do Brasileirão 2026.", f"{SITE_URL}/", home_content(insights), depth="", body_class="br-page br-home", script=True)
     write(ROOT / "index.html", home)
     write(OUTPUT / "index.html", page("Brasileirão 2026 rodada a rodada", "Explore classificação, artilharia, times e todas as rodadas do Brasileirão 2026.", f"{SITE_URL}/brasileirao/", hub_content(insights)))
-    write(OUTPUT / "classificacao-rodada-a-rodada.html", page("Classificação do Brasileirão 2026 rodada a rodada", "Reconstrua a classificação do Brasileirão 2026 após qualquer rodada e compare a evolução dos times.", f"{SITE_URL}/brasileirao/classificacao-rodada-a-rodada.html", classification_content(insights), current="classificacao", script=True))
-    write(OUTPUT / "artilharia-rodada-a-rodada.html", page("Artilharia do Brasileirão 2026 rodada a rodada", "Veja quem liderava a artilharia do Brasileirão 2026 após cada rodada e acompanhe a corrida gol a gol.", f"{SITE_URL}/brasileirao/artilharia-rodada-a-rodada.html", scorers_content(insights), current="artilharia", script=True))
-    write(OUTPUT / "comparador-times.html", page("Comparador de times do Brasileirão 2026 | Rodada a Rodada", "Compare dois times do Brasileirão 2026 por posição, pontos, vitórias, saldo e aproveitamento em cada rodada.", f"{SITE_URL}/brasileirao/comparador-times.html", comparison_content(insights), current="comparador", script=True))
+    write(OUTPUT / "classificacao-rodada-a-rodada.html", page("Classificação do Brasileirão 2026 rodada a rodada", "Reconstrua a classificação do Brasileirão 2026 após qualquer rodada e compare a evolução dos times.", f"{SITE_URL}/brasileirao/classificacao-rodada-a-rodada.html", classification_content(insights), current="classificacao", script=True, social_image=f"{SITE_URL}/assets/og/classificacao.png", social_image_alt="Classificação histórica do Brasileirão 2026 rodada a rodada"))
+    write(OUTPUT / "artilharia-rodada-a-rodada.html", page("Artilharia do Brasileirão 2026 rodada a rodada", "Veja quem liderava a artilharia do Brasileirão 2026 após cada rodada e acompanhe a corrida gol a gol.", f"{SITE_URL}/brasileirao/artilharia-rodada-a-rodada.html", scorers_content(insights), current="artilharia", script=True, social_image=f"{SITE_URL}/assets/og/artilharia.png", social_image_alt="Artilharia do Brasileirão 2026 rodada a rodada"))
+    write(OUTPUT / "comparador-times.html", page("Comparador de times do Brasileirão 2026 | Rodada a Rodada", "Compare dois times do Brasileirão 2026 por posição, pontos, vitórias, saldo e aproveitamento em cada rodada.", f"{SITE_URL}/brasileirao/comparador-times.html", comparison_content(insights), current="comparador", script=True, social_image=f"{SITE_URL}/assets/og/comparador.png", social_image_alt="Comparador de campanhas dos times do Brasileirão 2026"))
 
     for slug, profile in insights["team_profiles"].items():
         title = f'Evolução do {profile["team"]} no Brasileirão 2026'
         description = f'Posição, pontos, aproveitamento, últimos jogos e evolução rodada a rodada do {profile["team"]} no Brasileirão 2026.'
-        write(OUTPUT / "times" / f"{slug}.html", page(title, description, f"{SITE_URL}/brasileirao/times/{slug}.html", team_content(profile, insights["current_round"]), depth="../../", current="times", script=True))
+        write(OUTPUT / "times" / f"{slug}.html", page(title, description, f"{SITE_URL}/brasileirao/times/{slug}.html", team_content(profile, insights["current_round"]), depth="../../", current="times", script=True, social_image=f"{SITE_URL}/assets/og/times/{slug}.png", social_image_alt=f'Evolução do {profile["team"]} no Brasileirão 2026'))
 
     completed = [match for match in matches if parse_score(match.get("score", ""))]
     for summary, snapshot in zip(insights["rounds"], insights["snapshots"]):
         number = summary["round"]
         round_matches = [m for m in completed if int(m["round"]) == number]
-        write(OUTPUT / "rodadas" / f"rodada-{number}.html", page(f'O que mudou na rodada {number} do Brasileirão 2026', f'Resultados, líder, maiores subidas, quedas e mudanças no Z4 após a rodada {number} do Brasileirão 2026.', f"{SITE_URL}/brasileirao/rodadas/rodada-{number}.html", round_content(number, summary, round_matches, snapshot["table"]), depth="../../", current="rodadas"))
+        write(OUTPUT / "rodadas" / f"rodada-{number}.html", page(f'O que mudou na rodada {number} do Brasileirão 2026', f'Resultados, líder, maiores subidas, quedas e mudanças no Z4 após a rodada {number} do Brasileirão 2026.', f"{SITE_URL}/brasileirao/rodadas/rodada-{number}.html", round_content(number, summary, round_matches, snapshot["table"]), depth="../../", current="rodadas", social_image=f"{SITE_URL}/assets/og/rodadas/rodada-{number}.png", social_image_alt=f'Resumo da rodada {number} do Brasileirão 2026'))
 
     build_sitemap(insights)
     print(f"Produto gerado: {len(insights['team_profiles'])} times, {insights['current_round']} rodadas e {insights['scorer_coverage']['matches_with_scorers']} jogos com artilheiros.")
