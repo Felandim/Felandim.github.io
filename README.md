@@ -5,7 +5,7 @@ Site de evolução rodada a rodada do Brasileirão, com o portfólio profissiona
 ## Estrutura
 
 - `index.html`: página principal do produto Rodada a Rodada.
-- `brasileirao/`: classificação, artilharia, páginas de times e resumos por rodada.
+- `brasileirao/`: classificação, artilharia, rankings, comparador, páginas de times e resumos por rodada.
 - `brasileirao_2026/`: coleta de artilheiros e gerador das análises e páginas.
 - `projetos.html`: seleção de projetos públicos.
 - `dados-futebol.html`: estudo de caso e hub das competições.
