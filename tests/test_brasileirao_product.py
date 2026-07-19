@@ -116,6 +116,15 @@ def test_standings_render_badges_initially_and_after_round_change():
     assert "${teamBadge(row.team)}" in script
 
 
+
+def test_home_leader_name_never_breaks_inside_the_club_name():
+    home = (ROOT / "index.html").read_text(encoding="utf-8")
+    css = (ROOT / "style.css").read_text(encoding="utf-8")
+    assert 'class="br-leader-name"' in home
+    assert ".br-ranking-card .br-leader-name" in css
+    assert "white-space: nowrap" in css
+
+
 def test_shared_site_script_loads_plausible_only_on_production():
     source = (ROOT / "site.js").read_text(encoding="utf-8")
     assert "location.hostname === 'felandim.github.io'" in source
