@@ -26,6 +26,10 @@ def esc(value: Any, quote: bool = False) -> str:
     return html.escape(str(value), quote=quote)
 
 
+def format_count(value: int, singular: str, plural: str | None = None) -> str:
+    return f"{value} {singular if value == 1 else plural or singular + 's'}"
+
+
 def slugify(value: str) -> str:
     normalized = unicodedata.normalize("NFKD", value).encode("ascii", "ignore").decode()
     return re.sub(r"[^a-z0-9]+", "-", normalized.lower()).strip("-")
@@ -282,27 +286,27 @@ def rankings_data(insights: dict[str, Any]) -> dict[str, list[dict[str, Any]]]:
         return {"slug": slug, "team": profile["team"], "value": value, "detail": detail}
 
     attack = sorted(
-        (row(slug, profile, profile["current"]["gf"], f'{profile["current"]["played"]} jogos') for slug, profile in profiles),
+        (row(slug, profile, profile["current"]["gf"], format_count(profile["current"]["played"], "jogo")) for slug, profile in profiles),
         key=lambda item: (-item["value"], item["team"]),
     )
     defense = sorted(
-        (row(slug, profile, profile["current"]["ga"], f'{profile["current"]["played"]} jogos') for slug, profile in profiles),
+        (row(slug, profile, profile["current"]["ga"], format_count(profile["current"]["played"], "jogo")) for slug, profile in profiles),
         key=lambda item: (item["value"], item["team"]),
     )
     home = sorted(
-        (row(slug, profile, profile["home"]["points"], f'{profile["home"]["wins"]} vitórias · saldo {profile["home"]["gd"]:+d}') for slug, profile in profiles),
+        (row(slug, profile, profile["home"]["points"], f'{format_count(profile["home"]["wins"], "vitória", "vitórias")} · saldo {profile["home"]["gd"]:+d}') for slug, profile in profiles),
         key=lambda item: (-item["value"], item["team"]),
     )
     away = sorted(
-        (row(slug, profile, profile["away"]["points"], f'{profile["away"]["wins"]} vitórias · saldo {profile["away"]["gd"]:+d}') for slug, profile in profiles),
+        (row(slug, profile, profile["away"]["points"], f'{format_count(profile["away"]["wins"], "vitória", "vitórias")} · saldo {profile["away"]["gd"]:+d}') for slug, profile in profiles),
         key=lambda item: (-item["value"], item["team"]),
     )
     unbeaten = sorted(
-        (row(slug, profile, profile["streaks"]["longest_unbeaten"], f'atual: {profile["streaks"]["current_unbeaten"]}') for slug, profile in profiles),
+        (row(slug, profile, profile["streaks"]["longest_unbeaten"], f'atual: {format_count(profile["streaks"]["current_unbeaten"], "jogo")}') for slug, profile in profiles),
         key=lambda item: (-item["value"], item["team"]),
     )
     wins = sorted(
-        (row(slug, profile, profile["streaks"]["longest_wins"], f'atual: {profile["streaks"]["current_wins"]}') for slug, profile in profiles),
+        (row(slug, profile, profile["streaks"]["longest_wins"], f'atual: {format_count(profile["streaks"]["current_wins"], "jogo")}') for slug, profile in profiles),
         key=lambda item: (-item["value"], item["team"]),
     )
     return {"attack": attack, "defense": defense, "home": home, "away": away, "unbeaten": unbeaten, "wins": wins}
@@ -310,35 +314,35 @@ def rankings_data(insights: dict[str, Any]) -> dict[str, list[dict[str, Any]]]:
 
 def record_preview(rankings: dict[str, list[dict[str, Any]]]) -> str:
     items = [
-        ("Melhor ataque", rankings["attack"][0], "gols"),
-        ("Melhor defesa", rankings["defense"][0], "gols sofridos"),
-        ("Melhor mandante", rankings["home"][0], "pontos em casa"),
-        ("Melhor visitante", rankings["away"][0], "pontos fora"),
+        ("Melhor ataque", rankings["attack"][0], "gol", "gols"),
+        ("Melhor defesa", rankings["defense"][0], "gol sofrido", "gols sofridos"),
+        ("Melhor mandante", rankings["home"][0], "ponto em casa", "pontos em casa"),
+        ("Melhor visitante", rankings["away"][0], "ponto fora", "pontos fora"),
     ]
     return "".join(
-        f'<article><span>{label}</span><strong>{esc(item["team"])}</strong><b>{item["value"]} {suffix}</b></article>'
-        for label, item, suffix in items
+        f'<article><span>{label}</span><strong>{esc(item["team"])}</strong><b>{format_count(item["value"], singular, plural)}</b></article>'
+        for label, item, singular, plural in items
     )
 
 
 def rankings_content(insights: dict[str, Any]) -> str:
     rankings = rankings_data(insights)
     categories = [
-        ("Melhores ataques", "Gols marcados", rankings["attack"], "gols"),
-        ("Melhores defesas", "Menos gols sofridos", rankings["defense"], "sofridos"),
-        ("Força em casa", "Pontos como mandante", rankings["home"], "pts"),
-        ("Força fora", "Pontos como visitante", rankings["away"], "pts"),
-        ("Maiores invencibilidades", "Maior sequência sem derrota", rankings["unbeaten"], "jogos"),
-        ("Sequências de vitórias", "Maior série de vitórias", rankings["wins"], "jogos"),
+        ("Melhores ataques", "Gols marcados", rankings["attack"], "gol", "gols"),
+        ("Melhores defesas", "Menos gols sofridos", rankings["defense"], "gol sofrido", "gols sofridos"),
+        ("Força em casa", "Pontos como mandante", rankings["home"], "ponto", "pontos"),
+        ("Força fora", "Pontos como visitante", rankings["away"], "ponto", "pontos"),
+        ("Maiores invencibilidades", "Maior sequência sem derrota", rankings["unbeaten"], "jogo", "jogos"),
+        ("Sequências de vitórias", "Maior série de vitórias", rankings["wins"], "jogo", "jogos"),
     ]
     leaders = "".join(
-        f'<article><span>{title}</span><strong>{esc(rows[0]["team"])}</strong><b>{rows[0]["value"]} {suffix}</b><small>{subtitle}</small></article>'
-        for title, subtitle, rows, suffix in categories
+        f'<article><span>{title}</span><strong>{esc(rows[0]["team"])}</strong><b>{format_count(rows[0]["value"], singular, plural)}</b><small>{subtitle}</small></article>'
+        for title, subtitle, rows, singular, plural in categories
     )
     lists = []
-    for title, subtitle, rows, suffix in categories:
+    for title, subtitle, rows, singular, plural in categories:
         items = "".join(
-            f'<li><span>{position:02d}</span><a href="times/{item["slug"]}.html">{esc(item["team"])}</a><small>{esc(item["detail"])}</small><strong>{item["value"]} {suffix}</strong></li>'
+            f'<li><span>{position:02d}</span><a href="times/{item["slug"]}.html">{esc(item["team"])}</a><small>{esc(item["detail"])}</small><strong>{format_count(item["value"], singular, plural)}</strong></li>'
             for position, item in enumerate(rows[:5], 1)
         )
         lists.append(f'<article class="br-record-ranking"><p class="br-kicker">{esc(subtitle)}</p><h2>{esc(title)}</h2><ol>{items}</ol></article>')
