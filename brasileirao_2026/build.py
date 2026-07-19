@@ -50,7 +50,7 @@ def team_badge(team: str, variant: str = "inline") -> str:
     return (
         f'<span class="br-team-with-badge br-team-with-badge-{variant}">'
         f'<img class="br-team-badge" src="https://images.fotmob.com/image_resources/logo/teamlogo/{logo_id}.png" '
-        f'alt="" width="48" height="48" loading="lazy" decoding="async">'
+        f'alt="" aria-hidden="true" width="48" height="48" loading="lazy" decoding="async">'
         f'<span>{safe_team}</span></span>'
     )
 
