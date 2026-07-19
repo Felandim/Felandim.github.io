@@ -294,7 +294,7 @@ def table_html(rows: list[dict[str, Any]], limit: int | None = None, team_prefix
     body = []
     for row in rows[:limit]:
         zone = " g4" if row["position"] <= 4 else " z4" if row["position"] >= 17 else ""
-        body.append(f'<tr class="{zone.strip()}"><td><span class="br-pos{zone}">{row["position"]}</span></td><th scope="row"><a href="{team_prefix}{slugify(row["team"])}.html">{esc(row["team"])}</a></th><td>{row["points"]}</td><td>{row["played"]}</td><td>{row["wins"]}</td><td>{row["draws"]}</td><td>{row["losses"]}</td><td>{row["gd"]:+d}</td></tr>')
+        body.append(f'<tr class="{zone.strip()}"><td><span class="br-pos{zone}">{row["position"]}</span></td><th scope="row"><a href="{team_prefix}{slugify(row["team"])}.html">{team_badge(row["team"], "table")}</a></th><td>{row["points"]}</td><td>{row["played"]}</td><td>{row["wins"]}</td><td>{row["draws"]}</td><td>{row["losses"]}</td><td>{row["gd"]:+d}</td></tr>')
     return '<div class="br-table-wrap"><table class="br-table" data-standings-table><thead><tr><th>Pos.</th><th>Time</th><th>Pts</th><th>J</th><th>V</th><th>E</th><th>D</th><th>SG</th></tr></thead><tbody>' + "".join(body) + '</tbody></table></div>'
 
 
