@@ -21,6 +21,14 @@ OUTPUT = ROOT / "brasileirao"
 SITE_URL = "https://felandim.github.io"
 SEASON = 2026
 
+TEAM_LOGO_IDS = {
+    "Athletico-PR": 10273, "Atlético-MG": 10272, "Bahia": 7877, "Botafogo": 8517,
+    "Bragantino": 109705, "Chapecoense": 197693, "Corinthians": 9808, "Coritiba": 9767,
+    "Cruzeiro": 9781, "Flamengo": 9770, "Fluminense": 9863, "Grêmio": 9769,
+    "Internacional": 8702, "Mirassol": 163782, "Palmeiras": 10283, "Remo": 1626,
+    "Santos": 8514, "São Paulo": 10277, "Vasco": 10276, "Vitória": 7733,
+}
+
 
 def esc(value: Any, quote: bool = False) -> str:
     return html.escape(str(value), quote=quote)
@@ -33,6 +41,18 @@ def format_count(value: int, singular: str, plural: str | None = None) -> str:
 def slugify(value: str) -> str:
     normalized = unicodedata.normalize("NFKD", value).encode("ascii", "ignore").decode()
     return re.sub(r"[^a-z0-9]+", "-", normalized.lower()).strip("-")
+
+
+def team_badge(team: str, variant: str = "inline") -> str:
+    """Renderiza escudo e nome como uma unidade proporcional à tipografia."""
+    logo_id = TEAM_LOGO_IDS[team]
+    safe_team = esc(team, quote=True)
+    return (
+        f'<span class="br-team-with-badge br-team-with-badge-{variant}">'
+        f'<img class="br-team-badge" src="https://images.fotmob.com/image_resources/logo/teamlogo/{logo_id}.png" '
+        f'alt="" aria-hidden="true" width="48" height="48" loading="lazy" decoding="async">'
+        f'<span>{safe_team}</span></span>'
+    )
 
 
 def parse_score(value: str) -> tuple[int, int] | None:
@@ -320,7 +340,7 @@ def record_preview(rankings: dict[str, list[dict[str, Any]]]) -> str:
         ("Melhor visitante", rankings["away"][0], "ponto fora", "pontos fora"),
     ]
     return "".join(
-        f'<article><span>{label}</span><strong>{esc(item["team"])}</strong><b>{format_count(item["value"], singular, plural)}</b></article>'
+        f'<article><span>{label}</span><strong>{team_badge(item["team"], "preview")}</strong><b>{format_count(item["value"], singular, plural)}</b></article>'
         for label, item, singular, plural in items
     )
 
@@ -336,13 +356,13 @@ def rankings_content(insights: dict[str, Any]) -> str:
         ("Sequências de vitórias", "Maior série de vitórias", rankings["wins"], "jogo", "jogos"),
     ]
     leaders = "".join(
-        f'<article><span>{title}</span><strong>{esc(rows[0]["team"])}</strong><b>{format_count(rows[0]["value"], singular, plural)}</b><small>{subtitle}</small></article>'
+        f'<article><span>{title}</span><strong>{team_badge(rows[0]["team"], "leader")}</strong><b>{format_count(rows[0]["value"], singular, plural)}</b><small>{subtitle}</small></article>'
         for title, subtitle, rows, singular, plural in categories
     )
     lists = []
     for title, subtitle, rows, singular, plural in categories:
         items = "".join(
-            f'<li><span>{position:02d}</span><a href="times/{item["slug"]}.html">{esc(item["team"])}</a><small>{esc(item["detail"])}</small><strong>{format_count(item["value"], singular, plural)}</strong></li>'
+            f'<li><span>{position:02d}</span><a href="times/{item["slug"]}.html">{team_badge(item["team"])}</a><small>{esc(item["detail"])}</small><strong>{format_count(item["value"], singular, plural)}</strong></li>'
             for position, item in enumerate(rows[:5], 1)
         )
         lists.append(f'<article class="br-record-ranking"><p class="br-kicker">{esc(subtitle)}</p><h2>{esc(title)}</h2><ol>{items}</ol></article>')
