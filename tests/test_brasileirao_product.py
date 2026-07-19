@@ -27,6 +27,7 @@ def test_insights_cover_all_teams_and_completed_rounds():
     assert len(insights["team_profiles"]) == 20
     assert len(insights["snapshots"]) == insights["current_round"]
     assert insights["scorer_coverage"]["completed_matches"] == insights["scorer_coverage"]["matches_with_scorers"]
+    assert all("streaks" in profile for profile in insights["team_profiles"].values())
     assert sorted(row["position"] for row in insights["snapshots"][-1]["table"]) == list(range(1, 21))
 
 
@@ -37,6 +38,7 @@ def test_generated_product_pages_exist_and_have_main_navigation_labels():
         ROOT / "brasileirao" / "index.html",
         ROOT / "brasileirao" / "classificacao-rodada-a-rodada.html",
         ROOT / "brasileirao" / "artilharia-rodada-a-rodada.html",
+        ROOT / "brasileirao" / "rankings-recordes.html",
     ]
     pages += [ROOT / "brasileirao" / "times" / f"{slug}.html" for slug in insights["team_profiles"]]
     pages += [ROOT / "brasileirao" / "rodadas" / f"rodada-{number}.html" for number in range(1, insights["current_round"] + 1)]
@@ -63,6 +65,7 @@ def test_generated_pages_have_social_images_and_large_twitter_cards():
         ROOT / "brasileirao" / "classificacao-rodada-a-rodada.html",
         ROOT / "brasileirao" / "artilharia-rodada-a-rodada.html",
         ROOT / "brasileirao" / "comparador-times.html",
+        ROOT / "brasileirao" / "rankings-recordes.html",
         ROOT / "brasileirao" / "times" / "palmeiras.html",
         ROOT / "brasileirao" / "rodadas" / f'rodada-{insights["current_round"]}.html',
     ]
@@ -81,6 +84,7 @@ def test_social_images_exist_with_expected_dimensions():
         ROOT / "assets" / "og" / "classificacao.png",
         ROOT / "assets" / "og" / "artilharia.png",
         ROOT / "assets" / "og" / "comparador.png",
+        ROOT / "assets" / "og" / "rankings-recordes.png",
         ROOT / "assets" / "og" / "times" / "palmeiras.png",
         ROOT / "assets" / "og" / "rodadas" / f'rodada-{insights["current_round"]}.png',
     ]
