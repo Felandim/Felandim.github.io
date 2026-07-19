@@ -579,6 +579,14 @@ h3 { margin-bottom: 12px; font-size: 1.35rem; }
 
 
 
+
+.br-team-with-badge { display: inline-flex; min-width: 0; align-items: center; gap: .62em; vertical-align: middle; }
+.br-team-with-badge > span { min-width: 0; }
+.br-team-badge { width: 1.45em; height: 1.45em; flex: 0 0 auto; object-fit: contain; }
+.br-team-with-badge-preview .br-team-badge { width: 1.35em; height: 1.35em; }
+.br-team-with-badge-leader { align-items: flex-end; gap: .42em; }
+.br-team-with-badge-leader .br-team-badge { width: 1.12em; height: 1.12em; }
+
 .br-record-preview { padding-block: 88px; background: var(--br-soft); }
 .br-record-preview .br-section-head { margin-bottom: 28px; }
 .br-record-preview-grid { display: grid; grid-template-columns: repeat(4, 1fr); border-top: 1px solid var(--br-line); border-left: 1px solid var(--br-line); }
@@ -601,7 +609,9 @@ h3 { margin-bottom: 12px; font-size: 1.35rem; }
 .br-record-ranking ol { margin: 0; padding: 0; list-style: none; }
 .br-record-ranking li { display: grid; grid-template-columns: 34px 1fr auto auto; gap: 12px; align-items: center; padding: 14px 0; border-bottom: 1px solid #e0e2da; }
 .br-record-ranking li > span { color: #8a958d; font: 800 .72rem ui-monospace, monospace; }
-.br-record-ranking li a { font-weight: 850; text-decoration: none; }
+.br-record-ranking li a { min-width: 0; font-weight: 850; text-decoration: none; }
+.br-record-ranking li a .br-team-with-badge { max-width: 100%; }
+.br-record-ranking li a .br-team-with-badge > span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .br-record-ranking li small { color: #79847c; font-size: .67rem; }
 .br-record-ranking li strong { color: var(--br-coral); white-space: nowrap; }
 .br-record-note { margin: 28px 0 0; color: #69746c; font-size: .75rem; }
