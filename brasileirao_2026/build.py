@@ -74,6 +74,27 @@ def load_data() -> tuple[list[dict[str, Any]], dict[str, Any]]:
     return matches, scorer_data
 
 
+
+def streak_summary(results: list[str]) -> dict[str, int]:
+    longest_unbeaten = longest_wins = current_unbeaten = current_wins = 0
+    for result in results:
+        if result != "D":
+            current_unbeaten += 1
+            longest_unbeaten = max(longest_unbeaten, current_unbeaten)
+        else:
+            current_unbeaten = 0
+        if result == "V":
+            current_wins += 1
+            longest_wins = max(longest_wins, current_wins)
+        else:
+            current_wins = 0
+    return {
+        "longest_unbeaten": longest_unbeaten,
+        "longest_wins": longest_wins,
+        "current_unbeaten": current_unbeaten,
+        "current_wins": current_wins,
+    }
+
 def build_insights(matches: list[dict[str, Any]], scorer_data: dict[str, Any]) -> dict[str, Any]:
     teams = sorted({match[side] for match in matches for side in ("home", "away")})
     completed = [match for match in matches if parse_score(match.get("score", ""))]
@@ -152,7 +173,7 @@ def build_insights(matches: list[dict[str, Any]], scorer_data: dict[str, Any]) -
     team_profiles: dict[str, dict[str, Any]] = {}
     current_table = snapshots[-1]["table"] if snapshots else []
     for team in teams:
-        team_matches = [m for m in completed if team in (m["home"], m["away"])]
+        team_matches = sorted((m for m in completed if team in (m["home"], m["away"])), key=lambda m: int(m["round"]))
         home_stats, away_stats = blank_stats(team), blank_stats(team)
         for match in team_matches:
             target = home_stats if match["home"] == team else away_stats
@@ -166,7 +187,20 @@ def build_insights(matches: list[dict[str, Any]], scorer_data: dict[str, Any]) -
             team_goals, opponent_goals = (home_goals, away_goals) if is_home else (away_goals, home_goals)
             last_five.append({"round": match["round"], "opponent": match["away"] if is_home else match["home"], "venue": "Casa" if is_home else "Fora", "score": match["score"], "result": "V" if team_goals > opponent_goals else "D" if team_goals < opponent_goals else "E"})
         current = next((row for row in current_table if row["team"] == team), blank_stats(team))
-        team_profiles[slugify(team)] = {"team": team, "current": current, "home": home_stats, "away": away_stats, "last_five": last_five, "history": history_by_team[team]}
+        results = []
+        for match in team_matches:
+            home_goals, away_goals = parse_score(match["score"]) or (0, 0)
+            team_goals, opponent_goals = (home_goals, away_goals) if match["home"] == team else (away_goals, home_goals)
+            results.append("V" if team_goals > opponent_goals else "D" if team_goals < opponent_goals else "E")
+        team_profiles[slugify(team)] = {
+            "team": team,
+            "current": current,
+            "home": home_stats,
+            "away": away_stats,
+            "last_five": last_five,
+            "history": history_by_team[team],
+            "streaks": streak_summary(results),
+        }
 
     return {
         "season": SEASON,
@@ -185,6 +219,7 @@ def nav(prefix: str = "../", current: str = "") -> str:
         ("classificacao", f"{prefix}brasileirao/classificacao-rodada-a-rodada.html", "Classificação"),
         ("artilharia", f"{prefix}brasileirao/artilharia-rodada-a-rodada.html", "Artilharia"),
         ("comparador", f"{prefix}brasileirao/comparador-times.html", "Comparar"),
+        ("rankings", f"{prefix}brasileirao/rankings-recordes.html", "Rankings"),
         ("times", f"{prefix}brasileirao/#times", "Times"),
         ("rodadas", f"{prefix}brasileirao/#rodadas", "Rodadas"),
         ("portfolio", f"{prefix}projetos.html", "Portfólio"),
@@ -239,6 +274,76 @@ def table_html(rows: list[dict[str, Any]], limit: int | None = None, team_prefix
     return '<div class="br-table-wrap"><table class="br-table" data-standings-table><thead><tr><th>Pos.</th><th>Time</th><th>Pts</th><th>J</th><th>V</th><th>E</th><th>D</th><th>SG</th></tr></thead><tbody>' + "".join(body) + '</tbody></table></div>'
 
 
+
+def rankings_data(insights: dict[str, Any]) -> dict[str, list[dict[str, Any]]]:
+    profiles = list(insights["team_profiles"].items())
+
+    def row(slug: str, profile: dict[str, Any], value: int, detail: str) -> dict[str, Any]:
+        return {"slug": slug, "team": profile["team"], "value": value, "detail": detail}
+
+    attack = sorted(
+        (row(slug, profile, profile["current"]["gf"], f'{profile["current"]["played"]} jogos') for slug, profile in profiles),
+        key=lambda item: (-item["value"], item["team"]),
+    )
+    defense = sorted(
+        (row(slug, profile, profile["current"]["ga"], f'{profile["current"]["played"]} jogos') for slug, profile in profiles),
+        key=lambda item: (item["value"], item["team"]),
+    )
+    home = sorted(
+        (row(slug, profile, profile["home"]["points"], f'{profile["home"]["wins"]} vitórias · saldo {profile["home"]["gd"]:+d}') for slug, profile in profiles),
+        key=lambda item: (-item["value"], item["team"]),
+    )
+    away = sorted(
+        (row(slug, profile, profile["away"]["points"], f'{profile["away"]["wins"]} vitórias · saldo {profile["away"]["gd"]:+d}') for slug, profile in profiles),
+        key=lambda item: (-item["value"], item["team"]),
+    )
+    unbeaten = sorted(
+        (row(slug, profile, profile["streaks"]["longest_unbeaten"], f'atual: {profile["streaks"]["current_unbeaten"]}') for slug, profile in profiles),
+        key=lambda item: (-item["value"], item["team"]),
+    )
+    wins = sorted(
+        (row(slug, profile, profile["streaks"]["longest_wins"], f'atual: {profile["streaks"]["current_wins"]}') for slug, profile in profiles),
+        key=lambda item: (-item["value"], item["team"]),
+    )
+    return {"attack": attack, "defense": defense, "home": home, "away": away, "unbeaten": unbeaten, "wins": wins}
+
+
+def record_preview(rankings: dict[str, list[dict[str, Any]]]) -> str:
+    items = [
+        ("Melhor ataque", rankings["attack"][0], "gols"),
+        ("Melhor defesa", rankings["defense"][0], "gols sofridos"),
+        ("Melhor mandante", rankings["home"][0], "pontos em casa"),
+        ("Melhor visitante", rankings["away"][0], "pontos fora"),
+    ]
+    return "".join(
+        f'<article><span>{label}</span><strong>{esc(item["team"])}</strong><b>{item["value"]} {suffix}</b></article>'
+        for label, item, suffix in items
+    )
+
+
+def rankings_content(insights: dict[str, Any]) -> str:
+    rankings = rankings_data(insights)
+    categories = [
+        ("Melhores ataques", "Gols marcados", rankings["attack"], "gols"),
+        ("Melhores defesas", "Menos gols sofridos", rankings["defense"], "sofridos"),
+        ("Força em casa", "Pontos como mandante", rankings["home"], "pts"),
+        ("Força fora", "Pontos como visitante", rankings["away"], "pts"),
+        ("Maiores invencibilidades", "Maior sequência sem derrota", rankings["unbeaten"], "jogos"),
+        ("Sequências de vitórias", "Maior série de vitórias", rankings["wins"], "jogos"),
+    ]
+    leaders = "".join(
+        f'<article><span>{title}</span><strong>{esc(rows[0]["team"])}</strong><b>{rows[0]["value"]} {suffix}</b><small>{subtitle}</small></article>'
+        for title, subtitle, rows, suffix in categories
+    )
+    lists = []
+    for title, subtitle, rows, suffix in categories:
+        items = "".join(
+            f'<li><span>{position:02d}</span><a href="times/{item["slug"]}.html">{esc(item["team"])}</a><small>{esc(item["detail"])}</small><strong>{item["value"]} {suffix}</strong></li>'
+            for position, item in enumerate(rows[:5], 1)
+        )
+        lists.append(f'<article class="br-record-ranking"><p class="br-kicker">{esc(subtitle)}</p><h2>{esc(title)}</h2><ol>{items}</ol></article>')
+    return f'''<section class="br-page-hero br-record-hero"><div class="br-shell"><p class="br-kicker">Rankings e recordes</p><h1>Quem domina cada recorte do campeonato?</h1><p>Ataque, defesa, desempenho em casa e fora, invencibilidade e sequências de vitórias atualizados com os resultados do Brasileirão {SEASON}.</p></div></section><section class="br-section"><div class="br-shell"><div class="br-record-leaders">{leaders}</div><div class="br-section-head br-top-gap"><div><p class="br-kicker">Top 5 por categoria</p><h2>Os números por trás da tabela</h2></div></div><div class="br-record-rankings">{''.join(lists)}</div><p class="br-record-note">Os rankings usam somente partidas concluídas. Em caso de igualdade, os times são apresentados em ordem alfabética.</p></div></section>'''
+
 def home_content(insights: dict[str, Any]) -> str:
     current = insights["snapshots"][-1]["table"]
     latest = insights["rounds"][-1]
@@ -248,9 +353,11 @@ def home_content(insights: dict[str, Any]) -> str:
     leader_length = len(leader["team"])
     leader_class = "br-cover-team-xlong" if leader_length > 12 else "br-cover-team-long" if leader_length > 9 else ""
     cards = "".join(f'<a class="br-team-chip" href="brasileirao/times/{slugify(team)}.html">{esc(team)}</a>' for team in insights["teams"])
+    rankings = rankings_data(insights)
     return f'''<section class="br-hero"><div class="br-shell br-hero-grid"><div><p class="br-kicker">Brasileirão Série A · {SEASON}</p><h1>A tabela tem memória.</h1><p>Acompanhe quem subiu, quem caiu e como a disputa mudou a cada rodada.</p><div class="br-actions"><a class="br-button br-button-hot" href="brasileirao/classificacao-rodada-a-rodada.html">Explorar classificação</a><a class="br-button" href="brasileirao/rodadas/rodada-{insights['current_round']}.html">Ver a rodada {insights['current_round']}</a></div></div><div class="br-cover" aria-label="Resumo da temporada"><span>EDIÇÃO {insights['current_round']:02d}</span><strong class="{leader_class}">{leader['team']}</strong><p>líder com {leader['points']} pontos</p><b>20 TIMES<br>38 RODADAS<br>1 HISTÓRIA</b></div></div></section>
 <section class="br-ticker"><div class="br-shell"><span>Rodada {insights['current_round']}</span><strong>{latest['goals']} gols</strong><strong>{latest['leader']} na liderança</strong><strong>{latest['matches']} jogos concluídos</strong></div></section>
 <section class="br-section"><div class="br-shell"><div class="br-section-head"><div><p class="br-kicker">Painel da temporada</p><h2>O campeonato agora</h2></div><a href="brasileirao/classificacao-rodada-a-rodada.html">Ver evolução completa →</a></div><div class="br-dashboard"><article class="br-ranking-card"><span>Líder</span><strong>{leader['team']}</strong><b>{leader['points']} pts</b><small>{leader['wins']} vitórias · saldo {leader['gd']:+d}</small></article><article class="br-ranking-card br-ranking-card-hot"><span>Artilharia</span><strong>{scorer_text}</strong><a href="brasileirao/artilharia-rodada-a-rodada.html">Abrir corrida →</a></article><div class="br-table-card">{table_html(current, 6, 'brasileirao/times/')}<a href="brasileirao/classificacao-rodada-a-rodada.html">Tabela completa e rodada a rodada →</a></div></div></div></section>
+<section class="br-record-preview"><div class="br-shell"><div class="br-section-head"><div><p class="br-kicker">Rankings atualizados</p><h2>Quem domina o campeonato?</h2></div><a href="brasileirao/rankings-recordes.html">Ver todos os rankings →</a></div><div class="br-record-preview-grid">{record_preview(rankings)}</div></div></section>
 <section class="br-section br-section-dark"><div class="br-shell"><div class="br-section-head"><div><p class="br-kicker">O que mudou</p><h2>Raio-x da rodada {latest['round']}</h2></div><a href="brasileirao/rodadas/rodada-{latest['round']}.html">Ler resumo completo →</a></div><div class="br-change-grid"><article><span>01</span><h3>Liderança</h3><p>{latest['leader']}{' assumiu a ponta.' if latest['leader_changed'] else ' manteve a ponta.'}</p></article><article><span>02</span><h3>Maior subida</h3><p>{', '.join(latest['biggest_rise']['teams']) or 'Sem mudança'} · {latest['biggest_rise']['places']} posições</p></article><article><span>03</span><h3>Z4</h3><p>Entraram: {', '.join(latest['z4_in']) or 'ninguém'}<br>Saíram: {', '.join(latest['z4_out']) or 'ninguém'}</p></article></div></div></section>
 <section class="br-compare-promo"><div class="br-shell br-compare-promo-grid"><div><p class="br-kicker">Novo comparador</p><h2>{esc(leader['team'])} ou {esc(current[1]['team'])}: quem fez a melhor campanha?</h2><p>Coloque dois times frente a frente e acompanhe a disputa rodada a rodada.</p></div><a class="br-button" href="brasileirao/comparador-times.html">Comparar times</a></div></section>
 <section class="br-section" id="times"><div class="br-shell"><div class="br-section-head"><div><p class="br-kicker">20 trajetórias</p><h2>Escolha seu time</h2></div></div><div class="br-team-cloud">{cards}</div></div></section>
@@ -259,7 +366,7 @@ def home_content(insights: dict[str, Any]) -> str:
 
 
 def hub_content(insights: dict[str, Any]) -> str:
-    return f'''<section class="br-page-hero"><div class="br-shell"><p class="br-kicker">Brasileirão {SEASON}</p><h1>Todos os caminhos do campeonato.</h1><p>Classificação, artilharia, times e o que mudou em cada rodada.</p></div></section><section class="br-section"><div class="br-shell br-feature-links"><a href="classificacao-rodada-a-rodada.html"><span>01</span><h2>Classificação rodada a rodada</h2><p>Veja a posição de cada time em qualquer ponto da competição.</p></a><a href="artilharia-rodada-a-rodada.html"><span>02</span><h2>Artilharia rodada a rodada</h2><p>Acompanhe ultrapassagens e a evolução cumulativa dos gols.</p></a><a href="comparador-times.html"><span>03</span><h2>Comparador de times</h2><p>Coloque duas campanhas frente a frente e compartilhe o duelo.</p></a></div><div class="br-section-head" id="times"><div><p class="br-kicker">Times</p><h2>20 páginas, 20 histórias</h2></div></div><div class="br-team-cloud">{''.join(f'<a class="br-team-chip" href="times/{slugify(t)}.html">{esc(t)}</a>' for t in insights['teams'])}</div><div class="br-section-head br-top-gap" id="rodadas"><div><p class="br-kicker">Rodadas</p><h2>O que mudou em cada capítulo</h2></div></div><div class="br-round-links">{''.join(f'<a href="rodadas/rodada-{n}.html"><span>{n:02d}</span>Rodada {n}</a>' for n in range(1, insights['current_round']+1))}</div></div></section>'''
+    return f'''<section class="br-page-hero"><div class="br-shell"><p class="br-kicker">Brasileirão {SEASON}</p><h1>Todos os caminhos do campeonato.</h1><p>Classificação, artilharia, times e o que mudou em cada rodada.</p></div></section><section class="br-section"><div class="br-shell br-feature-links"><a href="classificacao-rodada-a-rodada.html"><span>01</span><h2>Classificação rodada a rodada</h2><p>Veja a posição de cada time em qualquer ponto da competição.</p></a><a href="artilharia-rodada-a-rodada.html"><span>02</span><h2>Artilharia rodada a rodada</h2><p>Acompanhe ultrapassagens e a evolução cumulativa dos gols.</p></a><a href="comparador-times.html"><span>03</span><h2>Comparador de times</h2><p>Coloque duas campanhas frente a frente e compartilhe o duelo.</p></a><a href="rankings-recordes.html"><span>04</span><h2>Rankings e recordes</h2><p>Descubra os melhores ataques, defesas e sequências do campeonato.</p></a></div><div class="br-section-head" id="times"><div><p class="br-kicker">Times</p><h2>20 páginas, 20 histórias</h2></div></div><div class="br-team-cloud">{''.join(f'<a class="br-team-chip" href="times/{slugify(t)}.html">{esc(t)}</a>' for t in insights['teams'])}</div><div class="br-section-head br-top-gap" id="rodadas"><div><p class="br-kicker">Rodadas</p><h2>O que mudou em cada capítulo</h2></div></div><div class="br-round-links">{''.join(f'<a href="rodadas/rodada-{n}.html"><span>{n:02d}</span>Rodada {n}</a>' for n in range(1, insights['current_round']+1))}</div></div></section>'''
 
 
 def classification_content(insights: dict[str, Any]) -> str:
@@ -319,6 +426,7 @@ def build_sitemap(insights: dict[str, Any]) -> None:
         ("/brasileirao/classificacao-rodada-a-rodada.html", "0.9"),
         ("/brasileirao/artilharia-rodada-a-rodada.html", "0.9"),
         ("/brasileirao/comparador-times.html", "0.9"),
+        ("/brasileirao/rankings-recordes.html", "0.9"),
         ("/gerador-card-futebol.html", "0.8"), ("/projetos.html", "0.6"),
         ("/dados-futebol.html", "0.6"), ("/artigos.html", "0.5"), ("/about.html", "0.5"),
     ]
@@ -339,6 +447,7 @@ def main() -> None:
     write(OUTPUT / "classificacao-rodada-a-rodada.html", page("Classificação do Brasileirão 2026 rodada a rodada", "Reconstrua a classificação do Brasileirão 2026 após qualquer rodada e compare a evolução dos times.", f"{SITE_URL}/brasileirao/classificacao-rodada-a-rodada.html", classification_content(insights), current="classificacao", script=True, social_image=f"{SITE_URL}/assets/og/classificacao.png", social_image_alt="Classificação histórica do Brasileirão 2026 rodada a rodada"))
     write(OUTPUT / "artilharia-rodada-a-rodada.html", page("Artilharia do Brasileirão 2026 rodada a rodada", "Veja quem liderava a artilharia do Brasileirão 2026 após cada rodada e acompanhe a corrida gol a gol.", f"{SITE_URL}/brasileirao/artilharia-rodada-a-rodada.html", scorers_content(insights), current="artilharia", script=True, social_image=f"{SITE_URL}/assets/og/artilharia.png", social_image_alt="Artilharia do Brasileirão 2026 rodada a rodada"))
     write(OUTPUT / "comparador-times.html", page("Comparador de times do Brasileirão 2026 | Rodada a Rodada", "Compare dois times do Brasileirão 2026 por posição, pontos, vitórias, saldo e aproveitamento em cada rodada.", f"{SITE_URL}/brasileirao/comparador-times.html", comparison_content(insights), current="comparador", script=True, social_image=f"{SITE_URL}/assets/og/comparador.png", social_image_alt="Comparador de campanhas dos times do Brasileirão 2026"))
+    write(OUTPUT / "rankings-recordes.html", page("Rankings e recordes do Brasileirão 2026 | Rodada a Rodada", "Veja os melhores ataques, defesas, mandantes, visitantes e as maiores sequências do Brasileirão 2026.", f"{SITE_URL}/brasileirao/rankings-recordes.html", rankings_content(insights), current="rankings", social_image=f"{SITE_URL}/assets/og/rankings-recordes.png", social_image_alt="Rankings e recordes do Brasileirão 2026"))
 
     for slug, profile in insights["team_profiles"].items():
         title = f'Evolução do {profile["team"]} no Brasileirão 2026'
