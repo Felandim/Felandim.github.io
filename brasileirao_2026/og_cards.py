@@ -113,6 +113,13 @@ def build_og_cards(root: Path, insights: dict[str, Any]) -> None:
         "Posição, pontos, vitórias e saldo por rodada",
         CORAL,
     )
+    best_attack = max(current_table, key=lambda row: (row["gf"], row["team"]))
+    save_card(
+        output / "rankings-recordes.png",
+        "Rankings e recordes",
+        "Quem domina o campeonato?",
+        f'{best_attack["team"]}: melhor ataque com {best_attack["gf"]} gols',
+    )
 
     for slug, profile in insights["team_profiles"].items():
         save_team_card(output / "times" / f"{slug}.png", profile, current_round)
