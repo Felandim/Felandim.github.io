@@ -99,11 +99,21 @@ def test_rankings_render_proportional_team_badges():
     rankings = (ROOT / "brasileirao" / "rankings-recordes.html").read_text(encoding="utf-8")
     home = (ROOT / "index.html").read_text(encoding="utf-8")
     assert rankings.count('class="br-team-badge"') == 36
-    assert home.count('class="br-team-badge"') == 4
+    assert home.count('class="br-team-badge"') == 10
     assert 'aria-hidden="true" width="48" height="48" loading="lazy" decoding="async"' in rankings
     assert rankings.count('alt=""') >= 36
     css = (ROOT / "style.css").read_text(encoding="utf-8")
     assert ".br-record-leaders strong .br-team-with-badge > span" in css
+
+
+
+def test_standings_render_badges_initially_and_after_round_change():
+    classification = (ROOT / "brasileirao" / "classificacao-rodada-a-rodada.html").read_text(encoding="utf-8")
+    script = (ROOT / "brasileirao.js").read_text(encoding="utf-8")
+    assert classification.count('class="br-team-badge"') == 20
+    assert classification.count("br-team-with-badge-table") == 20
+    assert "const teamBadge = team =>" in script
+    assert "${teamBadge(row.team)}" in script
 
 
 def test_shared_site_script_loads_plausible_only_on_production():
