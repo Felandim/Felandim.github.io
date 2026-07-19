@@ -586,6 +586,11 @@ h3 { margin-bottom: 12px; font-size: 1.35rem; }
 .br-team-with-badge-preview .br-team-badge { width: 1.35em; height: 1.35em; }
 .br-team-with-badge-leader { align-items: flex-end; gap: .42em; }
 .br-team-with-badge-leader .br-team-badge { width: 1.12em; height: 1.12em; }
+.br-record-preview-grid strong .br-team-with-badge,
+.br-record-preview-grid strong .br-team-with-badge > span,
+.br-record-leaders strong .br-team-with-badge,
+.br-record-leaders strong .br-team-with-badge > span { color: inherit; font-size: inherit; font-weight: inherit; letter-spacing: inherit; text-transform: none; }
+
 
 .br-record-preview { padding-block: 88px; background: var(--br-soft); }
 .br-record-preview .br-section-head { margin-bottom: 28px; }
