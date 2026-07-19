@@ -10,10 +10,19 @@
 
   const slugify = value => value.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
 
+  const teamLogoIds = {
+    "Athletico-PR": 10273, "Atlético-MG": 10272, "Bahia": 7877, "Botafogo": 8517,
+    "Bragantino": 109705, "Chapecoense": 197693, "Corinthians": 9808, "Coritiba": 9767,
+    "Cruzeiro": 9781, "Flamengo": 9770, "Fluminense": 9863, "Grêmio": 9769,
+    "Internacional": 8702, "Mirassol": 163782, "Palmeiras": 10283, "Remo": 1626,
+    "Santos": 8514, "São Paulo": 10277, "Vasco": 10276, "Vitória": 7733,
+  };
+  const teamBadge = team => `<span class="br-team-with-badge br-team-with-badge-table"><img class="br-team-badge" src="https://images.fotmob.com/image_resources/logo/teamlogo/${teamLogoIds[team]}.png" alt="" aria-hidden="true" width="48" height="48" loading="lazy" decoding="async"><span>${team}</span></span>`;
+
   function standingsRows(rows) {
     return rows.map(row => {
       const zone = row.position <= 4 ? "g4" : row.position >= 17 ? "z4" : "";
-      return `<tr class="${zone}"><td><span class="br-pos ${zone}">${row.position}</span></td><th scope="row"><a href="times/${slugify(row.team)}.html">${row.team}</a></th><td>${row.points}</td><td>${row.played}</td><td>${row.wins}</td><td>${row.draws}</td><td>${row.losses}</td><td>${row.gd > 0 ? "+" : ""}${row.gd}</td></tr>`;
+      return `<tr class="${zone}"><td><span class="br-pos ${zone}">${row.position}</span></td><th scope="row"><a href="times/${slugify(row.team)}.html">${teamBadge(row.team)}</a></th><td>${row.points}</td><td>${row.played}</td><td>${row.wins}</td><td>${row.draws}</td><td>${row.losses}</td><td>${row.gd > 0 ? "+" : ""}${row.gd}</td></tr>`;
     }).join("");
   }
 
