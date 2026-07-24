@@ -385,7 +385,7 @@
       "date": "23/07/2026",
       "home": "Botafogo",
       "round": 4,
-      "score": "-",
+      "score": "0 x 0",
       "stadium": "Nilton Santos (Engenhão)",
       "time": "19:30",
       "url": "https://ge.globo.com/rj/futebol/brasileirao-serie-a/jogo/23-07-2026/botafogo-vitoria.ghtml"
@@ -1895,7 +1895,7 @@
       "date": "23/07/2026",
       "home": "Corinthians",
       "round": 19,
-      "score": "-",
+      "score": "3 x 0",
       "stadium": "Neo Química Arena",
       "time": "19:30",
       "url": "https://ge.globo.com/sp/futebol/brasileirao-serie-a/jogo/23-07-2026/corinthians-remo.ghtml"
@@ -1918,7 +1918,7 @@
       "score": "-",
       "stadium": "Vila Belmiro",
       "time": "18:30",
-      "url": ""
+      "url": "https://ge.globo.com/sp/santos-e-regiao/futebol/brasileirao-serie-a/jogo/25-07-2026/santos-chapecoense.ghtml"
     },
     {
       "away": "Mirassol",
@@ -1928,7 +1928,7 @@
       "score": "-",
       "stadium": "São Januário",
       "time": "20:30",
-      "url": ""
+      "url": "https://ge.globo.com/rj/futebol/brasileirao-serie-a/jogo/25-07-2026/vasco-mirassol.ghtml"
     },
     {
       "away": "Botafogo",
@@ -1938,7 +1938,7 @@
       "score": "-",
       "stadium": "Mineirão",
       "time": "16:00",
-      "url": ""
+      "url": "https://ge.globo.com/mg/futebol/brasileirao-serie-a/jogo/26-07-2026/cruzeiro-botafogo.ghtml"
     },
     {
       "away": "Corinthians",
@@ -1968,7 +1968,7 @@
       "score": "-",
       "stadium": "Arena do Grêmio",
       "time": "18:30",
-      "url": ""
+      "url": "https://ge.globo.com/rs/futebol/brasileirao-serie-a/jogo/26-07-2026/gremio-fluminense.ghtml"
     },
     {
       "away": "São Paulo",
@@ -1978,7 +1978,7 @@
       "score": "-",
       "stadium": "Maracanã",
       "time": "18:30",
-      "url": ""
+      "url": "https://ge.globo.com/rj/futebol/brasileirao-serie-a/jogo/26-07-2026/flamengo-sao-paulo.ghtml"
     },
     {
       "away": "Vitória",
@@ -1988,7 +1988,7 @@
       "score": "-",
       "stadium": "Mangueirão",
       "time": "19:30",
-      "url": ""
+      "url": "https://ge.globo.com/pa/futebol/brasileirao-serie-a/jogo/26-07-2026/remo-vitoria.ghtml"
     },
     {
       "away": "Atlético-MG",
@@ -1998,7 +1998,7 @@
       "score": "-",
       "stadium": "Nubank Parque",
       "time": "19:30",
-      "url": ""
+      "url": "https://ge.globo.com/sp/futebol/brasileirao-serie-a/jogo/26-07-2026/palmeiras-atletico-mg.ghtml"
     },
     {
       "away": "Remo",
