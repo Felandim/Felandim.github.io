@@ -2005,7 +2005,7 @@
       "date": "29/07/2026",
       "home": "Mirassol",
       "round": 21,
-      "score": "-",
+      "score": "2 x 1",
       "stadium": "Maião",
       "time": "19:30",
       "url": "https://ge.globo.com/sp/tem-esporte/futebol/brasileirao-serie-a/jogo/29-07-2026/mirassol-remo.ghtml"
@@ -2015,7 +2015,7 @@
       "date": "29/07/2026",
       "home": "Internacional",
       "round": 21,
-      "score": "-",
+      "score": "1 x 1",
       "stadium": "Beira-Rio",
       "time": "19:30",
       "url": "https://ge.globo.com/rs/futebol/brasileirao-serie-a/jogo/29-07-2026/internacional-flamengo.ghtml"
@@ -2025,7 +2025,7 @@
       "date": "29/07/2026",
       "home": "Fluminense",
       "round": 21,
-      "score": "-",
+      "score": "0 x 0",
       "stadium": "Maracanã",
       "time": "21:30",
       "url": "https://ge.globo.com/rj/futebol/brasileirao-serie-a/jogo/29-07-2026/fluminense-bahia.ghtml"
@@ -2035,7 +2035,7 @@
       "date": "29/07/2026",
       "home": "Vitória",
       "round": 21,
-      "score": "-",
+      "score": "0 x 3",
       "stadium": "Barradão",
       "time": "21:30",
       "url": "https://ge.globo.com/ba/futebol/brasileirao-serie-a/jogo/29-07-2026/vitoria-palmeiras.ghtml"
@@ -2201,6 +2201,16 @@
       "url": ""
     },
     {
+      "away": "Palmeiras",
+      "date": "15/08/2026",
+      "home": "Fluminense",
+      "round": 23,
+      "score": "-",
+      "stadium": "Maracanã",
+      "time": "16:30",
+      "url": ""
+    },
+    {
       "away": "Grêmio",
       "date": "15/08/2026",
       "home": "Atlético-MG",
@@ -2248,16 +2258,6 @@
       "score": "-",
       "stadium": "São Januário",
       "time": "16:00",
-      "url": ""
-    },
-    {
-      "away": "Palmeiras",
-      "date": "16/08/2026",
-      "home": "Fluminense",
-      "round": 23,
-      "score": "-",
-      "stadium": "Maracanã",
-      "time": "16:30",
       "url": ""
     },
     {
