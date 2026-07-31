@@ -2111,6 +2111,16 @@
       "url": ""
     },
     {
+      "away": "Botafogo-SP",
+      "date": "14/08/2026",
+      "home": "São Bernardo",
+      "round": 22,
+      "score": "-",
+      "stadium": "Primeiro de Maio",
+      "time": "19:30",
+      "url": ""
+    },
+    {
       "away": "Londrina",
       "date": "14/08/2026",
       "home": "Sport",
@@ -2146,7 +2156,7 @@
       "home": "Ceará",
       "round": 22,
       "score": "-",
-      "stadium": "Castelão (CE)",
+      "stadium": "Presidente Vargas (CE)",
       "time": "18:30",
       "url": ""
     },
@@ -2168,16 +2178,6 @@
       "score": "-",
       "stadium": "Germano Krüger",
       "time": "11:00",
-      "url": ""
-    },
-    {
-      "away": "Botafogo-SP",
-      "date": "16/08/2026",
-      "home": "São Bernardo",
-      "round": 22,
-      "score": "-",
-      "stadium": "Primeiro de Maio",
-      "time": "16:00",
       "url": ""
     },
     {
@@ -2306,7 +2306,7 @@
       "home": "Ceará",
       "round": 24,
       "score": "-",
-      "stadium": "Castelão (CE)",
+      "stadium": "Presidente Vargas (CE)",
       "time": "18:00",
       "url": ""
     },
