@@ -34,6 +34,7 @@ jobs:
           python3 serie_a_2026/main.py 2>&1 | tee serie-a-updater.log
           python3 brasileirao_2026/update_scorers.py 2>&1 | tee -a serie-a-updater.log
           python3 brasileirao_2026/build.py 2>&1 | tee -a serie-a-updater.log
+          python3 brasileirao_2026/enhance_team_pages.py 2>&1 | tee -a serie-a-updater.log
       - name: Upload updater log
         if: always() && github.event_name == 'pull_request'
         uses: actions/upload-artifact@v4
