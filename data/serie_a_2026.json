@@ -2211,16 +2211,6 @@
       "url": ""
     },
     {
-      "away": "Grêmio",
-      "date": "15/08/2026",
-      "home": "Atlético-MG",
-      "round": 23,
-      "score": "-",
-      "stadium": "Arena MRV",
-      "time": "16:30",
-      "url": ""
-    },
-    {
       "away": "Bragantino",
       "date": "15/08/2026",
       "home": "Athletico-PR",
@@ -2257,6 +2247,16 @@
       "round": 23,
       "score": "-",
       "stadium": "São Januário",
+      "time": "16:00",
+      "url": ""
+    },
+    {
+      "away": "Grêmio",
+      "date": "16/08/2026",
+      "home": "Atlético-MG",
+      "round": 23,
+      "score": "-",
+      "stadium": "Arena MRV",
       "time": "16:00",
       "url": ""
     },
