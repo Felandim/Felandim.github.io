@@ -5,6 +5,14 @@ on:
     paths:
       - 'serie_a_2026/**'
       - 'brasileirao_2026/**'
+      - 'brasileirao-team-pages.css'
+      - '.github/workflows/serie-a-2026-update.yml'
+  push:
+    branches:
+      - main
+    paths:
+      - 'brasileirao_2026/**'
+      - 'brasileirao-team-pages.css'
       - '.github/workflows/serie-a-2026-update.yml'
   schedule:
     - cron: '0 */6 * * *'
@@ -34,6 +42,7 @@ jobs:
           python3 serie_a_2026/main.py 2>&1 | tee serie-a-updater.log
           python3 brasileirao_2026/update_scorers.py 2>&1 | tee -a serie-a-updater.log
           python3 brasileirao_2026/build.py 2>&1 | tee -a serie-a-updater.log
+          python3 brasileirao_2026/enhance_team_pages.py 2>&1 | tee -a serie-a-updater.log
       - name: Upload updater log
         if: always() && github.event_name == 'pull_request'
         uses: actions/upload-artifact@v4
