@@ -5,6 +5,14 @@ on:
     paths:
       - 'serie_a_2026/**'
       - 'brasileirao_2026/**'
+      - 'brasileirao-team-pages.css'
+      - '.github/workflows/serie-a-2026-update.yml'
+  push:
+    branches:
+      - main
+    paths:
+      - 'brasileirao_2026/**'
+      - 'brasileirao-team-pages.css'
       - '.github/workflows/serie-a-2026-update.yml'
   schedule:
     - cron: '0 */6 * * *'
