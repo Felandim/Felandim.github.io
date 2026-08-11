@@ -2085,7 +2085,7 @@
       "date": "10/08/2026",
       "home": "Goiás",
       "round": 21,
-      "score": "-",
+      "score": "1 x 0",
       "stadium": "Hailé Pinheiro (Serrinha)",
       "time": "19:30",
       "url": "https://ge.globo.com/go/futebol/brasileirao-serie-b/jogo/10-08-2026/goias-londrina.ghtml"
@@ -2131,6 +2131,16 @@
       "url": ""
     },
     {
+      "away": "Cuiabá",
+      "date": "15/08/2026",
+      "home": "Ceará",
+      "round": 22,
+      "score": "-",
+      "stadium": "Castelão (CE)",
+      "time": "16:00",
+      "url": ""
+    },
+    {
       "away": "Vila Nova",
       "date": "15/08/2026",
       "home": "Atlético-GO",
@@ -2148,16 +2158,6 @@
       "score": "-",
       "stadium": "Heriberto Hülse",
       "time": "16:00",
-      "url": ""
-    },
-    {
-      "away": "Cuiabá",
-      "date": "15/08/2026",
-      "home": "Ceará",
-      "round": 22,
-      "score": "-",
-      "stadium": "Presidente Vargas (CE)",
-      "time": "18:30",
       "url": ""
     },
     {
