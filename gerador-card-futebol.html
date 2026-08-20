@@ -4,13 +4,13 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Gerador de card de futebol para Stories | Felipe Landim</title>
-  <meta name="description" content="Escolha seu time e crie gratuitamente um card vertical com os próximos jogos para baixar ou compartilhar nos Stories.">
+  <meta name="description" content="Escolha seu time e crie gratuitamente um card vertical com os próximos ou últimos jogos para baixar ou compartilhar nos Stories.">
   <meta name="theme-color" content="#101a2d">
   <link rel="canonical" href="https://felandim.github.io/gerador-card-futebol.html">
   <meta property="og:type" content="website">
   <meta property="og:locale" content="pt_BR">
   <meta property="og:title" content="Crie seu card de jogos para os Stories">
-  <meta property="og:description" content="Selecione o campeonato e o time. O card fica pronto para baixar e compartilhar.">
+  <meta property="og:description" content="Selecione o campeonato, o time e se quer os próximos ou últimos jogos. O card fica pronto para baixar e compartilhar.">
   <meta property="og:url" content="https://felandim.github.io/gerador-card-futebol.html">
   <link rel="stylesheet" href="style.css">
 </head>
@@ -34,9 +34,9 @@
         <div>
           <div class="breadcrumb"><a href="index.html">Início</a><span>/</span><a href="dados-futebol.html">Dados de futebol</a><span>/</span><span>Gerador de card</span></div>
           <p class="eyebrow">Ferramenta gratuita</p>
-          <h1>Seu time.<br>Seus próximos jogos.<br>Seu Story.</h1>
+          <h1>Seu time.<br>Seus jogos.<br>Seu Story.</h1>
         </div>
-        <p>Escolha o campeonato e o time. O site monta uma imagem vertical pronta para baixar ou compartilhar pelo celular.</p>
+        <p>Escolha o campeonato, o time e se quer mostrar os próximos ou os últimos jogos. O site monta uma imagem vertical pronta para baixar ou compartilhar pelo celular.</p>
       </div>
     </section>
 
@@ -58,6 +58,12 @@
           <label for="team">Time ou seleção</label>
           <select id="team" data-team disabled>
             <option>Carregando times…</option>
+          </select>
+
+          <label for="card-mode">Jogos no card</label>
+          <select id="card-mode" data-card-mode>
+            <option value="upcoming">Próximos 3 jogos</option>
+            <option value="recent">Últimos 3 jogos</option>
           </select>
 
           <fieldset>
@@ -90,7 +96,7 @@
     <section class="page-section generator-how"><div class="container">
       <p class="eyebrow">Como usar</p>
       <div class="generator-steps">
-        <article><span>01</span><h2>Escolha</h2><p>Selecione o campeonato, o time e o estilo visual.</p></article>
+        <article><span>01</span><h2>Escolha</h2><p>Selecione o campeonato, o time, os jogos e o estilo visual.</p></article>
         <article><span>02</span><h2>Baixe</h2><p>Salve o PNG no tamanho certo para Stories.</p></article>
         <article><span>03</span><h2>Compartilhe</h2><p>Use o menu do celular para publicar onde quiser.</p></article>
       </div>
@@ -100,5 +106,6 @@
   <footer class="site-footer"><div class="container footer-bottom"><span>© <span data-current-year>2026</span> Felipe Landim</span><span><a href="privacy.html">Privacidade</a> · <a href="dados-futebol.html">Mais dados de futebol</a></span></div></footer>
   <script src="site.js" defer></script>
   <script src="story-card.js" defer></script>
+  <script src="story-card-mode.js" defer></script>
 </body>
 </html>

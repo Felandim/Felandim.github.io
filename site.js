@@ -99,3 +99,26 @@ filterButtons.forEach((button) => {
   section.innerHTML = `<div class="br-shell"><header><div><p class="br-kicker">Raio-x da campanha</p><h2>${team} em números</h2><p>Desempenho consolidado após ${totals.played} partidas.</p></div><a href="../classificacao-rodada-a-rodada.html">Ver classificação completa →</a></header><div class="team-kpis"><article><span>Aproveitamento</span><strong>${percentage}</strong><small>${totals.played} jogos</small></article><article><span>Gols marcados</span><strong>${totals.gf}</strong><small>${average(totals.gf)} por jogo</small></article><article><span>Gols sofridos</span><strong>${totals.ga}</strong><small>${average(totals.ga)} por jogo</small></article><article><span>Melhor posição</span><strong>${best}º</strong><small>Pior posição: ${worst}º</small></article></div><div class="team-history"><p class="br-kicker">Histórico completo</p><h2>Posição e pontos após cada rodada</h2><p>A variação compara a posição com a rodada anterior.</p><div class="br-table-wrap"><table class="br-table"><thead><tr><th>Rodada</th><th>Posição</th><th>Variação</th><th>Pontos</th><th>Na rodada</th></tr></thead><tbody>${rows}</tbody></table></div></div><nav class="team-page-nav" aria-label="Navegar entre times"><a href="${previous[1]}.html">← ${previous[0]}</a><a href="../index.html#times">Todos os times</a><a href="${next[1]}.html">${next[0]} →</a></nav></div>`;
   shareSection.before(section);
 })();
+
+(() => {
+  document.querySelectorAll('.br-nav nav').forEach((nav) => {
+    if (nav.querySelector('[data-create-card-link]')) return;
+    const link = document.createElement('a');
+    link.href = `${location.pathname.includes('/brasileirao/times/') || location.pathname.includes('/brasileirao/rodadas/') ? '../../' : location.pathname.includes('/brasileirao/') ? '../' : ''}gerador-card-futebol.html?campeonato=serie-a`;
+    link.textContent = 'Criar card';
+    link.dataset.createCardLink = '';
+    nav.append(link);
+  });
+
+  const canvas = document.querySelector('[data-evolution-card]');
+  const shareSection = document.querySelector('.br-share-section');
+  if (!canvas || !shareSection || document.querySelector('[data-team-game-cards]')) return;
+
+  const team = canvas.dataset.team;
+  const encodedTeam = encodeURIComponent(team);
+  const section = document.createElement('section');
+  section.className = 'br-section br-section-soft';
+  section.dataset.teamGameCards = '';
+  section.innerHTML = `<div class="br-shell"><p class="br-kicker">Cards de jogos</p><h2>Compartilhe os jogos do ${team}</h2><p>Gere um card vertical pronto para Instagram com três partidas.</p><div class="br-actions"><a class="br-button br-button-hot" href="../../gerador-card-futebol.html?campeonato=serie-a&time=${encodedTeam}&modo=upcoming">Próximos 3 jogos</a><a class="br-button" href="../../gerador-card-futebol.html?campeonato=serie-a&time=${encodedTeam}&modo=recent">Últimos 3 jogos</a></div></div>`;
+  shareSection.before(section);
+})();
