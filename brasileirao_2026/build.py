@@ -246,6 +246,7 @@ def nav(prefix: str = "../", current: str = "") -> str:
         ("rankings", f"{prefix}brasileirao/rankings-recordes.html", "Rankings"),
         ("times", f"{prefix}brasileirao/#times", "Times"),
         ("rodadas", f"{prefix}brasileirao/#rodadas", "Rodadas"),
+        ("libertadores", f"{prefix}libertadores/", "Libertadores"),
         ("portfolio", f"{prefix}projetos.html", "Portfólio"),
     ]
     items_list = []
@@ -451,6 +452,7 @@ def build_sitemap(insights: dict[str, Any]) -> None:
         ("/brasileirao/artilharia-rodada-a-rodada.html", "0.9"),
         ("/brasileirao/comparador-times.html", "0.9"),
         ("/brasileirao/rankings-recordes.html", "0.9"),
+        ("/libertadores/", "0.9"),
         ("/gerador-card-futebol.html", "0.8"), ("/projetos.html", "0.6"),
         ("/dados-futebol.html", "0.6"), ("/artigos.html", "0.5"), ("/about.html", "0.5"),
     ]
