@@ -758,3 +758,108 @@ h3 { margin-bottom: 12px; font-size: 1.35rem; }
   .br-results li { grid-template-columns: 1fr 70px 1fr; font-size: .78rem; }
   .br-round-number { top: 50px; opacity: .65; }
 }
+
+/* Libertadores 2026 */
+.lib-page { --lib-gold: #e8ff39; --lib-green: #064b3d; --lib-deep: #071c18; --lib-mint: #e5f1e8; }
+.lib-hero { color: #f6f4ec; background: var(--lib-deep); overflow: hidden; }
+.lib-hero-grid { min-height: 610px; display: grid; grid-template-columns: 1.35fr .65fr; gap: 80px; align-items: center; padding-block: 90px; }
+.lib-hero h1 { max-width: 880px; margin-bottom: 24px; font-size: clamp(4rem, 9vw, 8rem); line-height: .86; letter-spacing: -.075em; text-transform: uppercase; }
+.lib-hero p:not(.br-kicker) { max-width: 620px; color: #aec5bb; font-size: 1.1rem; }
+.lib-hero aside { padding: 42px; color: var(--lib-deep); background: var(--lib-gold); box-shadow: 28px 28px 0 #123a31; }
+.lib-hero aside span, .lib-hero aside strong, .lib-hero aside p { display: block; }
+.lib-hero aside span { font-size: .72rem; font-weight: 900; letter-spacing: .15em; text-transform: uppercase; }
+.lib-hero aside strong { margin: 34px 0 10px; font-size: clamp(5rem, 10vw, 8rem); line-height: .8; letter-spacing: -.09em; }
+.lib-hero aside p { margin: 0; color: var(--lib-deep) !important; font-size: .82rem !important; font-weight: 800; }
+.lib-stats { color: #fff; background: var(--lib-green); }
+.lib-stats .br-shell { display: grid; grid-template-columns: repeat(4, 1fr); }
+.lib-stats article { padding: 30px; border-right: 1px solid rgba(255,255,255,.16); }
+.lib-stats article:first-child { border-left: 1px solid rgba(255,255,255,.16); }
+.lib-stats strong, .lib-stats span { display: block; }
+.lib-stats strong { color: var(--lib-gold); font-size: 2.5rem; letter-spacing: -.05em; }
+.lib-stats span { color: #b9cfc6; font-size: .72rem; font-weight: 800; text-transform: uppercase; }
+.lib-legend { display: flex; align-items: center; gap: 9px; color: #65746c; font-size: .75rem; }
+.lib-legend i { width: 18px; height: 5px; background: var(--lib-gold); border: 1px solid #bfce32; }
+.lib-groups { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; }
+.lib-group { min-width: 0; padding: 24px; background: #fff; border: 1px solid var(--br-line); }
+.lib-group h3 { margin-bottom: 16px; font-size: 1.55rem; }
+.lib-table-scroll { overflow-x: auto; }
+.lib-group table { width: 100%; min-width: 520px; border-collapse: collapse; }
+.lib-group th, .lib-group td { padding: 10px 8px; border-bottom: 1px solid #e2e5dd; font-size: .75rem; text-align: center; }
+.lib-group thead th { color: #6f7a73; background: #f1f2ec; font-size: .61rem; letter-spacing: .08em; text-transform: uppercase; }
+.lib-group tbody th { min-width: 180px; text-align: left; }
+.lib-group tr.lib-qualified { box-shadow: inset 4px 0 var(--lib-gold); }
+.lib-team { display: inline-flex; min-width: 0; align-items: center; gap: 9px; font-weight: 790; }
+.lib-team img, .lib-crest-placeholder { width: 34px; height: 34px; flex: 0 0 34px; object-fit: contain; }
+.lib-crest-placeholder { display: grid; place-items: center; color: #849087; background: #eef0e9; border-radius: 50%; }
+.lib-dark { color: #f6f4ec; background: var(--lib-deep); }
+.lib-dark .br-section-head { border-color: #38554a; }
+.lib-bracket { display: grid; grid-template-columns: repeat(4, minmax(230px, 1fr)); gap: 16px; overflow-x: auto; padding-bottom: 10px; }
+.lib-bracket-column { min-width: 230px; }
+.lib-bracket-column h3 { color: var(--lib-gold); font-size: .78rem; letter-spacing: .12em; text-transform: uppercase; }
+.lib-tie { margin-bottom: 14px; padding: 16px; color: var(--lib-deep); background: #f7f6ef; }
+.lib-tie > span, .lib-tie > b { display: block; }
+.lib-tie > span { margin-bottom: 10px; color: #68756e; font-size: .6rem; font-weight: 850; text-transform: uppercase; }
+.lib-tie .lib-team { display: flex; padding-block: 5px; }
+.lib-tie .lib-team img, .lib-tie .lib-crest-placeholder { width: 26px; height: 26px; flex-basis: 26px; }
+.lib-tie > b { margin-top: 8px; padding-top: 8px; border-top: 1px solid #dfe2da; font-size: .7rem; }
+.lib-filters { display: grid; grid-template-columns: 1fr 1fr auto; gap: 16px; align-items: end; margin-bottom: 24px; padding: 22px; background: var(--lib-mint); }
+.lib-filters label { color: #4f6057; font-size: .68rem; font-weight: 850; letter-spacing: .08em; text-transform: uppercase; }
+.lib-filters select, .lib-filters input { display: block; width: 100%; margin-top: 7px; padding: 11px 12px; color: var(--lib-deep); background: #fff; border: 1px solid #b9c9c0; }
+.lib-filters > span { padding: 11px 0; color: var(--lib-green); font-size: .78rem; font-weight: 850; white-space: nowrap; }
+.lib-games { border-top: 2px solid var(--lib-deep); }
+.lib-game { display: grid; grid-template-columns: 170px 125px 1fr 80px; gap: 18px; align-items: center; min-height: 100px; padding: 16px 10px; border-bottom: 1px solid #dfe3db; }
+.lib-game[hidden] { display: none; }
+.lib-game > div:first-child span, .lib-game > div:first-child small, .lib-game time small { display: block; }
+.lib-game > div:first-child span { color: var(--lib-green); font-size: .68rem; font-weight: 900; text-transform: uppercase; }
+.lib-game > div:first-child small, .lib-game time small { color: #77837c; font-size: .62rem; }
+.lib-game time { font-size: .78rem; font-weight: 800; }
+.lib-game-teams { display: grid; grid-template-columns: minmax(130px, 1fr) 90px minmax(130px, 1fr); align-items: center; gap: 14px; }
+.lib-game-teams > strong { text-align: center; }
+.lib-game-teams > strong small { display: block; color: #6f7a73; font-size: .55rem; }
+.lib-game-teams > .lib-team:last-child { justify-content: flex-end; text-align: right; }
+.lib-game > a { font-size: .7rem; font-weight: 850; text-align: right; }
+.lib-empty { padding: 40px; background: #f0f2eb; text-align: center; }
+.lib-soft { background: var(--lib-mint); }
+.lib-two-cols { display: grid; grid-template-columns: .72fr 1.28fr; gap: 80px; align-items: start; }
+.lib-scorers { margin: 0; padding: 0; list-style: none; background: #fff; border-top: 2px solid var(--lib-deep); }
+.lib-scorers li { display: grid; grid-template-columns: 34px 180px 1fr 100px 75px; gap: 12px; align-items: center; padding: 12px 16px; border-bottom: 1px solid #dfe3db; }
+.lib-scorers li > span { color: #849087; font-size: .7rem; font-weight: 850; }
+.lib-scorers li > strong { font-size: .9rem; }
+.lib-scorers li > small { color: #6c7971; }
+.lib-scorers li > b { color: var(--lib-green); text-align: right; }
+.lib-scorers .lib-team { font-size: .72rem; }
+.lib-scorers .lib-team img { width: 28px; height: 28px; flex-basis: 28px; }
+.lib-participants { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; margin: 0; padding: 1px; list-style: none; background: #d9ded6; }
+.lib-participants li { min-width: 0; padding: 18px; background: #fff; }
+.lib-regulation { color: #f6f4ec; background: var(--lib-green); }
+.lib-regulation dl { margin: 30px 0 0; }
+.lib-regulation dl div { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,.18); }
+.lib-regulation dt { font-weight: 850; }
+.lib-regulation dd { margin: 0; color: #c1d5cc; }
+.lib-regulation article { padding: 32px; color: var(--lib-deep); background: var(--lib-gold); }
+.lib-regulation article p { line-height: 1.75; }
+
+@media (max-width: 980px) {
+  .lib-hero-grid, .lib-two-cols { grid-template-columns: 1fr; }
+  .lib-groups { grid-template-columns: 1fr; }
+  .lib-participants { grid-template-columns: repeat(3, 1fr); }
+  .lib-game { grid-template-columns: 135px 100px 1fr; }
+  .lib-game > a { display: none; }
+  .lib-scorers li { grid-template-columns: 30px 150px 1fr 70px; }
+  .lib-scorers li > small { display: none; }
+}
+
+@media (max-width: 720px) {
+  .lib-hero-grid { min-height: auto; padding-block: 60px 75px; }
+  .lib-hero h1 { font-size: clamp(3.7rem, 18vw, 6rem); }
+  .lib-hero aside { padding: 30px; box-shadow: 14px 14px 0 #123a31; }
+  .lib-stats .br-shell { grid-template-columns: repeat(2, 1fr); }
+  .lib-stats article:nth-child(3) { border-left: 1px solid rgba(255,255,255,.16); }
+  .lib-filters { grid-template-columns: 1fr; }
+  .lib-game { grid-template-columns: 1fr; gap: 9px; padding-block: 22px; }
+  .lib-game-teams { grid-template-columns: 1fr 70px 1fr; }
+  .lib-participants { grid-template-columns: repeat(2, 1fr); }
+  .lib-scorers li { grid-template-columns: 28px 1fr auto; }
+  .lib-scorers li > .lib-team { display: none; }
+  .lib-regulation dl div { grid-template-columns: 1fr; gap: 2px; }
+}
