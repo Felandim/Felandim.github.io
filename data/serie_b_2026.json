@@ -2306,7 +2306,7 @@
       "home": "Ceará",
       "round": 24,
       "score": "-",
-      "stadium": "Presidente Vargas (CE)",
+      "stadium": "Castelão (CE)",
       "time": "18:00",
       "url": "https://ge.globo.com/ce/futebol/brasileirao-serie-b/jogo/22-08-2026/ceara-londrina.ghtml"
     },
@@ -2931,6 +2931,16 @@
       "url": ""
     },
     {
+      "away": "Sport",
+      "date": "26/09/2026",
+      "home": "Náutico",
+      "round": 30,
+      "score": "-",
+      "stadium": "Esportes da Sorte Aflitos",
+      "time": "16:30",
+      "url": ""
+    },
+    {
       "away": "Atlético-GO",
       "date": "26/09/2026",
       "home": "Goiás",
@@ -2938,16 +2948,6 @@
       "score": "-",
       "stadium": "Hailé Pinheiro (Serrinha)",
       "time": "18:30",
-      "url": ""
-    },
-    {
-      "away": "Sport",
-      "date": "26/09/2026",
-      "home": "Náutico",
-      "round": 30,
-      "score": "-",
-      "stadium": "Esportes da Sorte Aflitos",
-      "time": "20:30",
       "url": ""
     },
     {
