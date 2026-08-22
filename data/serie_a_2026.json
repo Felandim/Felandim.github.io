@@ -392,12 +392,12 @@
     },
     {
       "away": "Mirassol",
-      "date": "",
+      "date": "02/09/2026",
       "home": "Flamengo",
       "round": 4,
       "score": "-",
-      "stadium": "",
-      "time": "",
+      "stadium": "Maracanã",
+      "time": "19:30",
       "url": ""
     },
     {
@@ -2461,6 +2461,16 @@
       "url": ""
     },
     {
+      "away": "Palmeiras",
+      "date": "30/08/2026",
+      "home": "Mirassol",
+      "round": 25,
+      "score": "-",
+      "stadium": "Maião",
+      "time": "18:30",
+      "url": ""
+    },
+    {
       "away": "Chapecoense",
       "date": "30/08/2026",
       "home": "Grêmio",
@@ -2468,16 +2478,6 @@
       "score": "-",
       "stadium": "Arena do Grêmio",
       "time": "18:30",
-      "url": ""
-    },
-    {
-      "away": "Palmeiras",
-      "date": "30/08/2026",
-      "home": "Mirassol",
-      "round": 25,
-      "score": "-",
-      "stadium": "Maião",
-      "time": "19:30",
       "url": ""
     },
     {
@@ -2521,16 +2521,6 @@
       "url": ""
     },
     {
-      "away": "Mirassol",
-      "date": "05/09/2026",
-      "home": "Coritiba",
-      "round": 26,
-      "score": "-",
-      "stadium": "Couto Pereira",
-      "time": "18:30",
-      "url": ""
-    },
-    {
       "away": "Vasco",
       "date": "05/09/2026",
       "home": "Fluminense",
@@ -2538,6 +2528,16 @@
       "score": "-",
       "stadium": "Maracanã",
       "time": "21:00",
+      "url": ""
+    },
+    {
+      "away": "Mirassol",
+      "date": "06/09/2026",
+      "home": "Coritiba",
+      "round": 26,
+      "score": "-",
+      "stadium": "Couto Pereira",
+      "time": "11:00",
       "url": ""
     },
     {
