@@ -63,3 +63,5 @@ jobs:
       - name: Explain skipped publish
         if: env.INSTAGRAM_ACCESS_TOKEN == ''
         run: echo "INSTAGRAM_ACCESS_TOKEN is not configured; card generation succeeded but publishing was skipped."
+
+# Secret configured; keep this comment to document the verified production trigger.
