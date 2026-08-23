@@ -2285,7 +2285,7 @@
       "date": "20/08/2026",
       "home": "Athletic Club",
       "round": 23,
-      "score": "-",
+      "score": "0 x 2",
       "stadium": "Arena Sicredi",
       "time": "19:30",
       "url": "https://ge.globo.com/mg/zona-da-mata-centro-oeste/futebol/brasileirao-serie-b/jogo/20-08-2026/athletic-club-crb.ghtml"
@@ -2295,7 +2295,7 @@
       "date": "20/08/2026",
       "home": "Novorizontino",
       "round": 23,
-      "score": "-",
+      "score": "3 x 0",
       "stadium": "Jorge Ismael de Biasi",
       "time": "20:30",
       "url": "https://ge.globo.com/sp/tem-esporte/futebol/brasileirao-serie-b/jogo/20-08-2026/novorizontino-america-mg.ghtml"
@@ -2305,8 +2305,8 @@
       "date": "22/08/2026",
       "home": "Ceará",
       "round": 24,
-      "score": "-",
-      "stadium": "Presidente Vargas (CE)",
+      "score": "2 x 1",
+      "stadium": "Castelão (CE)",
       "time": "18:00",
       "url": "https://ge.globo.com/ce/futebol/brasileirao-serie-b/jogo/22-08-2026/ceara-londrina.ghtml"
     },
@@ -2315,10 +2315,10 @@
       "date": "22/08/2026",
       "home": "Cuiabá",
       "round": 24,
-      "score": "-",
+      "score": "1 x 1",
       "stadium": "Arena Pantanal",
       "time": "18:30",
-      "url": ""
+      "url": "https://ge.globo.com/mt/futebol/brasileirao-serie-b/jogo/22-08-2026/cuiaba-goias.ghtml"
     },
     {
       "away": "Avaí",
@@ -2328,7 +2328,7 @@
       "score": "-",
       "stadium": "Moisés Lucarelli",
       "time": "16:00",
-      "url": ""
+      "url": "https://ge.globo.com/sp/campinas-e-regiao/futebol/brasileirao-serie-b/jogo/23-08-2026/ponte-preta-avai.ghtml"
     },
     {
       "away": "Náutico",
@@ -2368,7 +2368,7 @@
       "score": "-",
       "stadium": "Arena Sicredi",
       "time": "19:30",
-      "url": ""
+      "url": "https://ge.globo.com/mg/zona-da-mata-centro-oeste/futebol/brasileirao-serie-b/jogo/24-08-2026/athletic-club-novorizontino.ghtml"
     },
     {
       "away": "América-MG",
@@ -2388,7 +2388,7 @@
       "score": "-",
       "stadium": "Antônio Accioly",
       "time": "19:30",
-      "url": ""
+      "url": "https://ge.globo.com/go/futebol/brasileirao-serie-b/jogo/25-08-2026/atletico-go-botafogo-sp.ghtml"
     },
     {
       "away": "CRB",
@@ -2931,6 +2931,16 @@
       "url": ""
     },
     {
+      "away": "Sport",
+      "date": "26/09/2026",
+      "home": "Náutico",
+      "round": 30,
+      "score": "-",
+      "stadium": "Esportes da Sorte Aflitos",
+      "time": "16:30",
+      "url": ""
+    },
+    {
       "away": "Atlético-GO",
       "date": "26/09/2026",
       "home": "Goiás",
@@ -2938,16 +2948,6 @@
       "score": "-",
       "stadium": "Hailé Pinheiro (Serrinha)",
       "time": "18:30",
-      "url": ""
-    },
-    {
-      "away": "Sport",
-      "date": "26/09/2026",
-      "home": "Náutico",
-      "round": 30,
-      "score": "-",
-      "stadium": "Esportes da Sorte Aflitos",
-      "time": "20:30",
       "url": ""
     },
     {
