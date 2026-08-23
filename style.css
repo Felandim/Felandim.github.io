@@ -838,6 +838,13 @@ h3 { margin-bottom: 12px; font-size: 1.35rem; }
 .lib-regulation dd { margin: 0; color: #c1d5cc; }
 .lib-regulation article { padding: 32px; color: var(--lib-deep); background: var(--lib-gold); }
 .lib-regulation article p { line-height: 1.75; }
+.cdb-page { --lib-gold: #ffcf33; --lib-green: #8a331f; --lib-deep: #17120a; --lib-mint: #f6eadc; }
+.cdb-page .lib-hero aside { box-shadow: 28px 28px 0 #5f281c; }
+.cdb-phases { grid-template-columns: repeat(3, 1fr); }
+.cdb-phase-card > span { color: var(--lib-green); font-size: .65rem; font-weight: 900; letter-spacing: .08em; text-transform: uppercase; }
+.cdb-phase-card p { color: #68756e; font-size: .78rem; }
+.cdb-phase-card strong { font-size: .75rem; }
+.cdb-bracket { grid-template-columns: repeat(5, minmax(230px, 1fr)); }
 
 @media (max-width: 980px) {
   .lib-hero-grid, .lib-two-cols { grid-template-columns: 1fr; }

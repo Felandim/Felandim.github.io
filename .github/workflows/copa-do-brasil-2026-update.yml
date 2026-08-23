@@ -1,0 +1,67 @@
+name: Update Copa do Brasil 2026 Data
+
+on:
+  pull_request:
+    paths:
+      - 'copa_do_brasil_2026/**'
+      - 'libertadores.js'
+      - 'style.css'
+      - '.github/workflows/copa-do-brasil-2026-update.yml'
+  push:
+    branches:
+      - main
+    paths:
+      - 'copa_do_brasil_2026/**'
+      - 'libertadores.js'
+      - 'style.css'
+      - '.github/workflows/copa-do-brasil-2026-update.yml'
+  schedule:
+    - cron: '45 */6 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: copa-do-brasil-2026-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.ref || github.ref_name }}
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Atualizar página da Copa do Brasil
+        run: python3 copa_do_brasil_2026/main.py
+      - name: Validar dados gerados
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+
+          data = json.loads(Path('data/copa_do_brasil_2026.json').read_text(encoding='utf-8'))
+          assert len(data['phases']) == 9
+          assert len(data['matches']) == 155
+          assert len(data['participants']) == 126
+          assert data['scorers']
+          print('9 fases, 126 times, 155 partidas e artilharia validados.')
+          PY
+      - name: Commitar atualização
+        if: github.event_name != 'pull_request'
+        run: |
+          if git diff --quiet data/copa_do_brasil_2026.json copa-do-brasil/index.html; then
+            echo "No changes"
+            exit 0
+          fi
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git config user.name "github-actions[bot]"
+          git add data/copa_do_brasil_2026.json copa-do-brasil/index.html
+          git commit -m "Update Copa do Brasil 2026 data"
+          git pull --rebase origin "${GITHUB_REF_NAME}"
+          git push

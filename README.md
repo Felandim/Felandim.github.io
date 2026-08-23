@@ -6,6 +6,7 @@ Site de evolução rodada a rodada do Brasileirão, com o portfólio profissiona
 
 - `index.html`: página principal do produto Rodada a Rodada.
 - `brasileirao/`: classificação, artilharia, rankings, comparador, páginas de times e resumos por rodada.
+- `libertadores_2026/` e `copa_do_brasil_2026/`: coletores e painéis completos dos torneios mata-mata.
 - `brasileirao_2026/`: coleta de artilheiros e gerador das análises e páginas.
 - `projetos.html`: seleção de projetos públicos.
 - `dados-futebol.html`: estudo de caso e hub das competições.
@@ -16,7 +17,7 @@ Site de evolução rodada a rodada do Brasileirão, com o portfólio profissiona
 
 ## Atualizações automáticas
 
-Os workflows do GitHub Actions atualizam a Copa do Mundo a cada quatro horas e as Séries A e B a cada seis horas. A atualização da Série A também consolida os autores dos gols, recalcula classificação, artilharia e movimentos de cada rodada e reescreve as páginas do produto.
+Os workflows do GitHub Actions atualizam a Copa do Mundo a cada quatro horas e as Séries A, B, Libertadores e Copa do Brasil a cada seis horas. A atualização da Série A também consolida os autores dos gols, recalcula classificação, artilharia e movimentos de cada rodada e reescreve as páginas do produto.
 
 ## Validação
 
