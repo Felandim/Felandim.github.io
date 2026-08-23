@@ -55,13 +55,51 @@ jobs:
           echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
 
       - name: Publish to Instagram
+        id: publish
         if: env.INSTAGRAM_ACCESS_TOKEN != ''
+        continue-on-error: true
         env:
           IMAGE_URL: https://raw.githubusercontent.com/${{ github.repository }}/${{ steps.card_commit.outputs.sha }}/assets/instagram/daily.png
-        run: python scripts/instagram_daily.py publish --image-url "$IMAGE_URL"
+        run: |
+          set -o pipefail
+          python scripts/instagram_daily.py publish --image-url "$IMAGE_URL" 2>&1 | tee /tmp/instagram-publish.log
 
       - name: Explain skipped publish
         if: env.INSTAGRAM_ACCESS_TOKEN == ''
         run: echo "INSTAGRAM_ACCESS_TOKEN is not configured; card generation succeeded but publishing was skipped."
 
-# Secret configured; keep this comment to document the verified production trigger.
+      - name: Record publish status
+        if: always()
+        env:
+          PUBLISH_OUTCOME: ${{ steps.publish.outcome }}
+        run: |
+          python - <<'PY'
+          import json
+          import os
+          from datetime import datetime, timezone
+          from pathlib import Path
+
+          log_path = Path('/tmp/instagram-publish.log')
+          log = log_path.read_text(encoding='utf-8', errors='replace').strip() if log_path.exists() else ''
+          payload = {
+              'timestamp_utc': datetime.now(timezone.utc).isoformat(),
+              'outcome': os.environ.get('PUBLISH_OUTCOME', 'skipped'),
+              'log': log[-2000:],
+          }
+          path = Path('data/instagram_publish_status.json')
+          path.parent.mkdir(parents=True, exist_ok=True)
+          path.write_text(json.dumps(payload, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
+          PY
+
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git config user.name "github-actions[bot]"
+          git add data/instagram_publish_status.json
+          if ! git diff --cached --quiet; then
+            git commit -m "chore(instagram): record publish status"
+            git pull --rebase origin main
+            git push origin main
+          fi
+
+      - name: Fail if Instagram publish failed
+        if: steps.publish.outcome == 'failure'
+        run: exit 1
