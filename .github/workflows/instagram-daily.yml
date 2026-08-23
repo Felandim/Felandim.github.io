@@ -1,0 +1,65 @@
+name: Publish Daily Instagram Summary
+
+on:
+  schedule:
+    # 10:00 em São Paulo (UTC-3)
+    - cron: '0 13 * * *'
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - 'scripts/instagram_daily.py'
+      - 'tests/test_instagram_daily.py'
+      - '.github/workflows/instagram-daily.yml'
+
+permissions:
+  contents: write
+
+env:
+  INSTAGRAM_IG_USER_ID: '17841429981371844'
+  INSTAGRAM_ACCESS_TOKEN: ${{ secrets.INSTAGRAM_ACCESS_TOKEN }}
+  INSTAGRAM_API_VERSION: 'v23.0'
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install pillow requests
+
+      - name: Test Instagram automation
+        run: python -m unittest tests/test_instagram_daily.py
+
+      - name: Render daily card
+        run: python scripts/instagram_daily.py render
+
+      - name: Commit daily card
+        id: card_commit
+        run: |
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git config user.name "github-actions[bot]"
+          git add assets/instagram/daily.png
+          if ! git diff --cached --quiet; then
+            git commit -m "chore(instagram): refresh daily card"
+            git pull --rebase origin main
+            git push origin main
+          fi
+          echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+
+      - name: Publish to Instagram
+        if: env.INSTAGRAM_ACCESS_TOKEN != ''
+        env:
+          IMAGE_URL: https://raw.githubusercontent.com/${{ github.repository }}/${{ steps.card_commit.outputs.sha }}/assets/instagram/daily.png
+        run: python scripts/instagram_daily.py publish --image-url "$IMAGE_URL"
+
+      - name: Explain skipped publish
+        if: env.INSTAGRAM_ACCESS_TOKEN == ''
+        run: echo "INSTAGRAM_ACCESS_TOKEN is not configured; card generation succeeded but publishing was skipped."
