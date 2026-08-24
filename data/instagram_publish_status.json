@@ -1,5 +1,5 @@
 {
-  "timestamp_utc": "2026-08-23T22:53:48.779815+00:00",
-  "outcome": "success",
-  "log": "Publicado: 18110115683329146"
+  "timestamp_utc": "2026-08-24T13:56:19.966332+00:00",
+  "outcome": "failure",
+  "log": "Traceback (most recent call last):\n  File \"/home/runner/work/Felandim.github.io/Felandim.github.io/scripts/instagram_daily.py\", line 211, in <module>\n    main()\n  File \"/home/runner/work/Felandim.github.io/Felandim.github.io/scripts/instagram_daily.py\", line 206, in main\n    media_id = publish(args.image_url, caption, ig_user_id, access_token, api_version)\n               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/runner/work/Felandim.github.io/Felandim.github.io/scripts/instagram_daily.py\", line 172, in publish\n    container = _post(\n                ^^^^^^\n  File \"/home/runner/work/Felandim.github.io/Felandim.github.io/scripts/instagram_daily.py\", line 166, in _post\n    raise RuntimeError(f\"Instagram API {response.status_code}: {payload}\")\nRuntimeError: Instagram API 400: {'error': {'message': 'Error validating access token: The session has been invalidated because the user changed their password or Facebook has changed the session for security reasons.', 'type': 'OAuthException', 'code': 190, 'error_subcode': 0, 'fbtrace_id': 'AfbzhESTkzCEIJYwynndYHi'}}"
 }
