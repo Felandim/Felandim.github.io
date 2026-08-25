@@ -2365,7 +2365,7 @@
       "date": "24/08/2026",
       "home": "Athletic Club",
       "round": 24,
-      "score": "-",
+      "score": "1 x 4",
       "stadium": "Arena Sicredi",
       "time": "19:30",
       "url": "https://ge.globo.com/mg/zona-da-mata-centro-oeste/futebol/brasileirao-serie-b/jogo/24-08-2026/athletic-club-novorizontino.ghtml"
@@ -2375,7 +2375,7 @@
       "date": "24/08/2026",
       "home": "Sport",
       "round": 24,
-      "score": "-",
+      "score": "3 x 0",
       "stadium": "Ilha do Retiro",
       "time": "19:30",
       "url": "https://ge.globo.com/pe/futebol/brasileirao-serie-b/jogo/24-08-2026/sport-america-mg.ghtml"
@@ -2441,22 +2441,22 @@
       "url": ""
     },
     {
-      "away": "Atlético-GO",
-      "date": "30/08/2026",
-      "home": "Avaí",
-      "round": 25,
-      "score": "-",
-      "stadium": "Ressacada",
-      "time": "11:00",
-      "url": ""
-    },
-    {
       "away": "Ponte Preta",
       "date": "30/08/2026",
       "home": "América-MG",
       "round": 25,
       "score": "-",
       "stadium": "Independência",
+      "time": "16:00",
+      "url": ""
+    },
+    {
+      "away": "Atlético-GO",
+      "date": "30/08/2026",
+      "home": "Avaí",
+      "round": 25,
+      "score": "-",
+      "stadium": "Ressacada",
       "time": "16:00",
       "url": ""
     },
