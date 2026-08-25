@@ -6,7 +6,6 @@ from __future__ import annotations
 import argparse
 import json
 import os
-import textwrap
 from datetime import datetime
 from pathlib import Path
 from zoneinfo import ZoneInfo
@@ -56,6 +55,41 @@ def _join_teams(values: list[str], empty: str = "ninguém") -> str:
     return ", ".join(values) if values else empty
 
 
+def five_round_form(insights: dict) -> dict | None:
+    """Retorna quem mais pontuou entre o snapshot atual e o de cinco rodadas atrás."""
+    snapshots = insights.get("snapshots", [])
+    if len(snapshots) < 6:
+        return None
+
+    latest = snapshots[-1]
+    base = snapshots[-6]
+    base_by_team = {row["team"]: row for row in base["table"]}
+    candidates = []
+
+    for row in latest["table"]:
+        previous = base_by_team.get(row["team"])
+        if previous is None:
+            continue
+        candidates.append({
+            "team": row["team"],
+            "points": row["points"] - previous["points"],
+            "position_gain": previous["position"] - row["position"],
+        })
+
+    if not candidates:
+        return None
+
+    best_points = max(item["points"] for item in candidates)
+    leaders = [item for item in candidates if item["points"] == best_points]
+    leaders.sort(key=lambda item: (-item["position_gain"], item["team"]))
+    return {
+        "teams": [item["team"] for item in leaders],
+        "points": best_points,
+        "from_round": base["round"],
+        "to_round": latest["round"],
+    }
+
+
 def build_caption(insights: dict) -> str:
     snapshot, latest = current_snapshot(insights)
     table = snapshot["table"]
@@ -71,6 +105,12 @@ def build_caption(insights: dict) -> str:
         f"Z4: {z4}.",
         f"Gols na rodada: {latest['goals']}.",
     ]
+
+    form = five_round_form(insights)
+    if form:
+        teams = _join_teams(form["teams"])
+        verb = "somou" if len(form["teams"]) == 1 else "somaram"
+        lines.append(f"Em alta: {teams} {verb} {form['points']} pontos nas últimas 5 rodadas.")
 
     rise = latest.get("biggest_rise", {})
     fall = latest.get("biggest_fall", {})
@@ -137,18 +177,17 @@ def render_card(insights: dict, output: Path = DEFAULT_OUTPUT, now: datetime | N
         _draw_text(draw, (980, y), f"{row['points']} pts", body, anchor="ra")
         y += 58
 
-    rise = latest.get("biggest_rise", {})
-    fall = latest.get("biggest_fall", {})
-    insights_line = []
-    if rise.get("places"):
-        insights_line.append(f"↑ {_join_teams(rise.get('teams', []))} +{rise['places']}")
-    if fall.get("places"):
-        insights_line.append(f"↓ {_join_teams(fall.get('teams', []))} -{fall['places']}")
-    movement = "   •   ".join(insights_line) or "Sem grandes mudanças de posição"
-    movement = textwrap.shorten(movement, width=62, placeholder="…")
-
+    form = five_round_form(insights)
     draw.rounded_rectangle((60, 1165, 1020, 1260), radius=24, fill=PANEL)
-    _draw_text(draw, (90, 1198), f"{latest['goals']} gols na rodada   •   {movement}", small)
+    if form:
+        teams = _join_teams(form["teams"][:2])
+        if len(form["teams"]) > 2:
+            teams += " + outros"
+        _draw_text(draw, (90, 1185), "EM ALTA • ÚLTIMAS 5 RODADAS", small, ACCENT)
+        _draw_text(draw, (90, 1222), f"{teams} • {form['points']} pontos", body)
+    else:
+        _draw_text(draw, (90, 1198), f"{latest['goals']} gols na rodada", small)
+
     _draw_text(draw, (540, 1310), SITE_URL, small, MUTED, anchor="mm")
 
     output.parent.mkdir(parents=True, exist_ok=True)
