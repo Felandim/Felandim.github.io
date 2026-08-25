@@ -97,3 +97,8 @@ selectedTheme = function selectedThemeWithTeamColors() {
   }
   return themes[selected] || fallbackTeamTheme;
 };
+
+if (normalizedMatches.length && teamSelect?.value) {
+  drawCard();
+  updatePageUrl();
+}
