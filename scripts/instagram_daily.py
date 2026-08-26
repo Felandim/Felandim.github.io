@@ -90,6 +90,26 @@ def five_round_form(insights: dict) -> dict | None:
     }
 
 
+def table_hook(insights: dict) -> str:
+    """Cria um gancho factual curto a partir da disputa por título ou contra o Z4."""
+    snapshot, _ = current_snapshot(insights)
+    table = snapshot["table"]
+    if len(table) < 17:
+        return "A tabela segue em movimento"
+
+    title_gap = table[0]["points"] - table[1]["points"]
+    relegation_gap = table[15]["points"] - table[16]["points"]
+
+    if title_gap <= 3:
+        unit = "ponto" if title_gap == 1 else "pontos"
+        return f"Liderança separada por {title_gap} {unit}"
+    if relegation_gap <= 3:
+        unit = "ponto" if relegation_gap == 1 else "pontos"
+        return f"Fora do Z4 por apenas {relegation_gap} {unit}"
+
+    return f"Líder abre {title_gap} pontos na ponta"
+
+
 def build_caption(insights: dict) -> str:
     snapshot, latest = current_snapshot(insights)
     table = snapshot["table"]
@@ -98,7 +118,8 @@ def build_caption(insights: dict) -> str:
     z4 = ", ".join(row["team"] for row in table[-4:])
 
     lines = [
-        f"Brasileirão {insights['season']} — resumo da rodada {latest['round']}" + (" (parcial)." if latest.get('matches', 10) < 10 else "."),
+        table_hook(insights) + ".",
+        f"Brasileirão {insights['season']} — rodada {latest['round']}" + (" (parcial)." if latest.get('matches', 10) < 10 else "."),
         "",
         f"Líder: {leader['team']} — {leader['points']} pts.",
         f"G4: {top4}.",
@@ -155,16 +176,17 @@ def render_card(insights: dict, output: Path = DEFAULT_OUTPUT, now: datetime | N
     big = _font(84, True)
 
     _draw_text(draw, (70, 70), "BRASILEIRÃO POR RODADAS", title)
-    _draw_text(draw, (72, 157), f"Resumo diário • {now.strftime('%d/%m/%Y')}", subtitle, MUTED)
+    _draw_text(draw, (72, 145), table_hook(insights), subtitle, ACCENT)
+    _draw_text(draw, (72, 190), f"Rodada {latest['round']} • {now.strftime('%d/%m/%Y')}", small, MUTED)
 
-    draw.rounded_rectangle((60, 230, 1020, 450), radius=32, fill=PANEL)
-    round_label = f"RODADA {latest['round']}" + (" • PARCIAL" if latest.get('matches', 10) < 10 else "")
-    _draw_text(draw, (95, 270), round_label, section, ACCENT)
-    _draw_text(draw, (95, 330), leader["team"], big)
-    _draw_text(draw, (985, 350), f"{leader['points']} pts", section, TEXT, anchor="ra")
+    draw.rounded_rectangle((60, 250, 1020, 460), radius=32, fill=PANEL)
+    round_label = f"LÍDER" + (" • RODADA PARCIAL" if latest.get('matches', 10) < 10 else "")
+    _draw_text(draw, (95, 285), round_label, section, ACCENT)
+    _draw_text(draw, (95, 340), leader["team"], big)
+    _draw_text(draw, (985, 360), f"{leader['points']} pts", section, TEXT, anchor="ra")
 
-    _draw_text(draw, (70, 515), "CLASSIFICAÇÃO", section)
-    y = 575
+    _draw_text(draw, (70, 520), "CLASSIFICAÇÃO", section)
+    y = 580
     for row in table[:4]:
         _draw_text(draw, (80, y), f"{row['position']:>2}  {row['team']}", body)
         _draw_text(draw, (980, y), f"{row['points']} pts", body, anchor="ra")
