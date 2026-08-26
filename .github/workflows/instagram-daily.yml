@@ -2,16 +2,9 @@ name: Publish Daily Instagram Summary
 
 on:
   schedule:
-    # 10:00 em São Paulo (UTC-3)
+    # 10:00 em São Paulo (UTC-3). O job só publica se houve jogo concluído no dia anterior.
     - cron: '0 13 * * *'
   workflow_dispatch:
-  push:
-    branches:
-      - main
-    paths:
-      - 'scripts/instagram_daily.py'
-      - 'tests/test_instagram_daily.py'
-      - '.github/workflows/instagram-daily.yml'
 
 permissions:
   contents: write
@@ -38,11 +31,26 @@ jobs:
       - name: Test Instagram automation
         run: python -m unittest tests/test_instagram_daily.py
 
+      - name: Check if yesterday had completed matches
+        id: should_post
+        run: |
+          if python scripts/instagram_daily.py should-post; then
+            echo "publish=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "publish=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Explain no-match skip
+        if: steps.should_post.outputs.publish != 'true'
+        run: echo "No completed Serie A matches yesterday; Instagram publishing was skipped."
+
       - name: Render daily card
+        if: steps.should_post.outputs.publish == 'true'
         run: python scripts/instagram_daily.py render
 
       - name: Commit daily card
         id: card_commit
+        if: steps.should_post.outputs.publish == 'true'
         run: |
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git config user.name "github-actions[bot]"
@@ -56,7 +64,7 @@ jobs:
 
       - name: Publish to Instagram
         id: publish
-        if: env.INSTAGRAM_ACCESS_TOKEN != ''
+        if: steps.should_post.outputs.publish == 'true' && env.INSTAGRAM_ACCESS_TOKEN != ''
         continue-on-error: true
         env:
           IMAGE_URL: https://raw.githubusercontent.com/${{ github.repository }}/${{ steps.card_commit.outputs.sha }}/assets/instagram/daily.png
@@ -64,12 +72,12 @@ jobs:
           set -o pipefail
           python scripts/instagram_daily.py publish --image-url "$IMAGE_URL" 2>&1 | tee /tmp/instagram-publish.log
 
-      - name: Explain skipped publish
-        if: env.INSTAGRAM_ACCESS_TOKEN == ''
+      - name: Explain missing token
+        if: steps.should_post.outputs.publish == 'true' && env.INSTAGRAM_ACCESS_TOKEN == ''
         run: echo "INSTAGRAM_ACCESS_TOKEN is not configured; card generation succeeded but publishing was skipped."
 
       - name: Record publish status
-        if: always()
+        if: always() && steps.should_post.outputs.publish == 'true'
         env:
           PUBLISH_OUTCOME: ${{ steps.publish.outcome }}
         run: |
