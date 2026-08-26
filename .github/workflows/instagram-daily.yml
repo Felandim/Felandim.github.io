@@ -34,7 +34,24 @@ jobs:
       - name: Check if yesterday had completed matches
         id: should_post
         run: |
-          if python scripts/instagram_daily.py should-post; then
+          if python - <<'PY'
+          import json
+          import re
+          from datetime import datetime, timedelta
+          from pathlib import Path
+          from zoneinfo import ZoneInfo
+
+          matches = json.loads(Path('data/serie_a_2026.json').read_text(encoding='utf-8'))['matches']
+          target = (datetime.now(ZoneInfo('America/Sao_Paulo')).date() - timedelta(days=1)).strftime('%d/%m/%Y')
+          completed = [
+              match for match in matches
+              if match.get('date') == target
+              and re.fullmatch(r'\d+\s*x\s*\d+', (match.get('score') or '').strip())
+          ]
+          print(f'{len(completed)} jogo(s) concluído(s) em {target}.')
+          raise SystemExit(0 if completed else 1)
+          PY
+          then
             echo "publish=true" >> "$GITHUB_OUTPUT"
           else
             echo "publish=false" >> "$GITHUB_OUTPUT"
