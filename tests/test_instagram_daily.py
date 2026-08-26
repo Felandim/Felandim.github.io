@@ -29,7 +29,6 @@ def sample_insights(matches=10, snapshots=1):
         base_table = [dict(row) for row in latest_table]
         for row in base_table:
             row["points"] -= 8
-        # Palmeiras foi o melhor no recorte, com 13 pontos ganhos.
         base_table[0]["points"] = latest_table[0]["points"] - 13
         snapshots_data.append({"round": 19, "table": base_table})
         for round_number in range(20, 24):
@@ -78,6 +77,14 @@ class InstagramDailyTests(unittest.TestCase):
     def test_caption_includes_five_round_form(self):
         caption = instagram_daily.build_caption(sample_insights(snapshots=6))
         self.assertIn("Em alta: Palmeiras somou 13 pontos nas últimas 5 rodadas.", caption)
+
+    def test_table_hook_prioritizes_close_title_race(self):
+        hook = instagram_daily.table_hook(sample_insights())
+        self.assertEqual(hook, "Liderança separada por 2 pontos")
+
+    def test_caption_starts_with_dynamic_hook(self):
+        caption = instagram_daily.build_caption(sample_insights())
+        self.assertTrue(caption.startswith("Liderança separada por 2 pontos."))
 
     def test_render_creates_instagram_portrait(self):
         with tempfile.TemporaryDirectory() as tmp:
