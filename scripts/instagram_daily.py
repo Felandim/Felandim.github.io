@@ -91,23 +91,25 @@ def five_round_form(insights: dict) -> dict | None:
 
 
 def table_hook(insights: dict) -> str:
-    """Cria um gancho factual curto a partir da disputa por título ou contra o Z4."""
+    """Destaca a disputa mais apertada entre título, corte do G4 e corte do Z4."""
     snapshot, _ = current_snapshot(insights)
     table = snapshot["table"]
     if len(table) < 17:
         return "A tabela segue em movimento"
 
-    title_gap = table[0]["points"] - table[1]["points"]
-    relegation_gap = table[15]["points"] - table[16]["points"]
+    battles = [
+        (table[0]["points"] - table[1]["points"], 0, "title"),
+        (table[3]["points"] - table[4]["points"], 1, "g4"),
+        (table[15]["points"] - table[16]["points"], 2, "z4"),
+    ]
+    gap, _, battle = min(battles, key=lambda item: (item[0], item[1]))
+    unit = "ponto" if gap == 1 else "pontos"
 
-    if title_gap <= 3:
-        unit = "ponto" if title_gap == 1 else "pontos"
-        return f"Liderança separada por {title_gap} {unit}"
-    if relegation_gap <= 3:
-        unit = "ponto" if relegation_gap == 1 else "pontos"
-        return f"Fora do Z4 por apenas {relegation_gap} {unit}"
-
-    return f"Líder abre {title_gap} pontos na ponta"
+    if battle == "title":
+        return f"Liderança separada por {gap} {unit}"
+    if battle == "g4":
+        return f"Só {gap} {unit} separa o G4 do 5º"
+    return f"Só {gap} {unit} separa permanência e Z4"
 
 
 def build_caption(insights: dict) -> str:
