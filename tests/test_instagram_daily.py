@@ -78,9 +78,31 @@ class InstagramDailyTests(unittest.TestCase):
         caption = instagram_daily.build_caption(sample_insights(snapshots=6))
         self.assertIn("Em alta: Palmeiras somou 13 pontos nas últimas 5 rodadas.", caption)
 
-    def test_table_hook_prioritizes_close_title_race(self):
+    def test_table_hook_prioritizes_close_title_race_on_tie(self):
         hook = instagram_daily.table_hook(sample_insights())
         self.assertEqual(hook, "Liderança separada por 2 pontos")
+
+    def test_table_hook_highlights_tighter_g4_cutoff(self):
+        insights = sample_insights()
+        table = insights["snapshots"][-1]["table"]
+        table[0]["points"] = 55
+        table[1]["points"] = 50
+        table[3]["points"] = 44
+        table[4]["points"] = 43
+        table[15]["points"] = 20
+        table[16]["points"] = 17
+        self.assertEqual(instagram_daily.table_hook(insights), "Só 1 ponto separa o G4 do 5º")
+
+    def test_table_hook_highlights_tighter_z4_cutoff(self):
+        insights = sample_insights()
+        table = insights["snapshots"][-1]["table"]
+        table[0]["points"] = 55
+        table[1]["points"] = 50
+        table[3]["points"] = 44
+        table[4]["points"] = 42
+        table[15]["points"] = 20
+        table[16]["points"] = 20
+        self.assertEqual(instagram_daily.table_hook(insights), "Só 0 pontos separa permanência e Z4")
 
     def test_caption_starts_with_dynamic_hook(self):
         caption = instagram_daily.build_caption(sample_insights())
