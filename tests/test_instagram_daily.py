@@ -44,11 +44,17 @@ def sample_insights(matches=10, snapshots=1):
             "round": 24,
             "matches": matches,
             "goals": 31,
+            "leader": "Palmeiras",
+            "leader_changed": False,
+            "g4_in": [],
+            "g4_out": [],
+            "z4_in": [],
+            "z4_out": [],
             "biggest_rise": {"teams": ["Vasco"], "places": 3},
             "biggest_fall": {"teams": ["Grêmio"], "places": 2},
             "biggest_win": {
                 "winner": "Palmeiras", "home": "Palmeiras",
-                "away": "Santos", "score": "4 x 0",
+                "away": "Santos", "score": "4 x 0", "margin": 4,
             },
         }],
     }
@@ -103,6 +109,33 @@ class InstagramDailyTests(unittest.TestCase):
         table[15]["points"] = 20
         table[16]["points"] = 20
         self.assertEqual(instagram_daily.table_hook(insights), "Só 0 pontos separa permanência e Z4")
+
+    def test_round_spotlight_prioritizes_new_leader(self):
+        insights = sample_insights(snapshots=6)
+        latest = insights["rounds"][-1]
+        latest["leader"] = "Flamengo"
+        latest["leader_changed"] = True
+        latest["g4_in"] = ["Corinthians"]
+        latest["g4_out"] = ["São Paulo"]
+        spotlight = instagram_daily.round_spotlight(insights)
+        self.assertEqual(spotlight["label"], "NOVO LÍDER")
+        self.assertEqual(spotlight["text"], "Flamengo assumiu a ponta")
+
+    def test_round_spotlight_highlights_g4_change(self):
+        insights = sample_insights(snapshots=6)
+        latest = insights["rounds"][-1]
+        latest["g4_in"] = ["Corinthians"]
+        latest["g4_out"] = ["São Paulo"]
+        spotlight = instagram_daily.round_spotlight(insights)
+        self.assertEqual(spotlight["label"], "MUDANÇA NO G4")
+        self.assertIn("Corinthians entrou", spotlight["text"])
+        self.assertIn("São Paulo saiu", spotlight["text"])
+        self.assertIn("Mudou o G4", instagram_daily.build_caption(insights))
+
+    def test_round_spotlight_falls_back_to_biggest_win(self):
+        spotlight = instagram_daily.round_spotlight(sample_insights())
+        self.assertEqual(spotlight["label"], "DESTAQUE DA RODADA")
+        self.assertEqual(spotlight["text"], "Palmeiras 4 x 0 Santos")
 
     def test_caption_starts_with_dynamic_hook(self):
         caption = instagram_daily.build_caption(sample_insights())
