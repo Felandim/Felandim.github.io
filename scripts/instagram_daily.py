@@ -112,6 +112,75 @@ def table_hook(insights: dict) -> str:
     return f"Só {gap} {unit} separa permanência e Z4"
 
 
+def round_spotlight(insights: dict) -> dict:
+    """Escolhe a mudança mais noticiável da rodada para o bloco editorial do card."""
+    _, latest = current_snapshot(insights)
+
+    if latest.get("leader_changed") and latest.get("leader"):
+        return {
+            "kind": "leader",
+            "label": "NOVO LÍDER",
+            "text": f"{latest['leader']} assumiu a ponta",
+            "caption": f"Mudança na liderança: {latest['leader']} assumiu a ponta.",
+        }
+
+    g4_in = latest.get("g4_in", [])
+    g4_out = latest.get("g4_out", [])
+    if g4_in or g4_out:
+        if g4_in and g4_out:
+            text = f"{_join_teams(g4_in)} entrou • {_join_teams(g4_out)} saiu"
+            caption = f"Mudou o G4: {_join_teams(g4_in)} entrou; {_join_teams(g4_out)} saiu."
+        elif g4_in:
+            text = f"{_join_teams(g4_in)} entrou no G4"
+            caption = f"Mudou o G4: {_join_teams(g4_in)} entrou."
+        else:
+            text = f"{_join_teams(g4_out)} saiu do G4"
+            caption = f"Mudou o G4: {_join_teams(g4_out)} saiu."
+        return {"kind": "g4", "label": "MUDANÇA NO G4", "text": text, "caption": caption}
+
+    z4_in = latest.get("z4_in", [])
+    z4_out = latest.get("z4_out", [])
+    if z4_in or z4_out:
+        if z4_in and z4_out:
+            text = f"{_join_teams(z4_out)} saiu • {_join_teams(z4_in)} entrou"
+            caption = f"Mudou o Z4: {_join_teams(z4_out)} saiu; {_join_teams(z4_in)} entrou."
+        elif z4_out:
+            text = f"{_join_teams(z4_out)} saiu do Z4"
+            caption = f"Mudou o Z4: {_join_teams(z4_out)} saiu."
+        else:
+            text = f"{_join_teams(z4_in)} entrou no Z4"
+            caption = f"Mudou o Z4: {_join_teams(z4_in)} entrou."
+        return {"kind": "z4", "label": "MUDANÇA NO Z4", "text": text, "caption": caption}
+
+    biggest = latest.get("biggest_win")
+    if biggest and biggest.get("winner") != "Empate" and biggest.get("margin", 0) >= 3:
+        return {
+            "kind": "biggest_win",
+            "label": "DESTAQUE DA RODADA",
+            "text": f"{biggest['home']} {biggest['score']} {biggest['away']}",
+            "caption": "",
+        }
+
+    form = five_round_form(insights)
+    if form:
+        teams = _join_teams(form["teams"][:2])
+        if len(form["teams"]) > 2:
+            teams += " + outros"
+        return {
+            "kind": "form",
+            "label": "EM ALTA • ÚLTIMAS 5 RODADAS",
+            "text": f"{teams} • {form['points']} pontos",
+            "caption": "",
+        }
+
+    return {
+        "kind": "goals",
+        "label": "NÚMERO DA RODADA",
+        "text": f"{latest['goals']} gols na rodada",
+        "caption": "",
+    }
+
+
 def build_caption(insights: dict) -> str:
     snapshot, latest = current_snapshot(insights)
     table = snapshot["table"]
@@ -128,6 +197,10 @@ def build_caption(insights: dict) -> str:
         f"Z4: {z4}.",
         f"Gols na rodada: {latest['goals']}.",
     ]
+
+    spotlight = round_spotlight(insights)
+    if spotlight["caption"]:
+        lines.append(spotlight["caption"])
 
     form = five_round_form(insights)
     if form:
@@ -201,16 +274,10 @@ def render_card(insights: dict, output: Path = DEFAULT_OUTPUT, now: datetime | N
         _draw_text(draw, (980, y), f"{row['points']} pts", body, anchor="ra")
         y += 58
 
-    form = five_round_form(insights)
+    spotlight = round_spotlight(insights)
     draw.rounded_rectangle((60, 1165, 1020, 1260), radius=24, fill=PANEL)
-    if form:
-        teams = _join_teams(form["teams"][:2])
-        if len(form["teams"]) > 2:
-            teams += " + outros"
-        _draw_text(draw, (90, 1185), "EM ALTA • ÚLTIMAS 5 RODADAS", small, ACCENT)
-        _draw_text(draw, (90, 1222), f"{teams} • {form['points']} pontos", body)
-    else:
-        _draw_text(draw, (90, 1198), f"{latest['goals']} gols na rodada", small)
+    _draw_text(draw, (90, 1185), spotlight["label"], small, ACCENT)
+    _draw_text(draw, (90, 1222), spotlight["text"], body)
 
     _draw_text(draw, (540, 1310), SITE_URL, small, MUTED, anchor="mm")
 
