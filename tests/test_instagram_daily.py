@@ -24,16 +24,22 @@ def sample_insights(matches=10, snapshots=1):
         for i, team in enumerate(teams)
     ]
 
-    snapshots_data = []
     if snapshots >= 6:
         base_table = [dict(row) for row in latest_table]
         for row in base_table:
             row["points"] -= 8
         base_table[0]["points"] = latest_table[0]["points"] - 13
-        snapshots_data.append({"round": 19, "table": base_table})
+        snapshots_data = [{"round": 19, "table": base_table}]
         for round_number in range(20, 24):
             snapshots_data.append({"round": round_number, "table": base_table})
         snapshots_data.append({"round": 24, "table": latest_table})
+    elif snapshots >= 2:
+        previous_table = [dict(row) for row in latest_table]
+        previous_table[2]["position"], previous_table[3]["position"] = 4, 3
+        snapshots_data = [
+            {"round": 23, "table": previous_table},
+            {"round": 24, "table": latest_table},
+        ]
     else:
         snapshots_data = [{"round": 24, "table": latest_table}]
 
@@ -69,8 +75,18 @@ class InstagramDailyTests(unittest.TestCase):
         self.assertLessEqual(len(caption), 2200)
 
     def test_partial_round_is_identified(self):
-        caption = instagram_daily.build_caption(sample_insights(matches=4))
-        self.assertIn("(parcial)", caption)
+        self.assertIn("(parcial)", instagram_daily.build_caption(sample_insights(matches=4)))
+
+    def test_position_movements_compare_last_two_snapshots(self):
+        movements = instagram_daily.position_movements(sample_insights(snapshots=2))
+        self.assertEqual(movements["Bahia"], 1)
+        self.assertEqual(movements["São Paulo"], -1)
+        self.assertEqual(movements["Palmeiras"], 0)
+
+    def test_movement_label_is_compact(self):
+        self.assertEqual(instagram_daily.movement_label(2), "▲2")
+        self.assertEqual(instagram_daily.movement_label(-3), "▼3")
+        self.assertEqual(instagram_daily.movement_label(0), "•")
 
     def test_five_round_form_finds_best_team(self):
         form = instagram_daily.five_round_form(sample_insights(snapshots=6))
@@ -81,42 +97,32 @@ class InstagramDailyTests(unittest.TestCase):
         self.assertEqual(form["to_round"], 24)
 
     def test_caption_includes_five_round_form(self):
-        caption = instagram_daily.build_caption(sample_insights(snapshots=6))
-        self.assertIn("Em alta: Palmeiras somou 13 pontos nas últimas 5 rodadas.", caption)
+        self.assertIn("Em alta: Palmeiras somou 13 pontos nas últimas 5 rodadas.", instagram_daily.build_caption(sample_insights(snapshots=6)))
 
     def test_table_hook_prioritizes_close_title_race_on_tie(self):
-        hook = instagram_daily.table_hook(sample_insights())
-        self.assertEqual(hook, "Liderança separada por 2 pontos")
+        self.assertEqual(instagram_daily.table_hook(sample_insights()), "Liderança separada por 2 pontos")
 
     def test_table_hook_highlights_tighter_g4_cutoff(self):
         insights = sample_insights()
         table = insights["snapshots"][-1]["table"]
-        table[0]["points"] = 55
-        table[1]["points"] = 50
-        table[3]["points"] = 44
-        table[4]["points"] = 43
-        table[15]["points"] = 20
-        table[16]["points"] = 17
+        table[0]["points"], table[1]["points"] = 55, 50
+        table[3]["points"], table[4]["points"] = 44, 43
+        table[15]["points"], table[16]["points"] = 20, 17
         self.assertEqual(instagram_daily.table_hook(insights), "Só 1 ponto separa o G4 do 5º")
 
     def test_table_hook_highlights_tighter_z4_cutoff(self):
         insights = sample_insights()
         table = insights["snapshots"][-1]["table"]
-        table[0]["points"] = 55
-        table[1]["points"] = 50
-        table[3]["points"] = 44
-        table[4]["points"] = 42
-        table[15]["points"] = 20
-        table[16]["points"] = 20
+        table[0]["points"], table[1]["points"] = 55, 50
+        table[3]["points"], table[4]["points"] = 44, 42
+        table[15]["points"], table[16]["points"] = 20, 20
         self.assertEqual(instagram_daily.table_hook(insights), "Só 0 pontos separa permanência e Z4")
 
     def test_round_spotlight_prioritizes_new_leader(self):
         insights = sample_insights(snapshots=6)
         latest = insights["rounds"][-1]
-        latest["leader"] = "Flamengo"
-        latest["leader_changed"] = True
-        latest["g4_in"] = ["Corinthians"]
-        latest["g4_out"] = ["São Paulo"]
+        latest["leader"], latest["leader_changed"] = "Flamengo", True
+        latest["g4_in"], latest["g4_out"] = ["Corinthians"], ["São Paulo"]
         spotlight = instagram_daily.round_spotlight(insights)
         self.assertEqual(spotlight["label"], "NOVO LÍDER")
         self.assertEqual(spotlight["text"], "Flamengo assumiu a ponta")
@@ -124,8 +130,7 @@ class InstagramDailyTests(unittest.TestCase):
     def test_round_spotlight_highlights_g4_change(self):
         insights = sample_insights(snapshots=6)
         latest = insights["rounds"][-1]
-        latest["g4_in"] = ["Corinthians"]
-        latest["g4_out"] = ["São Paulo"]
+        latest["g4_in"], latest["g4_out"] = ["Corinthians"], ["São Paulo"]
         spotlight = instagram_daily.round_spotlight(insights)
         self.assertEqual(spotlight["label"], "MUDANÇA NO G4")
         self.assertIn("Corinthians entrou", spotlight["text"])
@@ -138,14 +143,13 @@ class InstagramDailyTests(unittest.TestCase):
         self.assertEqual(spotlight["text"], "Palmeiras 4 x 0 Santos")
 
     def test_caption_starts_with_dynamic_hook(self):
-        caption = instagram_daily.build_caption(sample_insights())
-        self.assertTrue(caption.startswith("Liderança separada por 2 pontos."))
+        self.assertTrue(instagram_daily.build_caption(sample_insights()).startswith("Liderança separada por 2 pontos."))
 
     def test_render_creates_instagram_portrait(self):
         with tempfile.TemporaryDirectory() as tmp:
             output = Path(tmp) / "daily.png"
             now = datetime(2026, 8, 23, 10, 0, tzinfo=ZoneInfo("America/Sao_Paulo"))
-            instagram_daily.render_card(sample_insights(snapshots=6), output, now=now)
+            instagram_daily.render_card(sample_insights(snapshots=2), output, now=now)
             self.assertTrue(output.exists())
             with instagram_daily.Image.open(output) as image:
                 self.assertEqual(image.size, (1080, 1350))
