@@ -66,6 +66,29 @@ def sample_insights(matches=10, snapshots=1):
     }
 
 
+def sample_matches():
+    return [
+        {
+            "round": 24,
+            "home": "Vasco",
+            "away": "Flamengo",
+            "score": "2 x 1",
+        },
+        {
+            "round": 24,
+            "home": "Palmeiras",
+            "away": "Santos",
+            "score": "4 x 0",
+        },
+        {
+            "round": 23,
+            "home": "Remo",
+            "away": "Palmeiras",
+            "score": "1 x 0",
+        },
+    ]
+
+
 class InstagramDailyTests(unittest.TestCase):
     def test_caption_contains_summary(self):
         caption = instagram_daily.build_caption(sample_insights())
@@ -97,7 +120,33 @@ class InstagramDailyTests(unittest.TestCase):
         self.assertEqual(form["to_round"], 24)
 
     def test_caption_includes_five_round_form(self):
-        self.assertIn("Em alta: Palmeiras somou 13 pontos nas últimas 5 rodadas.", instagram_daily.build_caption(sample_insights(snapshots=6)))
+        self.assertIn(
+            "Em alta: Palmeiras somou 13 pontos nas últimas 5 rodadas.",
+            instagram_daily.build_caption(sample_insights(snapshots=6)),
+        )
+
+    def test_round_upset_finds_lower_ranked_winner(self):
+        upset = instagram_daily.round_upset(sample_insights(snapshots=2), sample_matches())
+        self.assertIsNotNone(upset)
+        self.assertEqual(upset["winner"], "Vasco")
+        self.assertEqual(upset["loser"], "Flamengo")
+        self.assertEqual(upset["winner_position"], 17)
+        self.assertEqual(upset["loser_position"], 2)
+        self.assertEqual(upset["position_gap"], 15)
+
+    def test_round_upset_ignores_small_position_gap(self):
+        insights = sample_insights(snapshots=2)
+        matches = [{"round": 24, "home": "Corinthians", "away": "Bahia", "score": "1 x 0"}]
+        self.assertIsNone(instagram_daily.round_upset(insights, matches, minimum_position_gap=5))
+
+    def test_round_spotlight_uses_upset_before_biggest_win(self):
+        spotlight = instagram_daily.round_spotlight(sample_insights(snapshots=2), sample_matches())
+        self.assertEqual(spotlight["label"], "ZEBRA DA RODADA")
+        self.assertIn("Vasco bateu o Flamengo", spotlight["text"])
+
+    def test_caption_includes_upset_context(self):
+        caption = instagram_daily.build_caption(sample_insights(snapshots=2), sample_matches())
+        self.assertIn("Zebra da rodada: o Vasco (17º antes da rodada) venceu o Flamengo (2º).", caption)
 
     def test_table_hook_prioritizes_close_title_race_on_tie(self):
         self.assertEqual(instagram_daily.table_hook(sample_insights()), "Liderança separada por 2 pontos")
@@ -149,7 +198,7 @@ class InstagramDailyTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             output = Path(tmp) / "daily.png"
             now = datetime(2026, 8, 23, 10, 0, tzinfo=ZoneInfo("America/Sao_Paulo"))
-            instagram_daily.render_card(sample_insights(snapshots=2), output, now=now)
+            instagram_daily.render_card(sample_insights(snapshots=2), output, now=now, matches=sample_matches())
             self.assertTrue(output.exists())
             with instagram_daily.Image.open(output) as image:
                 self.assertEqual(image.size, (1080, 1350))
