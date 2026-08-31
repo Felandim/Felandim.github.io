@@ -171,6 +171,44 @@ def table_hook(insights: dict) -> str:
     return f"Só {gap} {unit} separa permanência e Z4"
 
 
+def boundary_pressure(insights: dict, maximum_gap: int = 3) -> dict | None:
+    """Personaliza a menor distância até G4 ou saída do Z4 quando cabe em um resultado."""
+    snapshot, _ = current_snapshot(insights)
+    table = snapshot["table"]
+    if len(table) < 17:
+        return None
+
+    candidates = [
+        {
+            "kind": "g4_pressure",
+            "team": table[4]["team"],
+            "gap": table[3]["points"] - table[4]["points"],
+            "target": table[3]["team"],
+        },
+        {
+            "kind": "z4_pressure",
+            "team": table[16]["team"],
+            "gap": table[15]["points"] - table[16]["points"],
+            "target": table[15]["team"],
+        },
+    ]
+    candidates = [item for item in candidates if 0 <= item["gap"] <= maximum_gap]
+    if not candidates:
+        return None
+
+    pressure = min(candidates, key=lambda item: (item["gap"], 0 if item["kind"] == "g4_pressure" else 1))
+    gap, team = pressure["gap"], pressure["team"]
+    if pressure["kind"] == "g4_pressure":
+        text = f"{team} está empatado em pontos com o G4" if gap == 0 else f"{team} está a {gap} {'ponto' if gap == 1 else 'pontos'} do G4"
+        caption = f"Na cola do G4: {team} está empatado em pontos com o 4º colocado." if gap == 0 else f"Na cola do G4: {team} está a {gap} {'ponto' if gap == 1 else 'pontos'} do 4º colocado."
+        label = "NA COLA DO G4"
+    else:
+        text = f"{team} está empatado em pontos com o 16º" if gap == 0 else f"{team} está a {gap} {'ponto' if gap == 1 else 'pontos'} de sair do Z4"
+        caption = f"Pressão no Z4: {team} está empatado em pontos com o 16º colocado." if gap == 0 else f"Pressão no Z4: {team} está a {gap} {'ponto' if gap == 1 else 'pontos'} de sair da zona."
+        label = "PRESSÃO NO Z4"
+    return {**pressure, "label": label, "text": text, "caption": caption}
+
+
 def round_spotlight(insights: dict, matches: list[dict] | None = None) -> dict:
     _, latest = current_snapshot(insights)
     if latest.get("leader_changed") and latest.get("leader"):
@@ -214,6 +252,10 @@ def round_spotlight(insights: dict, matches: list[dict] | None = None) -> dict:
                 f"venceu o {upset['loser']} ({upset['loser_position']}º)."
             ),
         }
+
+    pressure = boundary_pressure(insights)
+    if pressure:
+        return pressure
 
     biggest = latest.get("biggest_win")
     if biggest and biggest.get("winner") != "Empate" and biggest.get("margin", 0) >= 3:
@@ -260,6 +302,10 @@ def build_caption(insights: dict, matches: list[dict] | None = None) -> str:
             f"Zebra da rodada: o {upset['winner']} ({upset['winner_position']}º antes da rodada) "
             f"venceu o {upset['loser']} ({upset['loser_position']}º)."
         )
+
+    pressure = boundary_pressure(insights)
+    if pressure and spotlight["kind"] != pressure["kind"]:
+        lines.append(pressure["caption"])
 
     form = five_round_form(insights)
     if form:
