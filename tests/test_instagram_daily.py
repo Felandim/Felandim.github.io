@@ -68,24 +68,9 @@ def sample_insights(matches=10, snapshots=1):
 
 def sample_matches():
     return [
-        {
-            "round": 24,
-            "home": "Vasco",
-            "away": "Flamengo",
-            "score": "2 x 1",
-        },
-        {
-            "round": 24,
-            "home": "Palmeiras",
-            "away": "Santos",
-            "score": "4 x 0",
-        },
-        {
-            "round": 23,
-            "home": "Remo",
-            "away": "Palmeiras",
-            "score": "1 x 0",
-        },
+        {"round": 24, "home": "Vasco", "away": "Flamengo", "score": "2 x 1"},
+        {"round": 24, "home": "Palmeiras", "away": "Santos", "score": "4 x 0"},
+        {"round": 23, "home": "Remo", "away": "Palmeiras", "score": "1 x 0"},
     ]
 
 
@@ -167,6 +152,42 @@ class InstagramDailyTests(unittest.TestCase):
         table[15]["points"], table[16]["points"] = 20, 20
         self.assertEqual(instagram_daily.table_hook(insights), "Só 0 pontos separa permanência e Z4")
 
+    def test_boundary_pressure_personalizes_g4_chase(self):
+        insights = sample_insights()
+        table = insights["snapshots"][-1]["table"]
+        table[3]["points"], table[4]["points"] = 44, 43
+        table[15]["points"], table[16]["points"] = 25, 20
+        pressure = instagram_daily.boundary_pressure(insights)
+        self.assertEqual(pressure["kind"], "g4_pressure")
+        self.assertEqual(pressure["label"], "NA COLA DO G4")
+        self.assertEqual(pressure["text"], "Corinthians está a 1 ponto do G4")
+
+    def test_boundary_pressure_handles_points_tie(self):
+        insights = sample_insights()
+        table = insights["snapshots"][-1]["table"]
+        table[3]["points"], table[4]["points"] = 44, 40
+        table[15]["points"], table[16]["points"] = 20, 20
+        pressure = instagram_daily.boundary_pressure(insights)
+        self.assertEqual(pressure["kind"], "z4_pressure")
+        self.assertEqual(pressure["text"], "Vasco está empatado em pontos com o 16º")
+
+    def test_round_spotlight_uses_boundary_pressure_before_biggest_win(self):
+        insights = sample_insights()
+        table = insights["snapshots"][-1]["table"]
+        table[3]["points"], table[4]["points"] = 44, 43
+        table[15]["points"], table[16]["points"] = 25, 20
+        spotlight = instagram_daily.round_spotlight(insights)
+        self.assertEqual(spotlight["kind"], "g4_pressure")
+        self.assertEqual(spotlight["label"], "NA COLA DO G4")
+
+    def test_caption_includes_boundary_pressure(self):
+        insights = sample_insights()
+        table = insights["snapshots"][-1]["table"]
+        table[3]["points"], table[4]["points"] = 44, 43
+        table[15]["points"], table[16]["points"] = 25, 20
+        caption = instagram_daily.build_caption(insights)
+        self.assertIn("Na cola do G4: Corinthians está a 1 ponto do 4º colocado.", caption)
+
     def test_round_spotlight_prioritizes_new_leader(self):
         insights = sample_insights(snapshots=6)
         latest = insights["rounds"][-1]
@@ -187,7 +208,11 @@ class InstagramDailyTests(unittest.TestCase):
         self.assertIn("Mudou o G4", instagram_daily.build_caption(insights))
 
     def test_round_spotlight_falls_back_to_biggest_win(self):
-        spotlight = instagram_daily.round_spotlight(sample_insights())
+        insights = sample_insights()
+        table = insights["snapshots"][-1]["table"]
+        table[3]["points"], table[4]["points"] = 44, 39
+        table[15]["points"], table[16]["points"] = 25, 20
+        spotlight = instagram_daily.round_spotlight(insights)
         self.assertEqual(spotlight["label"], "DESTAQUE DA RODADA")
         self.assertEqual(spotlight["text"], "Palmeiras 4 x 0 Santos")
 
