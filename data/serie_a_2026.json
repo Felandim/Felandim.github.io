@@ -2495,7 +2495,7 @@
       "date": "31/08/2026",
       "home": "Remo",
       "round": 25,
-      "score": "-",
+      "score": "2 x 3",
       "stadium": "Mangueirão",
       "time": "20:00",
       "url": "https://ge.globo.com/pa/futebol/brasileirao-serie-a/jogo/31-08-2026/remo-coritiba.ghtml"
@@ -2601,43 +2601,73 @@
       "url": ""
     },
     {
-      "away": "Corinthians",
-      "date": "13/09/2026",
-      "home": "Flamengo",
+      "away": "Athletico-PR",
+      "date": "11/09/2026",
+      "home": "Coritiba",
       "round": 27,
       "score": "-",
-      "stadium": "",
-      "time": "12:00",
+      "stadium": "Couto Pereira",
+      "time": "21:00",
       "url": ""
     },
     {
-      "away": "Bragantino",
-      "date": "13/09/2026",
-      "home": "Botafogo",
+      "away": "Fluminense",
+      "date": "12/09/2026",
+      "home": "Atlético-MG",
       "round": 27,
       "score": "-",
-      "stadium": "",
-      "time": "12:00",
+      "stadium": "Arena MRV",
+      "time": "16:00",
       "url": ""
     },
     {
-      "away": "Cruzeiro",
-      "date": "13/09/2026",
-      "home": "Santos",
+      "away": "Vasco",
+      "date": "12/09/2026",
+      "home": "Grêmio",
       "round": 27,
       "score": "-",
-      "stadium": "",
-      "time": "12:00",
+      "stadium": "Arena do Grêmio",
+      "time": "16:00",
+      "url": ""
+    },
+    {
+      "away": "Internacional",
+      "date": "12/09/2026",
+      "home": "Chapecoense",
+      "round": 27,
+      "score": "-",
+      "stadium": "Arena Condá",
+      "time": "17:00",
       "url": ""
     },
     {
       "away": "São Paulo",
-      "date": "13/09/2026",
+      "date": "12/09/2026",
       "home": "Palmeiras",
       "round": 27,
       "score": "-",
-      "stadium": "",
-      "time": "12:00",
+      "stadium": "Nubank Parque",
+      "time": "18:30",
+      "url": ""
+    },
+    {
+      "away": "Bragantino",
+      "date": "12/09/2026",
+      "home": "Botafogo",
+      "round": 27,
+      "score": "-",
+      "stadium": "Nilton Santos (Engenhão)",
+      "time": "20:30",
+      "url": ""
+    },
+    {
+      "away": "Cruzeiro",
+      "date": "12/09/2026",
+      "home": "Santos",
+      "round": 27,
+      "score": "-",
+      "stadium": "Vila Belmiro",
+      "time": "21:00",
       "url": ""
     },
     {
@@ -2646,118 +2676,78 @@
       "home": "Mirassol",
       "round": 27,
       "score": "-",
-      "stadium": "",
-      "time": "12:00",
+      "stadium": "Maião",
+      "time": "16:00",
       "url": ""
     },
     {
-      "away": "Fluminense",
+      "away": "Corinthians",
       "date": "13/09/2026",
-      "home": "Atlético-MG",
+      "home": "Flamengo",
       "round": 27,
       "score": "-",
-      "stadium": "",
-      "time": "12:00",
-      "url": ""
-    },
-    {
-      "away": "Vasco",
-      "date": "13/09/2026",
-      "home": "Grêmio",
-      "round": 27,
-      "score": "-",
-      "stadium": "",
-      "time": "12:00",
-      "url": ""
-    },
-    {
-      "away": "Athletico-PR",
-      "date": "13/09/2026",
-      "home": "Coritiba",
-      "round": 27,
-      "score": "-",
-      "stadium": "",
-      "time": "12:00",
+      "stadium": "Maracanã",
+      "time": "17:30",
       "url": ""
     },
     {
       "away": "Remo",
-      "date": "13/09/2026",
+      "date": "14/09/2026",
       "home": "Bahia",
       "round": 27,
       "score": "-",
-      "stadium": "",
-      "time": "12:00",
-      "url": ""
-    },
-    {
-      "away": "Internacional",
-      "date": "13/09/2026",
-      "home": "Chapecoense",
-      "round": 27,
-      "score": "-",
-      "stadium": "",
-      "time": "12:00",
-      "url": ""
-    },
-    {
-      "away": "Bragantino",
-      "date": "20/09/2026",
-      "home": "Flamengo",
-      "round": 28,
-      "score": "-",
-      "stadium": "",
-      "time": "12:00",
-      "url": ""
-    },
-    {
-      "away": "Coritiba",
-      "date": "20/09/2026",
-      "home": "Vasco",
-      "round": 28,
-      "score": "-",
-      "stadium": "",
-      "time": "12:00",
-      "url": ""
-    },
-    {
-      "away": "Internacional",
-      "date": "20/09/2026",
-      "home": "São Paulo",
-      "round": 28,
-      "score": "-",
-      "stadium": "",
-      "time": "12:00",
-      "url": ""
-    },
-    {
-      "away": "Fluminense",
-      "date": "20/09/2026",
-      "home": "Corinthians",
-      "round": 28,
-      "score": "-",
-      "stadium": "",
-      "time": "12:00",
-      "url": ""
-    },
-    {
-      "away": "Botafogo",
-      "date": "20/09/2026",
-      "home": "Mirassol",
-      "round": 28,
-      "score": "-",
-      "stadium": "",
-      "time": "12:00",
+      "stadium": "Casa de Apostas Arena Fonte Nova",
+      "time": "20:00",
       "url": ""
     },
     {
       "away": "Chapecoense",
-      "date": "20/09/2026",
+      "date": "19/09/2026",
       "home": "Atlético-MG",
       "round": 28,
       "score": "-",
-      "stadium": "",
-      "time": "12:00",
+      "stadium": "Arena MRV",
+      "time": "16:00",
+      "url": ""
+    },
+    {
+      "away": "Botafogo",
+      "date": "19/09/2026",
+      "home": "Mirassol",
+      "round": 28,
+      "score": "-",
+      "stadium": "Maião",
+      "time": "17:00",
+      "url": ""
+    },
+    {
+      "away": "Santos",
+      "date": "19/09/2026",
+      "home": "Remo",
+      "round": 28,
+      "score": "-",
+      "stadium": "Mangueirão",
+      "time": "18:30",
+      "url": ""
+    },
+    {
+      "away": "Coritiba",
+      "date": "19/09/2026",
+      "home": "Vasco",
+      "round": 28,
+      "score": "-",
+      "stadium": "São Januário",
+      "time": "20:30",
+      "url": ""
+    },
+    {
+      "away": "Internacional",
+      "date": "19/09/2026",
+      "home": "São Paulo",
+      "round": 28,
+      "score": "-",
+      "stadium": "Morumbis",
+      "time": "21:00",
       "url": ""
     },
     {
@@ -2766,18 +2756,18 @@
       "home": "Grêmio",
       "round": 28,
       "score": "-",
-      "stadium": "",
-      "time": "12:00",
+      "stadium": "Arena do Grêmio",
+      "time": "11:00",
       "url": ""
     },
     {
-      "away": "Bahia",
+      "away": "Fluminense",
       "date": "20/09/2026",
-      "home": "Athletico-PR",
+      "home": "Corinthians",
       "round": 28,
       "score": "-",
-      "stadium": "",
-      "time": "12:00",
+      "stadium": "Neo Química Arena",
+      "time": "16:00",
       "url": ""
     },
     {
@@ -2786,58 +2776,28 @@
       "home": "Vitória",
       "round": 28,
       "score": "-",
-      "stadium": "",
-      "time": "12:00",
+      "stadium": "Barradão",
+      "time": "16:00",
       "url": ""
     },
     {
-      "away": "Santos",
+      "away": "Bragantino",
       "date": "20/09/2026",
-      "home": "Remo",
+      "home": "Flamengo",
       "round": 28,
       "score": "-",
-      "stadium": "",
-      "time": "12:00",
-      "url": ""
-    },
-    {
-      "away": "Coritiba",
-      "date": "07/10/2026",
-      "home": "Fluminense",
-      "round": 29,
-      "score": "-",
-      "stadium": "",
-      "time": "12:00",
-      "url": ""
-    },
-    {
-      "away": "Vasco",
-      "date": "07/10/2026",
-      "home": "Botafogo",
-      "round": 29,
-      "score": "-",
-      "stadium": "",
-      "time": "12:00",
-      "url": ""
-    },
-    {
-      "away": "Flamengo",
-      "date": "07/10/2026",
-      "home": "Santos",
-      "round": 29,
-      "score": "-",
-      "stadium": "",
-      "time": "12:00",
+      "stadium": "Maracanã",
+      "time": "18:30",
       "url": ""
     },
     {
       "away": "Bahia",
-      "date": "07/10/2026",
-      "home": "Palmeiras",
-      "round": 29,
+      "date": "20/09/2026",
+      "home": "Athletico-PR",
+      "round": 28,
       "score": "-",
-      "stadium": "",
-      "time": "12:00",
+      "stadium": "Arena da Baixada",
+      "time": "19:30",
       "url": ""
     },
     {
@@ -2846,18 +2806,8 @@
       "home": "Bragantino",
       "round": 29,
       "score": "-",
-      "stadium": "",
-      "time": "12:00",
-      "url": ""
-    },
-    {
-      "away": "São Paulo",
-      "date": "07/10/2026",
-      "home": "Cruzeiro",
-      "round": 29,
-      "score": "-",
-      "stadium": "",
-      "time": "12:00",
+      "stadium": "Cícero de Souza Marques",
+      "time": "19:30",
       "url": ""
     },
     {
@@ -2866,28 +2816,8 @@
       "home": "Internacional",
       "round": 29,
       "score": "-",
-      "stadium": "",
-      "time": "12:00",
-      "url": ""
-    },
-    {
-      "away": "Atlético-MG",
-      "date": "07/10/2026",
-      "home": "Athletico-PR",
-      "round": 29,
-      "score": "-",
-      "stadium": "",
-      "time": "12:00",
-      "url": ""
-    },
-    {
-      "away": "Chapecoense",
-      "date": "07/10/2026",
-      "home": "Vitória",
-      "round": 29,
-      "score": "-",
-      "stadium": "",
-      "time": "12:00",
+      "stadium": "Beira-Rio",
+      "time": "19:30",
       "url": ""
     },
     {
@@ -2896,58 +2826,98 @@
       "home": "Remo",
       "round": 29,
       "score": "-",
-      "stadium": "",
-      "time": "12:00",
+      "stadium": "Mangueirão",
+      "time": "19:30",
       "url": ""
     },
     {
-      "away": "Fluminense",
-      "date": "11/10/2026",
-      "home": "Flamengo",
-      "round": 30,
+      "away": "Chapecoense",
+      "date": "07/10/2026",
+      "home": "Vitória",
+      "round": 29,
       "score": "-",
-      "stadium": "",
-      "time": "12:00",
+      "stadium": "Barradão",
+      "time": "20:00",
+      "url": ""
+    },
+    {
+      "away": "Vasco",
+      "date": "07/10/2026",
+      "home": "Botafogo",
+      "round": 29,
+      "score": "-",
+      "stadium": "Nilton Santos (Engenhão)",
+      "time": "20:30",
+      "url": ""
+    },
+    {
+      "away": "São Paulo",
+      "date": "07/10/2026",
+      "home": "Cruzeiro",
+      "round": 29,
+      "score": "-",
+      "stadium": "Mineirão",
+      "time": "21:30",
+      "url": ""
+    },
+    {
+      "away": "Flamengo",
+      "date": "08/10/2026",
+      "home": "Santos",
+      "round": 29,
+      "score": "-",
+      "stadium": "Vila Belmiro",
+      "time": "19:30",
+      "url": ""
+    },
+    {
+      "away": "Atlético-MG",
+      "date": "08/10/2026",
+      "home": "Athletico-PR",
+      "round": 29,
+      "score": "-",
+      "stadium": "Arena da Baixada",
+      "time": "20:00",
+      "url": ""
+    },
+    {
+      "away": "Coritiba",
+      "date": "08/10/2026",
+      "home": "Fluminense",
+      "round": 29,
+      "score": "-",
+      "stadium": "Maracanã",
+      "time": "21:30",
+      "url": ""
+    },
+    {
+      "away": "Bahia",
+      "date": "08/10/2026",
+      "home": "Palmeiras",
+      "round": 29,
+      "score": "-",
+      "stadium": "Nubank Parque",
+      "time": "21:30",
       "url": ""
     },
     {
       "away": "Remo",
-      "date": "11/10/2026",
+      "date": "10/10/2026",
       "home": "Vasco",
       "round": 30,
       "score": "-",
-      "stadium": "",
-      "time": "12:00",
+      "stadium": "São Januário",
+      "time": "17:00",
       "url": ""
     },
     {
       "away": "Vitória",
-      "date": "11/10/2026",
+      "date": "10/10/2026",
       "home": "São Paulo",
       "round": 30,
       "score": "-",
-      "stadium": "",
-      "time": "12:00",
-      "url": ""
-    },
-    {
-      "away": "Corinthians",
-      "date": "11/10/2026",
-      "home": "Palmeiras",
-      "round": 30,
-      "score": "-",
-      "stadium": "",
-      "time": "12:00",
-      "url": ""
-    },
-    {
-      "away": "Cruzeiro",
-      "date": "11/10/2026",
-      "home": "Bragantino",
-      "round": 30,
-      "score": "-",
-      "stadium": "",
-      "time": "12:00",
+      "stadium": "Morumbis",
+      "time": "21:00",
       "url": ""
     },
     {
@@ -2956,8 +2926,28 @@
       "home": "Atlético-MG",
       "round": 30,
       "score": "-",
-      "stadium": "",
-      "time": "12:00",
+      "stadium": "Arena MRV",
+      "time": "16:00",
+      "url": ""
+    },
+    {
+      "away": "Fluminense",
+      "date": "11/10/2026",
+      "home": "Flamengo",
+      "round": 30,
+      "score": "-",
+      "stadium": "Maracanã",
+      "time": "17:30",
+      "url": ""
+    },
+    {
+      "away": "Corinthians",
+      "date": "11/10/2026",
+      "home": "Palmeiras",
+      "round": 30,
+      "score": "-",
+      "stadium": "Nubank Parque",
+      "time": "17:30",
       "url": ""
     },
     {
@@ -2966,8 +2956,8 @@
       "home": "Grêmio",
       "round": 30,
       "score": "-",
-      "stadium": "",
-      "time": "12:00",
+      "stadium": "Arena do Grêmio",
+      "time": "17:30",
       "url": ""
     },
     {
@@ -2976,8 +2966,8 @@
       "home": "Coritiba",
       "round": 30,
       "score": "-",
-      "stadium": "",
-      "time": "12:00",
+      "stadium": "Couto Pereira",
+      "time": "19:30",
       "url": ""
     },
     {
@@ -2986,18 +2976,28 @@
       "home": "Bahia",
       "round": 30,
       "score": "-",
-      "stadium": "",
-      "time": "12:00",
+      "stadium": "Casa de Apostas Arena Fonte Nova",
+      "time": "19:30",
       "url": ""
     },
     {
       "away": "Athletico-PR",
-      "date": "11/10/2026",
+      "date": "12/10/2026",
       "home": "Chapecoense",
       "round": 30,
       "score": "-",
-      "stadium": "",
-      "time": "12:00",
+      "stadium": "Arena Condá",
+      "time": "19:30",
+      "url": ""
+    },
+    {
+      "away": "Cruzeiro",
+      "date": "12/10/2026",
+      "home": "Bragantino",
+      "round": 30,
+      "score": "-",
+      "stadium": "Cícero de Souza Marques",
+      "time": "21:00",
       "url": ""
     },
     {
