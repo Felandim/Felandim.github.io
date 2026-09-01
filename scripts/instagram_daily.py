@@ -171,6 +171,44 @@ def table_hook(insights: dict) -> str:
     return f"Só {gap} {unit} separa permanência e Z4"
 
 
+def boundary_cluster(insights: dict, maximum_gap: int = 3, minimum_teams: int = 3) -> dict | None:
+    """Detecta pelotões comprimidos nos cortes do G4 e do Z4."""
+    snapshot, _ = current_snapshot(insights)
+    table = snapshot["table"]
+    if len(table) < 17:
+        return None
+
+    g4_cutoff = table[3]["points"]
+    g4_rows = [row for row in table[3:] if 0 <= g4_cutoff - row["points"] <= maximum_gap]
+    z4_cutoff = table[15]["points"]
+    z4_rows = [row for row in table[15:] if 0 <= z4_cutoff - row["points"] <= maximum_gap]
+
+    candidates = []
+    if len(g4_rows) >= minimum_teams:
+        spread = g4_cutoff - g4_rows[-1]["points"]
+        candidates.append({
+            "kind": "g4_cluster",
+            "count": len(g4_rows),
+            "spread": spread,
+            "label": "G4 EMBOLADO",
+            "text": f"{len(g4_rows)} times em até {spread} {'ponto' if spread == 1 else 'pontos'} do 4º",
+            "caption": f"G4 embolado: {len(g4_rows)} times estão em uma faixa de {spread} {'ponto' if spread == 1 else 'pontos'} a partir do 4º colocado.",
+        })
+    if len(z4_rows) >= minimum_teams:
+        spread = z4_cutoff - z4_rows[-1]["points"]
+        candidates.append({
+            "kind": "z4_cluster",
+            "count": len(z4_rows),
+            "spread": spread,
+            "label": "Z4 EMBOLADO",
+            "text": f"{len(z4_rows)} times em até {spread} {'ponto' if spread == 1 else 'pontos'} da permanência",
+            "caption": f"Z4 embolado: {len(z4_rows)} times estão em uma faixa de {spread} {'ponto' if spread == 1 else 'pontos'} a partir do 16º colocado.",
+        })
+    if not candidates:
+        return None
+    return max(candidates, key=lambda item: (item["count"], -item["spread"], item["kind"] == "g4_cluster"))
+
+
 def boundary_pressure(insights: dict, maximum_gap: int = 3) -> dict | None:
     """Personaliza a menor distância até G4 ou saída do Z4 quando cabe em um resultado."""
     snapshot, _ = current_snapshot(insights)
@@ -253,6 +291,10 @@ def round_spotlight(insights: dict, matches: list[dict] | None = None) -> dict:
             ),
         }
 
+    cluster = boundary_cluster(insights)
+    if cluster:
+        return cluster
+
     pressure = boundary_pressure(insights)
     if pressure:
         return pressure
@@ -302,6 +344,10 @@ def build_caption(insights: dict, matches: list[dict] | None = None) -> str:
             f"Zebra da rodada: o {upset['winner']} ({upset['winner_position']}º antes da rodada) "
             f"venceu o {upset['loser']} ({upset['loser_position']}º)."
         )
+
+    cluster = boundary_cluster(insights)
+    if cluster and spotlight["kind"] != cluster["kind"]:
+        lines.append(cluster["caption"])
 
     pressure = boundary_pressure(insights)
     if pressure and spotlight["kind"] != pressure["kind"]:
