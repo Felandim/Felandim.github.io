@@ -5,6 +5,13 @@ on:
     # 10:00 em São Paulo (UTC-3). O job só publica se houve jogo concluído no dia anterior.
     - cron: '0 13 * * *'
   workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/instagram_daily.py'
+      - 'tests/test_instagram_daily.py'
+      - 'tests/test_instagram_clusters.py'
+      - '.github/workflows/instagram-daily.yml'
 
 permissions:
   contents: write
