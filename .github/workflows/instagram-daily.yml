@@ -29,7 +29,7 @@ jobs:
         run: pip install pillow requests
 
       - name: Test Instagram automation
-        run: python -m unittest tests/test_instagram_daily.py tests/test_instagram_clusters.py
+        run: python -m unittest tests/test_instagram_daily.py tests/test_instagram_clusters.py tests/test_instagram_engagement.py
 
       - name: Check if yesterday had completed matches
         id: should_post
@@ -87,7 +87,7 @@ jobs:
           IMAGE_URL: https://raw.githubusercontent.com/${{ github.repository }}/${{ steps.card_commit.outputs.sha }}/assets/instagram/daily.png
         run: |
           set -o pipefail
-          python scripts/instagram_daily.py publish --image-url "$IMAGE_URL" 2>&1 | tee /tmp/instagram-publish.log
+          python scripts/instagram_engagement.py --image-url "$IMAGE_URL" 2>&1 | tee /tmp/instagram-publish.log
 
       - name: Explain missing token
         if: steps.should_post.outputs.publish == 'true' && env.INSTAGRAM_ACCESS_TOKEN == ''
