@@ -29,7 +29,7 @@ jobs:
         run: pip install pillow requests
 
       - name: Test Instagram automation
-        run: python -m unittest tests/test_instagram_daily.py tests/test_instagram_clusters.py tests/test_instagram_engagement.py
+        run: python -m unittest tests/test_instagram_daily.py tests/test_instagram_clusters.py tests/test_instagram_engagement.py tests/test_instagram_matchday.py
 
       - name: Check if yesterday had completed matches
         id: should_post
@@ -63,7 +63,7 @@ jobs:
 
       - name: Render daily card
         if: steps.should_post.outputs.publish == 'true'
-        run: python scripts/instagram_daily.py render
+        run: python scripts/instagram_matchday.py render
 
       - name: Commit daily card
         id: card_commit
