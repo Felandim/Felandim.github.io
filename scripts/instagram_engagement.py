@@ -23,6 +23,8 @@ def engagement_question(spotlight: dict) -> str:
     if kind == "upset":
         winner = text.partition(" bateu ")[0].strip()
         return f"{winner} confirma a reação na próxima rodada?" if winner else "A zebra confirma a reação na próxima rodada?"
+    if kind == "delayed_match":
+        return "Esse jogo atrasado muda sua leitura da tabela?"
     if kind == "g4_cluster":
         return "Quem leva a quarta vaga nesse pelotão?"
     if kind == "z4_cluster":
@@ -55,8 +57,9 @@ def with_engagement_question(caption: str, spotlight: dict, limit: int = 2200) -
 
 
 def main() -> None:
-    # Import tardio mantém as funções de copy testáveis sem carregar PIL/requests.
+    # Imports tardios mantêm as funções de copy testáveis sem carregar PIL/requests.
     import instagram_daily
+    import instagram_matchday
 
     parser = argparse.ArgumentParser()
     parser.add_argument("--image-url", required=True)
@@ -65,9 +68,10 @@ def main() -> None:
     args = parser.parse_args()
 
     insights = instagram_daily.load_insights(args.insights)
-    matches = instagram_daily.load_matches(args.matches)
-    spotlight = instagram_daily.round_spotlight(insights, matches)
-    caption = with_engagement_question(instagram_daily.build_caption(insights, matches), spotlight)
+    all_matches = instagram_daily.load_matches(args.matches)
+    matches = instagram_matchday.completed_matches_for_date(all_matches, instagram_matchday.publication_date())
+    spotlight = instagram_matchday.matchday_spotlight(insights, matches)
+    caption = with_engagement_question(instagram_matchday.build_caption(insights, matches), spotlight)
 
     media_id = instagram_daily.publish(
         args.image_url,
