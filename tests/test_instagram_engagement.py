@@ -24,6 +24,13 @@ class InstagramEngagementTests(unittest.TestCase):
             "Corinthians entra no G4 na próxima rodada?",
         )
 
+    def test_delayed_match_question_uses_table_context(self):
+        spotlight = {"kind": "delayed_match", "text": "Flamengo 2 x 0 Mirassol • 4ª rodada"}
+        self.assertEqual(
+            instagram_engagement.engagement_question(spotlight),
+            "Esse jogo atrasado muda sua leitura da tabela?",
+        )
+
     def test_question_is_inserted_before_site_cta(self):
         caption = "Resumo factual.\n\nMais números e evolução rodada a rodada: brasileiraoemrodadas.com.br\n\n#Brasileirao"
         spotlight = {"kind": "g4_cluster", "text": "4 times em até 3 pontos do 4º"}
