@@ -191,6 +191,8 @@
     const history = JSON.parse(canvas.dataset.history);
     const width = canvas.width, height = canvas.height;
     context.fillStyle = "#101714";
+    context.fillRect(0, 0, width, height);
+    context.fillStyle = "#dfff00";
     context.fillRect(0, 0, width, 34);
     context.fillRect(72, 112, 104, 104);
     context.fillStyle = "#101714";
