@@ -19,17 +19,64 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
-  update:
+  validate-pr:
+    if: github.event_name == 'pull_request'
+    permissions:
+      contents: read
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
-          ref: ${{ github.event.pull_request.head.ref || github.ref_name }}
-      - uses: actions/setup-python@v5
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
+        with:
+          python-version: '3.11'
+      - name: Install Python dependencies
+        run: |
+          pip install pillow playwright
+          python -m playwright install --with-deps chromium
+      - name: Run updater validation
+        run: |
+          set -o pipefail
+          python3 serie_a_2026/main.py 2>&1 | tee serie-a-updater.log
+          python3 brasileirao_2026/update_scorers.py 2>&1 | tee -a serie-a-updater.log
+          python3 brasileirao_2026/build.py 2>&1 | tee -a serie-a-updater.log
+          python3 brasileirao_2026/enhance_team_pages.py 2>&1 | tee -a serie-a-updater.log
+      - name: Upload updater log
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: serie-a-updater-log
+          path: serie-a-updater.log
+      - name: Validate all rounds
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+
+          data = json.loads(Path('data/serie_a_2026.json').read_text(encoding='utf-8'))
+          matches = data['matches']
+          rounds = {match['round'] for match in matches}
+          assert len(matches) == 380, f'Esperava 380 partidas, recebeu {len(matches)}'
+          assert rounds == set(range(1, 39)), f'Rodadas inválidas: {sorted(rounds)}'
+          assert all(sum(match['round'] == number for match in matches) == 10 for number in rounds)
+          print('38 rodadas e 380 partidas validadas.')
+          PY
+
+  update:
+    if: github.event_name != 'pull_request'
+    permissions:
+      contents: write
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
         with:
           python-version: '3.11'
       - name: Install Python dependencies
@@ -43,12 +90,6 @@ jobs:
           python3 brasileirao_2026/update_scorers.py 2>&1 | tee -a serie-a-updater.log
           python3 brasileirao_2026/build.py 2>&1 | tee -a serie-a-updater.log
           python3 brasileirao_2026/enhance_team_pages.py 2>&1 | tee -a serie-a-updater.log
-      - name: Upload updater log
-        if: always() && github.event_name == 'pull_request'
-        uses: actions/upload-artifact@v4
-        with:
-          name: serie-a-updater-log
-          path: serie-a-updater.log
       - name: Validate all rounds
         run: |
           python3 - <<'PY'
@@ -73,5 +114,5 @@ jobs:
           git config user.name "github-actions[bot]"
           git add data/serie_a_2026.json data/serie_a_2026_scorers.json data/brasileirao_2026_insights.json docs/serie_a_2026/index.html index.html brasileirao assets/og sitemap.xml
           git commit -m "Update Serie A 2026 data"
-          git pull --rebase origin "${GITHUB_HEAD_REF:-${GITHUB_REF_NAME}}"
+          git pull --rebase origin "${GITHUB_REF_NAME}"
           git push
