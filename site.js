@@ -2,6 +2,10 @@ document.querySelectorAll('[data-current-year]').forEach((node) => {
   node.textContent = new Date().getFullYear();
 });
 
+const escapeHtml = (value) => String(value ?? '').replace(/[&<>"']/g, (char) => ({
+  '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;',
+}[char]));
+
 if (location.hostname === 'felandim.github.io' && !document.querySelector('script[data-domain="felandim.github.io"]')) {
   const analytics = document.createElement('script');
   analytics.defer = true;
@@ -96,7 +100,7 @@ filterButtons.forEach((button) => {
 
   const section = document.createElement('section');
   section.className = 'br-section team-details';
-  section.innerHTML = `<div class="br-shell"><header><div><p class="br-kicker">Raio-x da campanha</p><h2>${team} em números</h2><p>Desempenho consolidado após ${totals.played} partidas.</p></div><a href="../classificacao-rodada-a-rodada.html">Ver classificação completa →</a></header><div class="team-kpis"><article><span>Aproveitamento</span><strong>${percentage}</strong><small>${totals.played} jogos</small></article><article><span>Gols marcados</span><strong>${totals.gf}</strong><small>${average(totals.gf)} por jogo</small></article><article><span>Gols sofridos</span><strong>${totals.ga}</strong><small>${average(totals.ga)} por jogo</small></article><article><span>Melhor posição</span><strong>${best}º</strong><small>Pior posição: ${worst}º</small></article></div><div class="team-history"><p class="br-kicker">Histórico completo</p><h2>Posição e pontos após cada rodada</h2><p>A variação compara a posição com a rodada anterior.</p><div class="br-table-wrap"><table class="br-table"><thead><tr><th>Rodada</th><th>Posição</th><th>Variação</th><th>Pontos</th><th>Na rodada</th></tr></thead><tbody>${rows}</tbody></table></div></div><nav class="team-page-nav" aria-label="Navegar entre times"><a href="${previous[1]}.html">← ${previous[0]}</a><a href="../index.html#times">Todos os times</a><a href="${next[1]}.html">${next[0]} →</a></nav></div>`;
+  section.innerHTML = `<div class="br-shell"><header><div><p class="br-kicker">Raio-x da campanha</p><h2>${escapeHtml(team)} em números</h2><p>Desempenho consolidado após ${totals.played} partidas.</p></div><a href="../classificacao-rodada-a-rodada.html">Ver classificação completa →</a></header><div class="team-kpis"><article><span>Aproveitamento</span><strong>${percentage}</strong><small>${totals.played} jogos</small></article><article><span>Gols marcados</span><strong>${totals.gf}</strong><small>${average(totals.gf)} por jogo</small></article><article><span>Gols sofridos</span><strong>${totals.ga}</strong><small>${average(totals.ga)} por jogo</small></article><article><span>Melhor posição</span><strong>${best}º</strong><small>Pior posição: ${worst}º</small></article></div><div class="team-history"><p class="br-kicker">Histórico completo</p><h2>Posição e pontos após cada rodada</h2><p>A variação compara a posição com a rodada anterior.</p><div class="br-table-wrap"><table class="br-table"><thead><tr><th>Rodada</th><th>Posição</th><th>Variação</th><th>Pontos</th><th>Na rodada</th></tr></thead><tbody>${rows}</tbody></table></div></div><nav class="team-page-nav" aria-label="Navegar entre times"><a href="${previous[1]}.html">← ${previous[0]}</a><a href="../index.html#times">Todos os times</a><a href="${next[1]}.html">${next[0]} →</a></nav></div>`;
   shareSection.before(section);
 })();
 
@@ -119,6 +123,6 @@ filterButtons.forEach((button) => {
   const section = document.createElement('section');
   section.className = 'br-section br-section-soft';
   section.dataset.teamGameCards = '';
-  section.innerHTML = `<div class="br-shell"><p class="br-kicker">Cards de jogos</p><h2>Compartilhe os jogos do ${team}</h2><p>Gere um card vertical pronto para Instagram com três partidas.</p><div class="br-actions"><a class="br-button br-button-hot" href="../../gerador-card-futebol.html?campeonato=serie-a&time=${encodedTeam}&modo=upcoming">Próximos 3 jogos</a><a class="br-button" href="../../gerador-card-futebol.html?campeonato=serie-a&time=${encodedTeam}&modo=recent">Últimos 3 jogos</a></div></div>`;
+  section.innerHTML = `<div class="br-shell"><p class="br-kicker">Cards de jogos</p><h2>Compartilhe os jogos do ${escapeHtml(team)}</h2><p>Gere um card vertical pronto para Instagram com três partidas.</p><div class="br-actions"><a class="br-button br-button-hot" href="../../gerador-card-futebol.html?campeonato=serie-a&time=${encodedTeam}&modo=upcoming">Próximos 3 jogos</a><a class="br-button" href="../../gerador-card-futebol.html?campeonato=serie-a&time=${encodedTeam}&modo=recent">Últimos 3 jogos</a></div></div>`;
   shareSection.before(section);
 })();
