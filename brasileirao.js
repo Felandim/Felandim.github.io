@@ -9,6 +9,7 @@
   });
 
   const slugify = value => value.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+  const safe = value => String(value ?? "").replace(/[&<>"']/g, char => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[char]));
 
   const teamLogoIds = {
     "Athletico-PR": 10273, "Atlético-MG": 10272, "Bahia": 7877, "Botafogo": 8517,
@@ -17,7 +18,7 @@
     "Internacional": 8702, "Mirassol": 163782, "Palmeiras": 10283, "Remo": 1626,
     "Santos": 8514, "São Paulo": 10277, "Vasco": 10276, "Vitória": 7733,
   };
-  const teamBadge = team => `<span class="br-team-with-badge br-team-with-badge-table"><img class="br-team-badge" src="https://images.fotmob.com/image_resources/logo/teamlogo/${teamLogoIds[team]}.png" alt="" aria-hidden="true" width="48" height="48" loading="lazy" decoding="async"><span>${team}</span></span>`;
+  const teamBadge = team => `<span class="br-team-with-badge br-team-with-badge-table"><img class="br-team-badge" src="https://images.fotmob.com/image_resources/logo/teamlogo/${teamLogoIds[team]}.png" alt="" aria-hidden="true" width="48" height="48" loading="lazy" decoding="async"><span>${safe(team)}</span></span>`;
 
   function standingsRows(rows) {
     return rows.map(row => {
@@ -41,7 +42,7 @@
       const y = top + (position - 1) * (height - top - bottom) / 19;
       return `<line x1="${left}" y1="${y}" x2="${width - right}" y2="${y}"/><text x="8" y="${y + 4}">${position}º</text>`;
     }).join("");
-    const legend = selected.map((row, index) => `<li><i style="--legend:${colors[index]}"></i>${row.team}</li>`).join("");
+    const legend = selected.map((row, index) => `<li><i style="--legend:${colors[index]}"></i>${safe(row.team)}</li>`).join("");
     return `<svg class="br-multi-chart" viewBox="0 0 ${width} ${height}" role="img" aria-label="Evolução dos oito primeiros times até a rodada ${round}">${guides}${lines}</svg><ul class="br-chart-legend">${legend}</ul>`;
   }
 
@@ -64,7 +65,7 @@
   function scorerChart(ranking) {
     const top = ranking.slice(0, 10);
     const max = Math.max(...top.map(item => item.goals), 1);
-    return `<ol class="br-goal-bars">${top.map((row, index) => `<li><span>${index + 1}</span><div><strong>${row.name}</strong><small>${row.team}</small><i style="width:${(row.goals / max) * 100}%"></i></div><b>${row.goals}</b></li>`).join("")}</ol>`;
+    return `<ol class="br-goal-bars">${top.map((row, index) => `<li><span>${index + 1}</span><div><strong>${safe(row.name)}</strong><small>${safe(row.team)}</small><i style="width:${(row.goals / max) * 100}%"></i></div><b>${row.goals}</b></li>`).join("")}</ol>`;
   }
 
   const scorerSelect = document.querySelector("[data-scorer-round-select]");
@@ -74,7 +75,7 @@
       const chart = document.querySelector("[data-scorer-chart]");
       const update = () => {
         const snapshot = data.scorers.find(item => item.round === Number(scorerSelect.value));
-        table.innerHTML = snapshot.ranking.map((row, index) => `<tr><td>${index + 1}</td><th scope="row">${row.name}</th><td>${row.team}</td><td><strong>${row.goals}</strong></td></tr>`).join("");
+        table.innerHTML = snapshot.ranking.map((row, index) => `<tr><td>${index + 1}</td><th scope="row">${safe(row.name)}</th><td>${safe(row.team)}</td><td><strong>${row.goals}</strong></td></tr>`).join("");
         chart.innerHTML = scorerChart(snapshot.ranking);
       };
       scorerSelect.addEventListener("change", update);
@@ -92,7 +93,6 @@
     const stats = comparisonRoot.querySelector("[data-compare-stats]");
     const error = comparisonRoot.querySelector("[data-compare-error]");
     const status = comparisonRoot.querySelector("[data-compare-status]");
-    const safe = value => String(value).replace(/[&<>"']/g, char => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[char]));
 
     function duelChart(profileA, profileB) {
       const width = 820, height = 430, left = 48, right = 28, top = 34, bottom = 46;
@@ -191,8 +191,6 @@
     const history = JSON.parse(canvas.dataset.history);
     const width = canvas.width, height = canvas.height;
     context.fillStyle = "#101714";
-    context.fillRect(0, 0, width, height);
-    context.fillStyle = "#dfff00";
     context.fillRect(0, 0, width, 34);
     context.fillRect(72, 112, 104, 104);
     context.fillStyle = "#101714";
