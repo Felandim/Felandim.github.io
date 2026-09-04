@@ -12,6 +12,10 @@ from PIL import Image, ImageDraw
 import instagram_daily
 
 
+SPOTLIGHT_BOX = (60, 1140, 1020, 1275)
+SPOTLIGHT_TEXT_WIDTH = 870
+
+
 def publication_date(now: datetime | None = None) -> date:
     now = now or datetime.now(instagram_daily.TZ)
     return now.date() - timedelta(days=1)
@@ -52,6 +56,66 @@ def matchday_spotlight(insights: dict, matches: list[dict]) -> dict:
     return delayed_match_spotlight(insights, matches) or instagram_daily.round_spotlight(insights, matches)
 
 
+def _wrap_text(draw: ImageDraw.ImageDraw, text: str, font, max_width: int) -> list[str]:
+    """Quebra texto por palavras sem ultrapassar a largura disponível."""
+    words = text.split()
+    if not words:
+        return [""]
+
+    lines = [words[0]]
+    for word in words[1:]:
+        candidate = f"{lines[-1]} {word}"
+        if draw.textbbox((0, 0), candidate, font=font)[2] <= max_width:
+            lines[-1] = candidate
+        else:
+            lines.append(word)
+    return lines
+
+
+def spotlight_text_layout(
+    draw: ImageDraw.ImageDraw,
+    text: str,
+    max_width: int = SPOTLIGHT_TEXT_WIDTH,
+    max_lines: int = 2,
+    preferred_size: int = 31,
+    minimum_size: int = 23,
+) -> tuple[list[str], object]:
+    """Ajusta tamanho e quebra para manter o destaque legível dentro do card."""
+    for size in range(preferred_size, minimum_size - 1, -1):
+        font = instagram_daily._font(size)
+        lines = _wrap_text(draw, text, font, max_width)
+        if len(lines) <= max_lines:
+            return lines, font
+
+    font = instagram_daily._font(minimum_size)
+    lines = _wrap_text(draw, text, font, max_width)
+    if len(lines) <= max_lines:
+        return lines, font
+
+    kept = lines[:max_lines]
+    tail = " ".join(lines[max_lines - 1:])
+    ellipsis = "…"
+    while tail and draw.textbbox((0, 0), tail + ellipsis, font=font)[2] > max_width:
+        tail = tail[:-1].rstrip()
+    kept[-1] = (tail + ellipsis) if tail else ellipsis
+    return kept, font
+
+
+def draw_spotlight(image: Image.Image, spotlight: dict) -> None:
+    """Redesenha o destaque com quebra e redução de fonte quando necessário."""
+    draw = ImageDraw.Draw(image)
+    draw.rounded_rectangle(SPOTLIGHT_BOX, radius=24, fill=instagram_daily.PANEL)
+    instagram_daily._draw_text(
+        draw, (90, 1158), spotlight["label"], instagram_daily._font(25), instagram_daily.ACCENT
+    )
+
+    lines, font = spotlight_text_layout(draw, spotlight["text"])
+    y = 1195
+    for line in lines:
+        instagram_daily._draw_text(draw, (90, y), line, font, instagram_daily.TEXT)
+        y += 34
+
+
 def build_caption(insights: dict, matches: list[dict]) -> str:
     caption = instagram_daily.build_caption(insights, matches)
     delayed = delayed_match_spotlight(insights, matches)
@@ -71,19 +135,8 @@ def render_card(
     now: datetime | None = None,
 ) -> Path:
     output = instagram_daily.render_card(insights, output, now=now, matches=matches)
-    delayed = delayed_match_spotlight(insights, matches)
-    if not delayed:
-        return output
-
     image = Image.open(output).convert("RGB")
-    draw = ImageDraw.Draw(image)
-    draw.rounded_rectangle((60, 1165, 1020, 1260), radius=24, fill=instagram_daily.PANEL)
-    instagram_daily._draw_text(
-        draw, (90, 1185), delayed["label"], instagram_daily._font(25), instagram_daily.ACCENT
-    )
-    instagram_daily._draw_text(
-        draw, (90, 1222), delayed["text"], instagram_daily._font(31), instagram_daily.TEXT
-    )
+    draw_spotlight(image, matchday_spotlight(insights, matches))
     image.save(output, "PNG", optimize=True)
     return output
 
