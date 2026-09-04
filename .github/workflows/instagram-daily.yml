@@ -19,9 +19,9 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
 
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
         with:
           python-version: '3.11'
 
@@ -86,14 +86,14 @@ jobs:
         env:
           IMAGE_URL: https://raw.githubusercontent.com/${{ github.repository }}/${{ steps.card_commit.outputs.sha }}/assets/instagram/daily.png
         run: |
-          set -o pipefail
-          python scripts/instagram_engagement.py --image-url "$IMAGE_URL" 2>&1 | tee /tmp/instagram-publish.log
+          # A resposta bruta da API pode conter detalhes sensíveis. Ela fica apenas no runner efêmero.
+          python scripts/instagram_engagement.py --image-url "$IMAGE_URL" > /tmp/instagram-publish.log 2>&1
 
       - name: Explain missing token
         if: steps.should_post.outputs.publish == 'true' && env.INSTAGRAM_ACCESS_TOKEN == ''
         run: echo "INSTAGRAM_ACCESS_TOKEN is not configured; card generation succeeded but publishing was skipped."
 
-      - name: Record publish status
+      - name: Record sanitized publish status
         if: always() && steps.should_post.outputs.publish == 'true'
         env:
           PUBLISH_OUTCOME: ${{ steps.publish.outcome }}
@@ -104,13 +104,13 @@ jobs:
           from datetime import datetime, timezone
           from pathlib import Path
 
-          log_path = Path('/tmp/instagram-publish.log')
-          log = log_path.read_text(encoding='utf-8', errors='replace').strip() if log_path.exists() else ''
+          outcome = os.environ.get('PUBLISH_OUTCOME', 'skipped')
           payload = {
               'timestamp_utc': datetime.now(timezone.utc).isoformat(),
-              'outcome': os.environ.get('PUBLISH_OUTCOME', 'skipped'),
-              'log': log[-2000:],
+              'outcome': outcome,
           }
+          if outcome == 'failure':
+              payload['detail'] = 'Falha de publicação; resposta bruta da API suprimida por segurança.'
           path = Path('data/instagram_publish_status.json')
           path.parent.mkdir(parents=True, exist_ok=True)
           path.write_text(json.dumps(payload, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
@@ -120,7 +120,7 @@ jobs:
           git config user.name "github-actions[bot]"
           git add data/instagram_publish_status.json
           if ! git diff --cached --quiet; then
-            git commit -m "chore(instagram): record publish status"
+            git commit -m "chore(instagram): record sanitized publish status"
             git pull --rebase origin main
             git push origin main
           fi
