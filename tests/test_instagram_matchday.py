@@ -6,6 +6,8 @@ from datetime import date, datetime
 from pathlib import Path
 from zoneinfo import ZoneInfo
 
+from PIL import Image, ImageDraw
+
 ROOT = Path(__file__).resolve().parents[1]
 SCRIPTS = ROOT / "scripts"
 sys.path.insert(0, str(SCRIPTS))
@@ -85,7 +87,24 @@ class InstagramMatchdayTests(unittest.TestCase):
         self.assertIn("Jogo atrasado: Flamengo 2 x 0 Mirassol, pela 4ª rodada.", caption)
         self.assertLessEqual(len(caption), 2200)
 
-    def test_render_overlays_delayed_match_spotlight(self):
+    def test_spotlight_layout_wraps_long_copy_inside_available_width(self):
+        image = Image.new("RGB", (1080, 1350))
+        draw = ImageDraw.Draw(image)
+        text = "Athletico-PR bateu o Atlético-MG • diferença de 14 posições antes da rodada"
+        lines, font = instagram_matchday.spotlight_text_layout(draw, text)
+
+        self.assertLessEqual(len(lines), 2)
+        for line in lines:
+            width = draw.textbbox((0, 0), line, font=font)[2]
+            self.assertLessEqual(width, instagram_matchday.SPOTLIGHT_TEXT_WIDTH)
+
+    def test_spotlight_layout_keeps_short_copy_on_one_line(self):
+        image = Image.new("RGB", (1080, 1350))
+        draw = ImageDraw.Draw(image)
+        lines, _ = instagram_matchday.spotlight_text_layout(draw, "Palmeiras assumiu a ponta")
+        self.assertEqual(lines, ["Palmeiras assumiu a ponta"])
+
+    def test_render_overlays_responsive_spotlight(self):
         matches = [{
             "date": "02/09/2026", "round": 4, "home": "Flamengo",
             "away": "Mirassol", "score": "2 x 0",
