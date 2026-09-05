@@ -61,12 +61,12 @@ def volatile_insights(record=True):
         order = base[:]
         order[4], order[4 + shift] = order[4 + shift], order[4]
         orders.append(order)
-    final = base[:]
     if record:
+        final = base[:]
         final[1], final[10] = final[10], final[1]
         final[3], final[15] = final[15], final[3]
     else:
-        final[4], final[5] = final[5], final[4]
+        final = orders[-1][:]
     orders.append(final)
 
     snapshots = [{"round": 19 + index, "table": make_table(order)} for index, order in enumerate(orders)]
