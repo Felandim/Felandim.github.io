@@ -52,8 +52,56 @@ def delayed_match_spotlight(insights: dict, matches: list[dict]) -> dict | None:
     }
 
 
+def table_volatility_spotlight(insights: dict, minimum_history: int = 5) -> dict | None:
+    """Destaca quando a rodada bate ou iguala o maior movimento agregado da tabela no campeonato."""
+    snapshots = insights.get("snapshots", [])
+    if len(snapshots) < minimum_history + 1:
+        return None
+
+    scores: list[int] = []
+    for previous, current in zip(snapshots, snapshots[1:]):
+        previous_positions = {row["team"]: row["position"] for row in previous["table"]}
+        movement = sum(
+            abs(previous_positions[row["team"]] - row["position"])
+            for row in current["table"]
+            if row["team"] in previous_positions
+        )
+        scores.append(movement)
+
+    current_score = scores[-1]
+    previous_best = max(scores[:-1], default=0)
+    if current_score <= 0 or current_score < previous_best:
+        return None
+
+    if current_score > previous_best:
+        qualifier = "recorde do campeonato"
+        caption = f"Tabela em ebulição: a rodada somou {current_score} posições de movimento, a maior marca do campeonato até aqui."
+    else:
+        qualifier = "iguala maior marca"
+        caption = f"Tabela em ebulição: a rodada somou {current_score} posições de movimento e igualou a maior marca do campeonato."
+
+    return {
+        "kind": "table_volatility",
+        "label": "TABELA EM EBULIÇÃO",
+        "text": f"{current_score} posições de movimento • {qualifier}",
+        "caption": caption,
+        "movement": current_score,
+    }
+
+
 def matchday_spotlight(insights: dict, matches: list[dict]) -> dict:
-    return delayed_match_spotlight(insights, matches) or instagram_daily.round_spotlight(insights, matches)
+    delayed = delayed_match_spotlight(insights, matches)
+    if delayed:
+        return delayed
+
+    base = instagram_daily.round_spotlight(insights, matches)
+    high_priority = {
+        "leader", "g4", "z4", "upset", "g4_cluster", "z4_cluster", "g4_pressure", "z4_pressure",
+    }
+    if base.get("kind") in high_priority:
+        return base
+
+    return table_volatility_spotlight(insights) or base
 
 
 def _wrap_text(draw: ImageDraw.ImageDraw, text: str, font, max_width: int) -> list[str]:
@@ -118,13 +166,14 @@ def draw_spotlight(image: Image.Image, spotlight: dict) -> None:
 
 def build_caption(insights: dict, matches: list[dict]) -> str:
     caption = instagram_daily.build_caption(insights, matches)
-    delayed = delayed_match_spotlight(insights, matches)
-    if not delayed or delayed["caption"] in caption:
+    spotlight = matchday_spotlight(insights, matches)
+    extra = spotlight.get("caption", "")
+    if not extra or extra in caption:
         return caption
 
     lines = caption.splitlines()
     insert_at = 2 if len(lines) >= 2 else len(lines)
-    lines.insert(insert_at, delayed["caption"])
+    lines.insert(insert_at, extra)
     return "\n".join(lines)[:2200]
 
 
