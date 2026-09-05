@@ -18,17 +18,24 @@ assert spec.loader is not None
 spec.loader.exec_module(instagram_matchday)
 
 
-def sample_insights():
-    teams = [
-        "Palmeiras", "Flamengo", "Bahia", "São Paulo", "Corinthians", "Santos",
-        "Botafogo", "Cruzeiro", "Fluminense", "Grêmio", "Atlético-MG", "Athletico-PR",
-        "Bragantino", "Internacional", "Mirassol", "Vitória", "Vasco", "Coritiba",
-        "Chapecoense", "Remo",
-    ]
-    table = [
+TEAMS = [
+    "Palmeiras", "Flamengo", "Bahia", "São Paulo", "Corinthians", "Santos",
+    "Botafogo", "Cruzeiro", "Fluminense", "Grêmio", "Atlético-MG", "Athletico-PR",
+    "Bragantino", "Internacional", "Mirassol", "Vitória", "Vasco", "Coritiba",
+    "Chapecoense", "Remo",
+]
+
+
+def make_table(order=None):
+    order = order or TEAMS
+    return [
         {"team": team, "points": 50 - index * 2, "position": index + 1}
-        for index, team in enumerate(teams)
+        for index, team in enumerate(order)
     ]
+
+
+def sample_insights():
+    table = make_table()
     return {
         "season": 2026,
         "snapshots": [{"round": 23, "table": table}, {"round": 24, "table": table}],
@@ -44,6 +51,29 @@ def sample_insights():
             "biggest_win": None,
         }],
     }
+
+
+def volatile_insights(record=True):
+    orders = []
+    base = list(TEAMS)
+    orders.append(base[:])
+    for shift in (1, 2, 1, 2):
+        order = base[:]
+        order[4], order[4 + shift] = order[4 + shift], order[4]
+        orders.append(order)
+    final = base[:]
+    if record:
+        final[1], final[10] = final[10], final[1]
+        final[3], final[15] = final[15], final[3]
+    else:
+        final[4], final[5] = final[5], final[4]
+    orders.append(final)
+
+    snapshots = [{"round": 19 + index, "table": make_table(order)} for index, order in enumerate(orders)]
+    data = sample_insights()
+    data["snapshots"] = snapshots
+    data["rounds"][-1]["round"] = snapshots[-1]["round"]
+    return data
 
 
 class InstagramMatchdayTests(unittest.TestCase):
@@ -85,6 +115,31 @@ class InstagramMatchdayTests(unittest.TestCase):
         }]
         caption = instagram_matchday.build_caption(sample_insights(), matches)
         self.assertIn("Jogo atrasado: Flamengo 2 x 0 Mirassol, pela 4ª rodada.", caption)
+        self.assertLessEqual(len(caption), 2200)
+
+    def test_table_volatility_detects_new_season_record(self):
+        spotlight = instagram_matchday.table_volatility_spotlight(volatile_insights(record=True))
+        self.assertIsNotNone(spotlight)
+        self.assertEqual(spotlight["kind"], "table_volatility")
+        self.assertIn("recorde do campeonato", spotlight["text"])
+        self.assertGreater(spotlight["movement"], 0)
+
+    def test_table_volatility_ignores_ordinary_round(self):
+        self.assertIsNone(instagram_matchday.table_volatility_spotlight(volatile_insights(record=False)))
+
+    def test_volatility_replaces_only_generic_spotlights(self):
+        data = volatile_insights(record=True)
+        spotlight = instagram_matchday.matchday_spotlight(data, [])
+        self.assertEqual(spotlight["kind"], "table_volatility")
+
+        data["rounds"][-1]["leader_changed"] = True
+        data["rounds"][-1]["leader"] = "Palmeiras"
+        spotlight = instagram_matchday.matchday_spotlight(data, [])
+        self.assertEqual(spotlight["kind"], "leader")
+
+    def test_caption_includes_volatility_context(self):
+        caption = instagram_matchday.build_caption(volatile_insights(record=True), [])
+        self.assertIn("Tabela em ebulição:", caption)
         self.assertLessEqual(len(caption), 2200)
 
     def test_spotlight_layout_wraps_long_copy_inside_available_width(self):
