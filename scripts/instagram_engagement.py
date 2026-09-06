@@ -25,6 +25,8 @@ def engagement_question(spotlight: dict) -> str:
         return f"{winner} confirma a reação na próxima rodada?" if winner else "A zebra confirma a reação na próxima rodada?"
     if kind == "delayed_match":
         return "Esse jogo atrasado muda sua leitura da tabela?"
+    if kind == "tight_matches":
+        return "A próxima rodada mantém esse nível de equilíbrio?"
     if kind == "g4_cluster":
         return "Quem leva a quarta vaga nesse pelotão?"
     if kind == "z4_cluster":
