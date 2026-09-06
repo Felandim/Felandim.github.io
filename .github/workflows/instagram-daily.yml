@@ -35,6 +35,30 @@ jobs:
       - name: Test Instagram automation
         run: python -m unittest tests/test_instagram_daily.py tests/test_instagram_clusters.py tests/test_instagram_engagement.py tests/test_instagram_matchday.py
 
+      - name: Validate Instagram token
+        run: |
+          python - <<'PY'
+          import os
+          import requests
+
+          ig_user_id = os.environ['INSTAGRAM_IG_USER_ID']
+          token = os.environ['INSTAGRAM_ACCESS_TOKEN']
+          api_version = os.environ['INSTAGRAM_API_VERSION']
+          if not token:
+              raise SystemExit('INSTAGRAM_ACCESS_TOKEN is not configured.')
+
+          response = requests.get(
+              f'https://graph.instagram.com/{api_version}/{ig_user_id}',
+              params={'fields': 'id,username', 'access_token': token},
+              timeout=30,
+          )
+          response.raise_for_status()
+          payload = response.json()
+          if str(payload.get('id')) != ig_user_id:
+              raise SystemExit('Instagram token does not resolve to the configured account.')
+          print('Instagram token validated successfully.')
+          PY
+
       - name: Check if yesterday had completed matches
         id: should_post
         run: |
