@@ -52,6 +52,40 @@ def delayed_match_spotlight(insights: dict, matches: list[dict]) -> dict | None:
     }
 
 
+def tight_matchday_spotlight(
+    matches: list[dict],
+    minimum_matches: int = 3,
+    minimum_share: float = 0.75,
+) -> dict | None:
+    """Destaca dias em que quase todos os jogos foram decididos no detalhe."""
+    scored = []
+    for match in matches:
+        score = instagram_daily._score(match.get("score", ""))
+        if score:
+            scored.append(score)
+
+    if len(scored) < minimum_matches:
+        return None
+
+    close_games = sum(1 for home, away in scored if abs(home - away) <= 1)
+    share = close_games / len(scored)
+    if share < minimum_share:
+        return None
+
+    return {
+        "kind": "tight_matches",
+        "label": "JOGOS NO LIMITE",
+        "text": f"{close_games} de {len(scored)} jogos do dia decididos por até 1 gol",
+        "caption": (
+            f"Jogos no limite: {close_games} de {len(scored)} partidas do dia "
+            "terminaram empatadas ou foram decididas por apenas um gol."
+        ),
+        "close_games": close_games,
+        "matches": len(scored),
+        "share": share,
+    }
+
+
 def table_volatility_spotlight(insights: dict, minimum_history: int = 5) -> dict | None:
     """Destaca quando a rodada bate ou iguala o maior movimento agregado da tabela no campeonato."""
     snapshots = insights.get("snapshots", [])
@@ -100,6 +134,10 @@ def matchday_spotlight(insights: dict, matches: list[dict]) -> dict:
     }
     if base.get("kind") in high_priority:
         return base
+
+    tight = tight_matchday_spotlight(matches)
+    if tight:
+        return tight
 
     return table_volatility_spotlight(insights) or base
 
