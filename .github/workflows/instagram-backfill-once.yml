@@ -1,0 +1,179 @@
+name: Instagram backfill (one-off)
+
+on:
+  push:
+    paths:
+      - '.github/workflows/instagram-backfill-once.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: instagram-backfill-once
+  cancel-in-progress: false
+
+jobs:
+  publish-missed-matchdays:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      INSTAGRAM_IG_USER_ID: '17841429981371844'
+      INSTAGRAM_ACCESS_TOKEN: ${{ secrets.INSTAGRAM_ACCESS_TOKEN }}
+      INSTAGRAM_API_VERSION: 'v23.0'
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install pillow requests
+
+      - name: Run Instagram tests
+        run: python -m unittest tests/test_instagram_daily.py tests/test_instagram_clusters.py tests/test_instagram_engagement.py tests/test_instagram_matchday.py
+
+      - name: Publish missed matchdays
+        shell: bash
+        run: |
+          python - <<'PY'
+          from __future__ import annotations
+
+          import json
+          import os
+          import sys
+          import time
+          from datetime import datetime
+
+          import requests
+
+          sys.path.insert(0, 'scripts')
+          import instagram_daily
+          import instagram_engagement
+          import instagram_matchday
+
+          targets = [
+              {
+                  'match_date': '23/08/2026',
+                  'card_ref': '94775cacf7969f493d2c436db1763504887e495c',
+                  'marker': 'Resumo recuperado dos jogos de 23/08/2026.',
+              },
+              {
+                  'match_date': '24/08/2026',
+                  'card_ref': '62cc12e820d1c5700ee812f6ffad1e2bbeb9cca0',
+                  'marker': 'Resumo recuperado dos jogos de 24/08/2026.',
+              },
+              {
+                  'match_date': '29/08/2026',
+                  'card_ref': '45836883c3cb0a745cff6a9516cbeb2d7230d390',
+                  'marker': 'Resumo recuperado dos jogos de 29/08/2026.',
+              },
+              {
+                  'match_date': '30/08/2026',
+                  'card_ref': 'a894d02b5034c66263425ba8a2f842f64cafe4a9',
+                  'marker': 'Resumo recuperado dos jogos de 30/08/2026.',
+              },
+              {
+                  'match_date': '31/08/2026',
+                  'card_ref': '85e3070c79032e77a91a24ff37bd655f543c6426',
+                  'marker': 'Resumo recuperado dos jogos de 31/08/2026.',
+              },
+              {
+                  'match_date': '02/09/2026',
+                  'card_ref': '686a73700f43649693889ae40451aa39425cb548',
+                  'marker': 'Resumo recuperado do jogo atrasado de 02/09/2026.',
+              },
+          ]
+
+          token = os.environ['INSTAGRAM_ACCESS_TOKEN']
+          ig_user_id = os.environ['INSTAGRAM_IG_USER_ID']
+          api_version = os.environ.get('INSTAGRAM_API_VERSION', instagram_daily.DEFAULT_API_VERSION)
+          base = f'https://graph.instagram.com/{api_version}/{ig_user_id}'
+
+          def get_json(url: str, params: dict) -> dict:
+              response = requests.get(url, params=params, timeout=30)
+              payload = response.json()
+              if not response.ok:
+                  raise RuntimeError(f'Instagram API preflight failed ({response.status_code}): {payload}')
+              return payload
+
+          profile = get_json(base, {'fields': 'id,username', 'access_token': token})
+          print(f"Preflight OK for Instagram account {profile.get('username', profile['id'])}.")
+
+          existing_captions: list[str] = []
+          page_url = f'{base}/media'
+          page_params = {
+              'fields': 'id,caption,timestamp',
+              'limit': 100,
+              'access_token': token,
+          }
+          while page_url and len(existing_captions) < 200:
+              page = get_json(page_url, page_params)
+              existing_captions.extend(item.get('caption', '') for item in page.get('data', []))
+              page_url = page.get('paging', {}).get('next')
+              page_params = {} if page_url else page_params
+
+          all_matches = instagram_daily.load_matches()
+          prepared: list[dict] = []
+          for target in targets:
+              marker = target['marker']
+              if any(marker in caption for caption in existing_captions):
+                  print(f"Skipping already published item: {marker}")
+                  continue
+
+              raw_base = (
+                  'https://raw.githubusercontent.com/Felandim/Felandim.github.io/'
+                  f"{target['card_ref']}"
+              )
+              insights_response = requests.get(
+                  f'{raw_base}/data/brasileirao_2026_insights.json', timeout=30
+              )
+              insights_response.raise_for_status()
+              insights = insights_response.json()
+
+              match_date = datetime.strptime(target['match_date'], '%d/%m/%Y').date()
+              matches = instagram_matchday.completed_matches_for_date(all_matches, match_date)
+              if not matches:
+                  raise RuntimeError(f"No completed matches found for {target['match_date']}")
+
+              spotlight = instagram_matchday.matchday_spotlight(insights, matches)
+              caption = instagram_matchday.build_caption(insights, matches)
+              caption = instagram_engagement.with_engagement_question(caption, spotlight)
+              caption = f'{marker}\n\n{caption}'[:2200]
+
+              image_url = f'{raw_base}/assets/instagram/daily.png'
+              image_response = requests.get(image_url, timeout=30)
+              image_response.raise_for_status()
+              if image_response.headers.get('content-type') != 'image/png' or len(image_response.content) < 10_000:
+                  raise RuntimeError(f"Invalid historical card for {target['match_date']}")
+
+              prepared.append({
+                  'match_date': target['match_date'],
+                  'matches': len(matches),
+                  'marker': marker,
+                  'caption': caption,
+                  'image_url': image_url,
+              })
+
+          print(f'Validated {len(prepared)} publication(s); starting backfill.')
+          published_markers: set[str] = set()
+          published_ids: list[str] = []
+
+          for item in prepared:
+              media_id = instagram_daily.publish(
+                  item['image_url'],
+                  item['caption'],
+                  ig_user_id,
+                  token,
+                  api_version,
+              )
+              published_markers.add(item['marker'])
+              published_ids.append(media_id)
+              print(
+                  f"Published {item['match_date']} ({item['matches']} match(es)); media id {media_id}."
+              )
+              time.sleep(3)
+
+          print(json.dumps({'published_media_ids': published_ids}, ensure_ascii=False))
+          PY
+
