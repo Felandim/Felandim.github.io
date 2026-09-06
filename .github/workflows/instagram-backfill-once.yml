@@ -189,3 +189,4 @@ jobs:
           print(json.dumps({'published_media_ids': published_ids}, ensure_ascii=False))
           PY
 
+# Execução excepcional solicitada em 05/09/2026.
