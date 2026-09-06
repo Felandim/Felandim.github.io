@@ -109,6 +109,31 @@ jobs:
                   raise RuntimeError(f'Instagram API preflight failed ({response.status_code}): {payload}')
               return payload
 
+          def publish_when_ready(image_url: str, caption: str) -> str:
+              container = instagram_daily._post(
+                  f'{base}/media',
+                  {'image_url': image_url, 'caption': caption, 'access_token': token},
+              )
+              creation_id = container['id']
+              last_error: RuntimeError | None = None
+              for attempt in range(12):
+                  try:
+                      media = instagram_daily._post(
+                          f'{base}/media_publish',
+                          {'creation_id': creation_id, 'access_token': token},
+                      )
+                      return media['id']
+                  except RuntimeError as exc:
+                      message = str(exc)
+                      if '9007' not in message and '2207027' not in message:
+                          raise
+                      last_error = exc
+                      if attempt == 11:
+                          break
+                      time.sleep(5)
+              assert last_error is not None
+              raise last_error
+
           profile = get_json(base, {'fields': 'id,username', 'access_token': token})
           print(f"Preflight OK for Instagram account {profile.get('username', profile['id'])}.")
 
@@ -168,18 +193,10 @@ jobs:
               })
 
           print(f'Validated {len(prepared)} publication(s); starting backfill.')
-          published_markers: set[str] = set()
           published_ids: list[str] = []
 
           for item in prepared:
-              media_id = instagram_daily.publish(
-                  item['image_url'],
-                  item['caption'],
-                  ig_user_id,
-                  token,
-                  api_version,
-              )
-              published_markers.add(item['marker'])
+              media_id = publish_when_ready(item['image_url'], item['caption'])
               published_ids.append(media_id)
               print(
                   f"Published {item['match_date']} ({item['matches']} match(es)); media id {media_id}."
@@ -189,4 +206,4 @@ jobs:
           print(json.dumps({'published_media_ids': published_ids}, ensure_ascii=False))
           PY
 
-# Execução excepcional solicitada em 05/09/2026.
+# Execução excepcional com retry de media_publish em 05/09/2026.
