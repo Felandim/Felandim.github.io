@@ -96,7 +96,7 @@ def matchday_spotlight(insights: dict, matches: list[dict]) -> dict:
 
     base = instagram_daily.round_spotlight(insights, matches)
     high_priority = {
-        "leader", "g4", "z4", "upset", "g4_cluster", "z4_cluster", "g4_pressure", "z4_pressure",
+        "leader", "g4", "z4", "upset", "g4_cluster", "z4_cluster",
     }
     if base.get("kind") in high_priority:
         return base
