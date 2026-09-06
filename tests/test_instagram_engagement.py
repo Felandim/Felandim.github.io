@@ -31,6 +31,13 @@ class InstagramEngagementTests(unittest.TestCase):
             "Esse jogo atrasado muda sua leitura da tabela?",
         )
 
+    def test_tight_matchday_question_asks_about_competitive_balance(self):
+        spotlight = {"kind": "tight_matches", "text": "4 de 5 jogos do dia decididos por até 1 gol"}
+        self.assertEqual(
+            instagram_engagement.engagement_question(spotlight),
+            "A próxima rodada mantém esse nível de equilíbrio?",
+        )
+
     def test_question_is_inserted_before_site_cta(self):
         caption = "Resumo factual.\n\nMais números e evolução rodada a rodada: brasileiraoemrodadas.com.br\n\n#Brasileirao"
         spotlight = {"kind": "g4_cluster", "text": "4 times em até 3 pontos do 4º"}
