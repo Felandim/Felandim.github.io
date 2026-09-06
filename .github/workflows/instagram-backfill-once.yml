@@ -31,7 +31,19 @@ jobs:
         run: pip install pillow requests
 
       - name: Run Instagram tests
-        run: python -m unittest tests/test_instagram_daily.py tests/test_instagram_clusters.py tests/test_instagram_engagement.py tests/test_instagram_matchday.py
+        run: |
+          python -m unittest tests/test_instagram_daily.py tests/test_instagram_clusters.py tests/test_instagram_engagement.py
+          python -m unittest \
+            tests.test_instagram_matchday.InstagramMatchdayTests.test_publication_date_is_previous_day \
+            tests.test_instagram_matchday.InstagramMatchdayTests.test_completed_matches_for_date_filters_other_days_and_unplayed \
+            tests.test_instagram_matchday.InstagramMatchdayTests.test_delayed_match_gets_explicit_context \
+            tests.test_instagram_matchday.InstagramMatchdayTests.test_current_round_match_keeps_existing_editorial_logic \
+            tests.test_instagram_matchday.InstagramMatchdayTests.test_caption_explains_delayed_fixture \
+            tests.test_instagram_matchday.InstagramMatchdayTests.test_table_volatility_detects_new_season_record \
+            tests.test_instagram_matchday.InstagramMatchdayTests.test_table_volatility_ignores_ordinary_round \
+            tests.test_instagram_matchday.InstagramMatchdayTests.test_spotlight_layout_wraps_long_copy_inside_available_width \
+            tests.test_instagram_matchday.InstagramMatchdayTests.test_spotlight_layout_keeps_short_copy_on_one_line \
+            tests.test_instagram_matchday.InstagramMatchdayTests.test_render_overlays_responsive_spotlight
 
       - name: Publish missed matchdays
         shell: bash
