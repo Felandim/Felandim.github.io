@@ -1,10 +1,6 @@
 name: Publish Daily Instagram Summary
 
 on:
-  push:
-    branches: [main]
-    paths:
-      - '.github/workflows/instagram-daily.yml'
   schedule:
     # 10:00 em São Paulo (UTC-3). O job só publica se houve jogo concluído no dia anterior.
     - cron: '0 13 * * *'
