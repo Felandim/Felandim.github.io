@@ -117,6 +117,56 @@ class InstagramMatchdayTests(unittest.TestCase):
         self.assertIn("Jogo atrasado: Flamengo 2 x 0 Mirassol, pela 4ª rodada.", caption)
         self.assertLessEqual(len(caption), 2200)
 
+    def test_tight_matchday_detects_close_results(self):
+        matches = [
+            {"score": "1 x 0"},
+            {"score": "2 x 2"},
+            {"score": "3 x 2"},
+            {"score": "4 x 1"},
+        ]
+        spotlight = instagram_matchday.tight_matchday_spotlight(matches)
+        self.assertIsNotNone(spotlight)
+        self.assertEqual(spotlight["kind"], "tight_matches")
+        self.assertEqual(spotlight["close_games"], 3)
+        self.assertEqual(spotlight["matches"], 4)
+        self.assertIn("3 de 4 jogos do dia", spotlight["text"])
+
+    def test_tight_matchday_requires_enough_matches(self):
+        matches = [{"score": "1 x 0"}, {"score": "0 x 0"}]
+        self.assertIsNone(instagram_matchday.tight_matchday_spotlight(matches))
+
+    def test_tight_matchday_replaces_generic_pressure(self):
+        matches = [
+            {"round": 24, "home": "Flamengo", "away": "Santos", "score": "1 x 0"},
+            {"round": 24, "home": "Botafogo", "away": "Cruzeiro", "score": "1 x 1"},
+            {"round": 24, "home": "Grêmio", "away": "Mirassol", "score": "2 x 1"},
+            {"round": 24, "home": "Vitória", "away": "Remo", "score": "3 x 0"},
+        ]
+        spotlight = instagram_matchday.matchday_spotlight(sample_insights(), matches)
+        self.assertEqual(spotlight["kind"], "tight_matches")
+
+    def test_tight_matchday_does_not_override_new_leader(self):
+        data = sample_insights()
+        data["rounds"][-1]["leader_changed"] = True
+        matches = [
+            {"round": 24, "home": "Flamengo", "away": "Santos", "score": "1 x 0"},
+            {"round": 24, "home": "Botafogo", "away": "Cruzeiro", "score": "1 x 1"},
+            {"round": 24, "home": "Grêmio", "away": "Mirassol", "score": "2 x 1"},
+        ]
+        spotlight = instagram_matchday.matchday_spotlight(data, matches)
+        self.assertEqual(spotlight["kind"], "leader")
+
+    def test_caption_includes_tight_matchday_context(self):
+        matches = [
+            {"round": 24, "home": "Flamengo", "away": "Santos", "score": "1 x 0"},
+            {"round": 24, "home": "Botafogo", "away": "Cruzeiro", "score": "1 x 1"},
+            {"round": 24, "home": "Grêmio", "away": "Mirassol", "score": "2 x 1"},
+            {"round": 24, "home": "Vitória", "away": "Remo", "score": "3 x 0"},
+        ]
+        caption = instagram_matchday.build_caption(sample_insights(), matches)
+        self.assertIn("Jogos no limite: 3 de 4 partidas do dia", caption)
+        self.assertLessEqual(len(caption), 2200)
+
     def test_table_volatility_detects_new_season_record(self):
         spotlight = instagram_matchday.table_volatility_spotlight(volatile_insights(record=True))
         self.assertIsNotNone(spotlight)
