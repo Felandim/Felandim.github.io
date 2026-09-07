@@ -22,7 +22,7 @@ TEAMS = [
 
 def table(order):
     return [
-        {"team": team, "points": 60 - index, "position": index + 1}
+        {"team": team, "points": 100 - index * 5, "position": index + 1}
         for index, team in enumerate(order)
     ]
 
