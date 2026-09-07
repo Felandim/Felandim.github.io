@@ -1,6 +1,7 @@
 import importlib.util
 import unittest
 from pathlib import Path
+from unittest.mock import Mock, patch
 
 MODULE_PATH = Path(__file__).resolve().parents[1] / "scripts" / "instagram_engagement.py"
 spec = importlib.util.spec_from_file_location("instagram_engagement", MODULE_PATH)
@@ -50,6 +51,30 @@ class InstagramEngagementTests(unittest.TestCase):
         caption = "Resumo.\n\nQuem consegue abrir distância do Z4?\n\nMais números e evolução rodada a rodada: site"
         enhanced = instagram_engagement.with_engagement_question(caption, spotlight)
         self.assertEqual(enhanced.count("Quem consegue abrir distância do Z4?"), 1)
+
+    @patch.object(instagram_engagement.time, "sleep", return_value=None)
+    @patch.object(instagram_engagement.time, "monotonic", side_effect=[0, 1, 2])
+    @patch.object(instagram_engagement.requests, "get")
+    def test_wait_for_container_polls_until_finished(self, get, _monotonic, _sleep):
+        in_progress = Mock(ok=True)
+        in_progress.json.return_value = {"status_code": "IN_PROGRESS"}
+        finished = Mock(ok=True)
+        finished.json.return_value = {"status_code": "FINISHED"}
+        get.side_effect = [in_progress, finished]
+
+        instagram_engagement._wait_for_container("container-1", "token", "v23.0", timeout=30, interval=0)
+
+        self.assertEqual(get.call_count, 2)
+
+    @patch.object(instagram_engagement.time, "monotonic", side_effect=[0, 0])
+    @patch.object(instagram_engagement.requests, "get")
+    def test_wait_for_container_fails_on_error_status(self, get, _monotonic):
+        failed = Mock(ok=True)
+        failed.json.return_value = {"status_code": "ERROR", "status": "Falha no processamento"}
+        get.return_value = failed
+
+        with self.assertRaises(RuntimeError):
+            instagram_engagement._wait_for_container("container-1", "token", "v23.0")
 
 
 if __name__ == "__main__":
