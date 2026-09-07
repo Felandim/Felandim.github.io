@@ -86,6 +86,51 @@ def tight_matchday_spotlight(
     }
 
 
+def sustained_climb_spotlight(
+    insights: dict,
+    transitions: int = 3,
+    minimum_gain: int = 3,
+) -> dict | None:
+    """Detecta um time que ganhou posições em todas as últimas rodadas, evitando destaque de ruído pontual."""
+    snapshots = insights.get("snapshots", [])
+    if len(snapshots) < transitions + 1:
+        return None
+
+    recent = snapshots[-(transitions + 1):]
+    positions = [
+        {row["team"]: row["position"] for row in snapshot.get("table", [])}
+        for snapshot in recent
+    ]
+    candidates = []
+    for team, start_position in positions[0].items():
+        series = [table.get(team) for table in positions]
+        if any(position is None for position in series):
+            continue
+        if not all(series[index + 1] < series[index] for index in range(transitions)):
+            continue
+        gain = start_position - series[-1]
+        if gain < minimum_gain:
+            continue
+        candidates.append({"team": team, "gain": gain, "from": start_position, "to": series[-1]})
+
+    if not candidates:
+        return None
+
+    best = max(candidates, key=lambda item: (item["gain"], -item["to"], item["team"]))
+    rounds = transitions
+    return {
+        "kind": "sustained_climb",
+        "label": "ARRANCADA NA TABELA",
+        "text": f"{best['team']} subiu {best['gain']} posições nas últimas {rounds} rodadas",
+        "caption": (
+            f"Arrancada na tabela: {best['team']} ganhou posição em cada uma das últimas {rounds} rodadas, "
+            f"saindo de {best['from']}º para {best['to']}º."
+        ),
+        **best,
+        "rounds": rounds,
+    }
+
+
 def table_volatility_spotlight(insights: dict, minimum_history: int = 5) -> dict | None:
     """Destaca quando a rodada bate ou iguala o maior movimento agregado da tabela no campeonato."""
     snapshots = insights.get("snapshots", [])
@@ -134,6 +179,10 @@ def matchday_spotlight(insights: dict, matches: list[dict]) -> dict:
     }
     if base.get("kind") in high_priority:
         return base
+
+    climb = sustained_climb_spotlight(insights)
+    if climb:
+        return climb
 
     tight = tight_matchday_spotlight(matches)
     if tight:
