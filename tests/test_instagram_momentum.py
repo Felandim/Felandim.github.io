@@ -35,6 +35,8 @@ def insights_with_orders(orders):
         "snapshots": snapshots,
         "rounds": [{
             "round": latest_round,
+            "matches": 10,
+            "goals": 24,
             "leader": snapshots[-1]["table"][0]["team"],
             "leader_changed": False,
             "g4_in": [], "g4_out": [], "z4_in": [], "z4_out": [],
