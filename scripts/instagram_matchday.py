@@ -52,6 +52,58 @@ def delayed_match_spotlight(insights: dict, matches: list[dict]) -> dict | None:
     }
 
 
+def direct_leapfrog_spotlight(insights: dict, matches: list[dict]) -> dict | None:
+    """Detecta confronto em que o vencedor começou abaixo e terminou acima do adversário."""
+    snapshots = insights.get("snapshots", [])
+    rounds = insights.get("rounds", [])
+    if len(snapshots) < 2 or not rounds:
+        return None
+
+    latest_round = int(rounds[-1]["round"])
+    previous = {row["team"]: row["position"] for row in snapshots[-2].get("table", [])}
+    current = {row["team"]: row["position"] for row in snapshots[-1].get("table", [])}
+    candidates = []
+
+    for match in matches:
+        if int(match.get("round", 0)) != latest_round:
+            continue
+        score = instagram_daily._score(match.get("score", ""))
+        if not score or score[0] == score[1]:
+            continue
+
+        winner = match["home"] if score[0] > score[1] else match["away"]
+        loser = match["away"] if winner == match["home"] else match["home"]
+        if winner not in previous or loser not in previous or winner not in current or loser not in current:
+            continue
+        if previous[winner] <= previous[loser] or current[winner] >= current[loser]:
+            continue
+
+        candidates.append({
+            "winner": winner,
+            "loser": loser,
+            "winner_from": previous[winner],
+            "winner_to": current[winner],
+            "loser_from": previous[loser],
+            "loser_to": current[loser],
+            "cross": previous[winner] - previous[loser],
+        })
+
+    if not candidates:
+        return None
+
+    best = max(candidates, key=lambda item: (item["cross"], item["winner_from"] - item["winner_to"], item["winner"]))
+    return {
+        "kind": "direct_leapfrog",
+        "label": "ULTRAPASSAGEM DIRETA",
+        "text": f"{best['winner']} venceu o {best['loser']} e terminou a rodada à frente",
+        "caption": (
+            f"Ultrapassagem direta: {best['winner']} começou a rodada em {best['winner_from']}º, "
+            f"venceu o {best['loser']} e terminou em {best['winner_to']}º, à frente do rival."
+        ),
+        **best,
+    }
+
+
 def tight_matchday_spotlight(
     matches: list[dict],
     minimum_matches: int = 3,
@@ -179,6 +231,10 @@ def matchday_spotlight(insights: dict, matches: list[dict]) -> dict:
     }
     if base.get("kind") in high_priority:
         return base
+
+    leapfrog = direct_leapfrog_spotlight(insights, matches)
+    if leapfrog:
+        return leapfrog
 
     climb = sustained_climb_spotlight(insights)
     if climb:
