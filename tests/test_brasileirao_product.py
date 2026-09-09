@@ -99,7 +99,7 @@ def test_rankings_render_proportional_team_badges():
     rankings = (ROOT / "brasileirao" / "rankings-recordes.html").read_text(encoding="utf-8")
     home = (ROOT / "index.html").read_text(encoding="utf-8")
     assert rankings.count('class="br-team-badge"') == 36
-    assert home.count('class="br-team-badge"') == 10
+    assert home.count('class="br-team-badge"') >= 38
     assert 'aria-hidden="true" width="48" height="48" loading="lazy" decoding="async"' in rankings
     assert rankings.count('alt=""') >= 36
     css = (ROOT / "style.css").read_text(encoding="utf-8")
@@ -112,8 +112,47 @@ def test_standings_render_badges_initially_and_after_round_change():
     script = (ROOT / "brasileirao.js").read_text(encoding="utf-8")
     assert classification.count('class="br-team-badge"') == 20
     assert classification.count("br-team-with-badge-table") == 20
-    assert "const teamBadge = team =>" in script
-    assert "${teamBadge(row.team)}" in script
+    assert 'const teamBadge = (team, variant = "inline") =>' in script
+    assert '${teamBadge(row.team, "table")}' in script
+
+
+def test_team_badges_cover_hub_scorers_comparison_team_and_round_pages():
+    insights = load("brasileirao_2026_insights.json")
+    hub = (ROOT / "brasileirao" / "index.html").read_text(encoding="utf-8")
+    scorers = (ROOT / "brasileirao" / "artilharia-rodada-a-rodada.html").read_text(encoding="utf-8")
+    comparison = (ROOT / "brasileirao" / "comparador-times.html").read_text(encoding="utf-8")
+    team = (ROOT / "brasileirao" / "times" / "flamengo.html").read_text(encoding="utf-8")
+    latest_round = ROOT / "brasileirao" / "rodadas" / f'rodada-{insights["current_round"]}.html'
+    round_source = latest_round.read_text(encoding="utf-8")
+    script = (ROOT / "brasileirao.js").read_text(encoding="utf-8")
+
+    assert hub.count("br-team-with-badge-chip") == 20
+    assert scorers.count("br-team-with-badge-table") == len(insights["scorers"][-1]["ranking"])
+    assert 'data-team-a-badge=""' in comparison
+    assert 'data-team-b-badge=""' in comparison
+    assert "br-team-with-badge-hero" in team
+    assert "br-team-with-badge-form" in team
+    assert "br-team-with-badge-heading" in team
+    assert team.count("br-team-with-badge-nav") == 2
+    assert round_source.count("br-team-with-badge-result-home") == 10
+    assert round_source.count("br-team-with-badge-result-away") == 10
+    for variant in ("legend", "scorer", "compare", "summary", "sentence"):
+        assert f'teamBadge(row.team, "{variant}")' in script or f'teamBadge(profileA.team, "{variant}")' in script or f'teamBadge(leader.team, "{variant}")' in script or f'teamBadge(trailer.team, "{variant}")' in script
+
+
+def test_main_pages_use_current_leader_color_in_the_top_area():
+    for relative_path in ("index.html", "brasileirao/index.html"):
+        source = (ROOT / relative_path).read_text(encoding="utf-8")
+        body = re.search(r'<body class="[^"]*br-leader-theme[^"]*" style="([^"]+)">', source)
+        assert body
+        color = re.search(r"--br-leader-color:(#[0-9a-f]{6})", body.group(1))
+        assert color
+        assert f'<meta name="theme-color" content="{color.group(1)}">' in source
+
+    css = (ROOT / "style.css").read_text(encoding="utf-8")
+    assert ".br-leader-theme .br-header" in css
+    assert ".br-leader-theme .br-hero" in css
+    assert ".br-leader-theme .br-page-hero" in css
 
 
 

@@ -11,6 +11,8 @@ import unicodedata
 from pathlib import Path
 from typing import Any
 
+from team_assets import team_badge
+
 ROOT = Path(os.environ.get("BRASILEIRAO_ROOT", Path(__file__).resolve().parents[1]))
 START = "<!-- team-details:start -->"
 END = "<!-- team-details:end -->"
@@ -50,9 +52,9 @@ def navigation(teams: list[str], current: str) -> str:
     previous, next_team = teams[index - 1], teams[(index + 1) % len(teams)]
     return (
         '<nav class="team-page-nav" aria-label="Navegar entre times">'
-        f'<a href="{slugify(previous)}.html">← {esc(previous)}</a>'
+        f'<a href="{slugify(previous)}.html"><span aria-hidden="true">←</span>{team_badge(previous, "nav")}</a>'
         '<a href="../index.html#times">Todos os times</a>'
-        f'<a href="{slugify(next_team)}.html">{esc(next_team)} →</a></nav>'
+        f'<a href="{slugify(next_team)}.html">{team_badge(next_team, "nav")}<span aria-hidden="true">→</span></a></nav>'
     )
 
 
@@ -74,7 +76,7 @@ def details(profile: dict[str, Any], teams: list[str]) -> str:
     return (
         START
         + '<section class="br-section team-details"><div class="br-shell">'
-        + f'<header><div><p class="br-kicker">Raio-x da campanha</p><h2>{esc(team)} em números</h2>'
+        + f'<header><div><p class="br-kicker">Raio-x da campanha</p><h2>{team_badge(team, "heading")} em números</h2>'
         + f'<p>Desempenho consolidado após {played} partidas.</p></div>'
         + '<a href="../classificacao-rodada-a-rodada.html">Ver classificação completa →</a></header>'
         + f'<div class="team-kpis">{cards}</div><div class="team-history">'

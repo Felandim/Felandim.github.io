@@ -83,6 +83,9 @@
 }
 
 .team-page-nav a {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
   padding: 1rem 1.2rem;
   border: 1px solid var(--br-line, rgba(16, 23, 20, 0.12));
   border-radius: 0.85rem;
@@ -90,10 +93,12 @@
 }
 
 .team-page-nav a:nth-child(2) {
+  justify-content: center;
   text-align: center;
 }
 
 .team-page-nav a:last-child {
+  justify-content: flex-end;
   text-align: right;
 }
 
@@ -130,6 +135,7 @@
 
   .team-page-nav a,
   .team-page-nav a:last-child {
+    justify-content: flex-start;
     text-align: left;
   }
 }

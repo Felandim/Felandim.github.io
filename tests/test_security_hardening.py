@@ -33,8 +33,8 @@ class SecurityHardeningTests(unittest.TestCase):
         script = (ROOT / "brasileirao.js").read_text(encoding="utf-8")
         self.assertIn("const safe = value =>", script)
         self.assertIn("${safe(row.name)}", script)
-        self.assertIn("${safe(row.team)}", script)
         self.assertIn("${safe(team)}", script)
+        self.assertIn('${teamBadge(row.team, "table")}', script)
 
         shared = (ROOT / "site.js").read_text(encoding="utf-8")
         self.assertIn("const escapeHtml =", shared)
