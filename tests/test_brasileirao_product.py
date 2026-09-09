@@ -140,19 +140,28 @@ def test_team_badges_cover_hub_scorers_comparison_team_and_round_pages():
         assert f'teamBadge(row.team, "{variant}")' in script or f'teamBadge(profileA.team, "{variant}")' in script or f'teamBadge(leader.team, "{variant}")' in script or f'teamBadge(trailer.team, "{variant}")' in script
 
 
-def test_main_pages_use_current_leader_color_in_the_top_area():
-    for relative_path in ("index.html", "brasileirao/index.html"):
-        source = (ROOT / relative_path).read_text(encoding="utf-8")
-        body = re.search(r'<body class="[^"]*br-leader-theme[^"]*" style="([^"]+)">', source)
-        assert body
-        color = re.search(r"--br-leader-color:(#[0-9a-f]{6})", body.group(1))
-        assert color
-        assert f'<meta name="theme-color" content="{color.group(1)}">' in source
+def test_only_home_leader_card_uses_current_leader_color():
+    home = (ROOT / "index.html").read_text(encoding="utf-8")
+    hub = (ROOT / "brasileirao/index.html").read_text(encoding="utf-8")
+    body = re.search(r'<body class="br-page br-home" style="([^"]+)">', home)
+    assert body
+    color = re.search(r"--br-leader-color:(#[0-9a-f]{6})", body.group(1))
+    assert color
+    assert '<meta name="theme-color" content="#101714">' in home
+    assert "--br-leader-color" not in hub
+    assert "br-leader-theme" not in home + hub
 
     css = (ROOT / "style.css").read_text(encoding="utf-8")
-    assert ".br-leader-theme .br-header" in css
-    assert ".br-leader-theme .br-hero" in css
-    assert ".br-leader-theme .br-page-hero" in css
+    assert "background: var(--br-leader-color)" in css
+    assert "color: var(--br-leader-text)" in css
+    assert ".br-leader-theme" not in css
+
+
+def test_team_badges_stay_close_to_team_names():
+    css = (ROOT / "style.css").read_text(encoding="utf-8")
+    rule = re.search(r"^\.br-team-with-badge \{([^}]+)\}", css, re.MULTILINE)
+    assert rule
+    assert "gap: clamp(4px, .24em, 12px)" in rule.group(1)
 
 
 
