@@ -104,6 +104,76 @@ def direct_leapfrog_spotlight(insights: dict, matches: list[dict]) -> dict | Non
     }
 
 
+def direct_rival_spotlight(
+    insights: dict,
+    matches: list[dict],
+    maximum_points_gap: int = 3,
+) -> dict | None:
+    """Destaca vitória sobre adversário que começou a rodada praticamente empatado em pontos."""
+    snapshots = insights.get("snapshots", [])
+    rounds = insights.get("rounds", [])
+    if len(snapshots) < 2 or not rounds:
+        return None
+
+    latest_round = int(rounds[-1]["round"])
+    previous = {
+        row["team"]: {"points": row["points"], "position": row["position"]}
+        for row in snapshots[-2].get("table", [])
+    }
+    candidates = []
+
+    for match in matches:
+        if int(match.get("round", 0)) != latest_round:
+            continue
+        score = instagram_daily._score(match.get("score", ""))
+        if not score or score[0] == score[1]:
+            continue
+
+        winner = match["home"] if score[0] > score[1] else match["away"]
+        loser = match["away"] if winner == match["home"] else match["home"]
+        if winner not in previous or loser not in previous:
+            continue
+
+        points_gap = abs(previous[winner]["points"] - previous[loser]["points"])
+        if points_gap > maximum_points_gap:
+            continue
+
+        candidates.append({
+            "winner": winner,
+            "loser": loser,
+            "points_gap": points_gap,
+            "winner_position": previous[winner]["position"],
+            "loser_position": previous[loser]["position"],
+            "goal_margin": abs(score[0] - score[1]),
+        })
+
+    if not candidates:
+        return None
+
+    best = min(
+        candidates,
+        key=lambda item: (
+            item["points_gap"],
+            min(item["winner_position"], item["loser_position"]),
+            -item["goal_margin"],
+            item["winner"],
+        ),
+    )
+    gap_text = "empatados em pontos" if best["points_gap"] == 0 else (
+        f"separados por {best['points_gap']} {'ponto' if best['points_gap'] == 1 else 'pontos'}"
+    )
+    return {
+        "kind": "direct_rival",
+        "label": "CONFRONTO DIRETO",
+        "text": f"{best['winner']} bateu {best['loser']} • {gap_text} antes da rodada",
+        "caption": (
+            f"Confronto direto: {best['winner']} venceu {best['loser']}; "
+            f"os dois começaram a rodada {gap_text}."
+        ),
+        **best,
+    }
+
+
 def tight_matchday_spotlight(
     matches: list[dict],
     minimum_matches: int = 3,
@@ -235,6 +305,10 @@ def matchday_spotlight(insights: dict, matches: list[dict]) -> dict:
     leapfrog = direct_leapfrog_spotlight(insights, matches)
     if leapfrog:
         return leapfrog
+
+    direct_rival = direct_rival_spotlight(insights, matches)
+    if direct_rival:
+        return direct_rival
 
     climb = sustained_climb_spotlight(insights)
     if climb:
