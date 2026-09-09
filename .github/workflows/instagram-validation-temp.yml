@@ -21,3 +21,4 @@ jobs:
       - run: pip install pillow requests
       - run: python -m unittest tests/test_instagram_daily.py tests/test_instagram_clusters.py tests/test_instagram_engagement.py tests/test_instagram_matchday.py tests/test_instagram_momentum.py tests/test_instagram_leapfrog.py
       - run: python -m py_compile scripts/instagram_daily.py scripts/instagram_matchday.py scripts/instagram_engagement.py
+      # Temporary workflow: removed after validation.
