@@ -56,6 +56,27 @@ def insights_after_leapfrog():
     }
 
 
+def insights_without_leapfrog():
+    return {
+        "season": 2026,
+        "snapshots": [
+            {"round": 23, "table": table(TEAMS)},
+            {"round": 24, "table": table(TEAMS)},
+        ],
+        "rounds": [{
+            "round": 24,
+            "matches": 10,
+            "goals": 22,
+            "leader": "Palmeiras",
+            "leader_changed": False,
+            "g4_in": [], "g4_out": [], "z4_in": [], "z4_out": [],
+            "biggest_rise": {"teams": [], "places": 0},
+            "biggest_fall": {"teams": [], "places": 0},
+            "biggest_win": None,
+        }],
+    }
+
+
 class InstagramLeapfrogTests(unittest.TestCase):
     def test_detects_winner_that_overtakes_direct_opponent(self):
         matches = [{
@@ -100,6 +121,55 @@ class InstagramLeapfrogTests(unittest.TestCase):
         self.assertEqual(
             instagram_engagement.engagement_question(spotlight),
             "Corinthians consegue se manter à frente na próxima rodada?",
+        )
+
+
+class InstagramDirectRivalTests(unittest.TestCase):
+    def test_detects_win_over_team_within_three_points(self):
+        data = insights_without_leapfrog()
+        matches = [{
+            "round": 24, "home": "Corinthians", "away": "Santos", "score": "2 x 1",
+        }]
+
+        spotlight = instagram_matchday.direct_rival_spotlight(data, matches)
+
+        self.assertIsNotNone(spotlight)
+        self.assertEqual(spotlight["kind"], "direct_rival")
+        self.assertEqual(spotlight["winner"], "Corinthians")
+        self.assertEqual(spotlight["loser"], "Santos")
+        self.assertEqual(spotlight["points_gap"], 2)
+        self.assertIn("separados por 2 pontos", spotlight["text"])
+
+    def test_ignores_win_over_distant_opponent(self):
+        data = insights_without_leapfrog()
+        matches = [{
+            "round": 24, "home": "Corinthians", "away": "Cruzeiro", "score": "2 x 0",
+        }]
+
+        self.assertIsNone(instagram_matchday.direct_rival_spotlight(data, matches))
+
+    def test_direct_rival_replaces_generic_pressure_but_not_leapfrog(self):
+        data = insights_without_leapfrog()
+        matches = [{
+            "round": 24, "home": "Corinthians", "away": "Santos", "score": "2 x 1",
+        }]
+        self.assertEqual(instagram_matchday.matchday_spotlight(data, matches)["kind"], "direct_rival")
+
+        leapfrog_data = insights_after_leapfrog()
+        self.assertEqual(instagram_matchday.matchday_spotlight(leapfrog_data, matches)["kind"], "direct_leapfrog")
+
+    def test_caption_and_question_explain_the_direct_rival_context(self):
+        data = insights_without_leapfrog()
+        matches = [{
+            "round": 24, "home": "Corinthians", "away": "Santos", "score": "2 x 1",
+        }]
+        spotlight = instagram_matchday.matchday_spotlight(data, matches)
+        caption = instagram_matchday.build_caption(data, matches)
+
+        self.assertIn("Confronto direto: Corinthians venceu Santos", caption)
+        self.assertEqual(
+            instagram_engagement.engagement_question(spotlight),
+            "Corinthians abre vantagem sobre Santos nas próximas rodadas?",
         )
 
 
