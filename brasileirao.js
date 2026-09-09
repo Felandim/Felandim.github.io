@@ -18,12 +18,13 @@
     "Internacional": 8702, "Mirassol": 163782, "Palmeiras": 10283, "Remo": 1626,
     "Santos": 8514, "São Paulo": 10277, "Vasco": 10276, "Vitória": 7733,
   };
-  const teamBadge = team => `<span class="br-team-with-badge br-team-with-badge-table"><img class="br-team-badge" src="https://images.fotmob.com/image_resources/logo/teamlogo/${teamLogoIds[team]}.png" alt="" aria-hidden="true" width="48" height="48" loading="lazy" decoding="async"><span>${safe(team)}</span></span>`;
+  const teamLogoUrl = team => `https://images.fotmob.com/image_resources/logo/teamlogo/${teamLogoIds[team]}.png`;
+  const teamBadge = (team, variant = "inline") => `<span class="br-team-with-badge br-team-with-badge-${variant}"><img class="br-team-badge" src="${teamLogoUrl(team)}" alt="" aria-hidden="true" width="48" height="48" loading="lazy" decoding="async"><span>${safe(team)}</span></span>`;
 
   function standingsRows(rows) {
     return rows.map(row => {
       const zone = row.position <= 4 ? "g4" : row.position >= 17 ? "z4" : "";
-      return `<tr class="${zone}"><td><span class="br-pos ${zone}">${row.position}</span></td><th scope="row"><a href="times/${slugify(row.team)}.html">${teamBadge(row.team)}</a></th><td>${row.points}</td><td>${row.played}</td><td>${row.wins}</td><td>${row.draws}</td><td>${row.losses}</td><td>${row.gd > 0 ? "+" : ""}${row.gd}</td></tr>`;
+      return `<tr class="${zone}"><td><span class="br-pos ${zone}">${row.position}</span></td><th scope="row"><a href="times/${slugify(row.team)}.html">${teamBadge(row.team, "table")}</a></th><td>${row.points}</td><td>${row.played}</td><td>${row.wins}</td><td>${row.draws}</td><td>${row.losses}</td><td>${row.gd > 0 ? "+" : ""}${row.gd}</td></tr>`;
     }).join("");
   }
 
@@ -42,7 +43,7 @@
       const y = top + (position - 1) * (height - top - bottom) / 19;
       return `<line x1="${left}" y1="${y}" x2="${width - right}" y2="${y}"/><text x="8" y="${y + 4}">${position}º</text>`;
     }).join("");
-    const legend = selected.map((row, index) => `<li><i style="--legend:${colors[index]}"></i>${safe(row.team)}</li>`).join("");
+    const legend = selected.map((row, index) => `<li><i style="--legend:${colors[index]}"></i>${teamBadge(row.team, "legend")}</li>`).join("");
     return `<svg class="br-multi-chart" viewBox="0 0 ${width} ${height}" role="img" aria-label="Evolução dos oito primeiros times até a rodada ${round}">${guides}${lines}</svg><ul class="br-chart-legend">${legend}</ul>`;
   }
 
@@ -65,7 +66,7 @@
   function scorerChart(ranking) {
     const top = ranking.slice(0, 10);
     const max = Math.max(...top.map(item => item.goals), 1);
-    return `<ol class="br-goal-bars">${top.map((row, index) => `<li><span>${index + 1}</span><div><strong>${safe(row.name)}</strong><small>${safe(row.team)}</small><i style="width:${(row.goals / max) * 100}%"></i></div><b>${row.goals}</b></li>`).join("")}</ol>`;
+    return `<ol class="br-goal-bars">${top.map((row, index) => `<li><span>${index + 1}</span><div><strong>${safe(row.name)}</strong><small>${teamBadge(row.team, "scorer")}</small><i style="width:${(row.goals / max) * 100}%"></i></div><b>${row.goals}</b></li>`).join("")}</ol>`;
   }
 
   const scorerSelect = document.querySelector("[data-scorer-round-select]");
@@ -75,7 +76,7 @@
       const chart = document.querySelector("[data-scorer-chart]");
       const update = () => {
         const snapshot = data.scorers.find(item => item.round === Number(scorerSelect.value));
-        table.innerHTML = snapshot.ranking.map((row, index) => `<tr><td>${index + 1}</td><th scope="row">${safe(row.name)}</th><td>${safe(row.team)}</td><td><strong>${row.goals}</strong></td></tr>`).join("");
+        table.innerHTML = snapshot.ranking.map((row, index) => `<tr><td>${index + 1}</td><th scope="row">${safe(row.name)}</th><td><a href="times/${slugify(row.team)}.html">${teamBadge(row.team, "table")}</a></td><td><strong>${row.goals}</strong></td></tr>`).join("");
         chart.innerHTML = scorerChart(snapshot.ranking);
       };
       scorerSelect.addEventListener("change", update);
@@ -88,6 +89,8 @@
   if (comparisonRoot) {
     const teamASelect = comparisonRoot.querySelector("[data-team-a]");
     const teamBSelect = comparisonRoot.querySelector("[data-team-b]");
+    const teamABadge = comparisonRoot.querySelector("[data-team-a-badge]");
+    const teamBBadge = comparisonRoot.querySelector("[data-team-b-badge]");
     const summary = comparisonRoot.querySelector("[data-compare-summary]");
     const chart = comparisonRoot.querySelector("[data-compare-chart]");
     const stats = comparisonRoot.querySelector("[data-compare-stats]");
@@ -103,7 +106,7 @@
         const y = yFor(position);
         return `<line x1="${left}" y1="${y}" x2="${width - right}" y2="${y}"/><text x="8" y="${y + 4}">${position}º</text>`;
       }).join("");
-      return `<svg class="br-multi-chart br-duel-chart" viewBox="0 0 ${width} ${height}" role="img" aria-label="Comparação da evolução de ${safe(profileA.team)} e ${safe(profileB.team)}">${guides}<polyline class="team-a" points="${line(profileA)}"/><polyline class="team-b" points="${line(profileB)}"/></svg><ul class="br-duel-legend"><li><i></i>${safe(profileA.team)}</li><li><i></i>${safe(profileB.team)}</li></ul>`;
+      return `<svg class="br-multi-chart br-duel-chart" viewBox="0 0 ${width} ${height}" role="img" aria-label="Comparação da evolução de ${safe(profileA.team)} e ${safe(profileB.team)}">${guides}<polyline class="team-a" points="${line(profileA)}"/><polyline class="team-b" points="${line(profileB)}"/></svg><ul class="br-duel-legend"><li><i></i>${teamBadge(profileA.team, "legend")}</li><li><i></i>${teamBadge(profileB.team, "legend")}</li></ul>`;
     }
 
     function metricRow(label, valueA, valueB, lowerIsBetter = false, suffix = "") {
@@ -120,6 +123,10 @@
       const render = () => {
         const slugA = teamASelect.value;
         const slugB = teamBSelect.value;
+        const profileA = data.team_profiles[slugA];
+        const profileB = data.team_profiles[slugB];
+        teamABadge.src = teamLogoUrl(profileA.team);
+        teamBBadge.src = teamLogoUrl(profileB.team);
         if (slugA === slugB) {
           error.textContent = "Escolha dois times diferentes.";
           summary.innerHTML = "";
@@ -128,8 +135,6 @@
           return;
         }
         error.textContent = "";
-        const profileA = data.team_profiles[slugA];
-        const profileB = data.team_profiles[slugB];
         const a = profileA.current;
         const b = profileB.current;
         const rateA = a.played ? Math.round(a.points / (a.played * 3) * 100) : 0;
@@ -139,7 +144,7 @@
         const positionGap = Math.abs(a.position - b.position);
         const pointGap = Math.abs(a.points - b.points);
 
-        summary.innerHTML = `<article><span>${a.position}º</span><h2>${safe(profileA.team)}</h2><p>${a.points} pontos · ${rateA}% de aproveitamento</p></article><div><strong>${safe(leader.team)}</strong><p>está ${positionGap} ${positionGap === 1 ? "posição" : "posições"} e ${pointGap} ${pointGap === 1 ? "ponto" : "pontos"} à frente de ${safe(trailer.team)}.</p></div><article><span>${b.position}º</span><h2>${safe(profileB.team)}</h2><p>${b.points} pontos · ${rateB}% de aproveitamento</p></article>`;
+        summary.innerHTML = `<article><span>${a.position}º</span><h2>${teamBadge(profileA.team, "compare")}</h2><p>${a.points} pontos · ${rateA}% de aproveitamento</p></article><div><strong>${teamBadge(leader.team, "summary")}</strong><p>está ${positionGap} ${positionGap === 1 ? "posição" : "posições"} e ${pointGap} ${pointGap === 1 ? "ponto" : "pontos"} à frente de ${teamBadge(trailer.team, "sentence")}.</p></div><article><span>${b.position}º</span><h2>${teamBadge(profileB.team, "compare")}</h2><p>${b.points} pontos · ${rateB}% de aproveitamento</p></article>`;
         chart.innerHTML = duelChart(profileA, profileB);
         stats.innerHTML = `<h2>Números atuais</h2>${metricRow("Posição", a.position, b.position, true, "º")}${metricRow("Pontos", a.points, b.points)}${metricRow("Vitórias", a.wins, b.wins)}${metricRow("Saldo de gols", a.gd, b.gd)}${metricRow("Gols marcados", a.gf, b.gf)}${metricRow("Aproveitamento", rateA, rateB, false, "%")}`;
         const url = new URL(location.href);
