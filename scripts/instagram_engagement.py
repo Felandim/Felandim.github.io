@@ -31,6 +31,12 @@ def engagement_question(spotlight: dict) -> str:
     if kind == "direct_leapfrog":
         winner = spotlight.get("winner", "")
         return f"{winner} consegue se manter à frente na próxima rodada?" if winner else "A ultrapassagem se sustenta na próxima rodada?"
+    if kind == "direct_rival":
+        winner = spotlight.get("winner", "")
+        loser = spotlight.get("loser", "")
+        if winner and loser:
+            return f"{winner} abre vantagem sobre {loser} nas próximas rodadas?"
+        return "Quem leva vantagem nessa disputa direta?"
     if kind == "tight_matches":
         return "A próxima rodada mantém esse nível de equilíbrio?"
     if kind == "g4_cluster":
