@@ -1,0 +1,116 @@
+#!/usr/bin/env python3
+"""Camada editorial para priorizar insights mais fortes no post diário."""
+
+from __future__ import annotations
+
+import argparse
+from datetime import datetime
+from pathlib import Path
+
+from PIL import Image
+
+import instagram_daily
+import instagram_matchday
+
+
+HIGH_PRIORITY_KINDS = {
+    "leader", "g4", "z4", "upset", "g4_cluster", "z4_cluster",
+}
+
+
+def title_race_spotlight(
+    insights: dict,
+    maximum_gap: int = 3,
+    minimum_teams: int = 3,
+    minimum_round: int = 5,
+) -> dict | None:
+    """Detecta disputa de título comprimida entre vários times, não apenas 1º e 2º."""
+    snapshot, latest = instagram_daily.current_snapshot(insights)
+    round_number = int(latest.get("round") or snapshot.get("round") or 0)
+    table = snapshot.get("table", [])
+    if round_number < minimum_round or len(table) < minimum_teams:
+        return None
+
+    leader_points = table[0]["points"]
+    contenders = [
+        row for row in table
+        if 0 <= leader_points - row["points"] <= maximum_gap
+    ]
+    if len(contenders) < minimum_teams:
+        return None
+
+    spread = leader_points - contenders[-1]["points"]
+    teams = [row["team"] for row in contenders]
+    gap_text = f"{spread} {'ponto' if spread == 1 else 'pontos'}"
+    return {
+        "kind": "title_cluster",
+        "label": "TÍTULO EMBOLADO",
+        "text": f"{len(contenders)} times separados por só {gap_text} no topo",
+        "caption": (
+            f"Briga pelo título: {len(contenders)} times estão separados por apenas {gap_text}; "
+            f"{', '.join(teams)} formam o pelotão da frente."
+        ),
+        "count": len(contenders),
+        "spread": spread,
+        "teams": teams,
+    }
+
+
+def editorial_spotlight(insights: dict, matches: list[dict]) -> dict:
+    """Mantém eventos factuais fortes e melhora apenas o fallback editorial."""
+    base = instagram_matchday.matchday_spotlight(insights, matches)
+    if base.get("kind") in HIGH_PRIORITY_KINDS or base.get("kind") == "delayed_match":
+        return base
+    return title_race_spotlight(insights) or base
+
+
+def build_caption(insights: dict, matches: list[dict]) -> str:
+    caption = instagram_matchday.build_caption(insights, matches)
+    spotlight = editorial_spotlight(insights, matches)
+    extra = spotlight.get("caption", "")
+    if not extra or extra in caption:
+        return caption[:2200]
+
+    lines = caption.splitlines()
+    insert_at = 2 if len(lines) >= 2 else len(lines)
+    lines.insert(insert_at, extra)
+    return "\n".join(lines)[:2200]
+
+
+def render_card(
+    insights: dict,
+    matches: list[dict],
+    output: Path = instagram_daily.DEFAULT_OUTPUT,
+    now: datetime | None = None,
+) -> Path:
+    """Reaproveita o render existente e substitui apenas o bloco editorial quando necessário."""
+    output = instagram_matchday.render_card(insights, matches, output, now=now)
+    spotlight = editorial_spotlight(insights, matches)
+    image = Image.open(output).convert("RGB")
+    instagram_matchday.draw_spotlight(image, spotlight)
+    image.save(output, "PNG", optimize=True)
+    return output
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser()
+    parser.add_argument("command", choices=("render", "caption"))
+    parser.add_argument("--insights", type=Path, default=instagram_daily.INSIGHTS_FILE)
+    parser.add_argument("--matches", type=Path, default=instagram_daily.MATCHES_FILE)
+    parser.add_argument("--output", type=Path, default=instagram_daily.DEFAULT_OUTPUT)
+    args = parser.parse_args()
+
+    insights = instagram_daily.load_insights(args.insights)
+    all_matches = instagram_daily.load_matches(args.matches)
+    matches = instagram_matchday.completed_matches_for_date(
+        all_matches, instagram_matchday.publication_date()
+    )
+
+    if args.command == "render":
+        print(render_card(insights, matches, args.output))
+    else:
+        print(build_caption(insights, matches))
+
+
+if __name__ == "__main__":
+    main()
