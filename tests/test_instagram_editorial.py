@@ -30,7 +30,7 @@ TEAMS = [
 def insights(points=(50, 49, 47, 43), leader_changed=False):
     table = []
     for index, team in enumerate(TEAMS):
-        value = points[index] if index < len(points) else max(0, 42 - index)
+        value = points[index] if index < len(points) else max(0, 39 - index * 2)
         table.append({"team": team, "points": value, "position": index + 1})
     snapshot = {"round": 24, "table": table}
     return {
