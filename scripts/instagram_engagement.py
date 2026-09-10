@@ -39,6 +39,8 @@ def engagement_question(spotlight: dict) -> str:
         return "Quem leva vantagem nessa disputa direta?"
     if kind == "tight_matches":
         return "A próxima rodada mantém esse nível de equilíbrio?"
+    if kind == "title_cluster":
+        return "Quem sai desse pelotão como principal candidato ao título?"
     if kind == "g4_cluster":
         return "Quem leva a quarta vaga nesse pelotão?"
     if kind == "z4_cluster":
@@ -131,6 +133,7 @@ def publish_when_ready(
 def main() -> None:
     # Imports tardios mantêm as funções de copy testáveis sem carregar PIL.
     import instagram_daily
+    import instagram_editorial
     import instagram_matchday
 
     parser = argparse.ArgumentParser()
@@ -142,8 +145,8 @@ def main() -> None:
     insights = instagram_daily.load_insights(args.insights)
     all_matches = instagram_daily.load_matches(args.matches)
     matches = instagram_matchday.completed_matches_for_date(all_matches, instagram_matchday.publication_date())
-    spotlight = instagram_matchday.matchday_spotlight(insights, matches)
-    caption = with_engagement_question(instagram_matchday.build_caption(insights, matches), spotlight)
+    spotlight = instagram_editorial.editorial_spotlight(insights, matches)
+    caption = with_engagement_question(instagram_editorial.build_caption(insights, matches), spotlight)
 
     media_id = publish_when_ready(
         instagram_daily,
