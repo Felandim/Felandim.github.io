@@ -64,17 +64,40 @@ def editorial_spotlight(insights: dict, matches: list[dict]) -> dict:
     return title_race_spotlight(insights) or base
 
 
-def build_caption(insights: dict, matches: list[dict]) -> str:
-    caption = instagram_matchday.build_caption(insights, matches)
-    spotlight = editorial_spotlight(insights, matches)
-    extra = spotlight.get("caption", "")
-    if not extra or extra in caption:
-        return caption[:2200]
+def _spotlight_sentence(spotlight: dict) -> str:
+    """Transforma o destaque escolhido em uma única frase editorial para a legenda."""
+    caption = (spotlight.get("caption") or "").strip()
+    if caption:
+        return caption
 
-    lines = caption.splitlines()
-    insert_at = 2 if len(lines) >= 2 else len(lines)
-    lines.insert(insert_at, extra)
-    return "\n".join(lines)[:2200]
+    text = (spotlight.get("text") or "").strip().rstrip(".")
+    if not text:
+        return ""
+    label = (spotlight.get("label") or "Destaque").strip().capitalize()
+    return f"{label}: {text}."
+
+
+def build_caption(insights: dict, matches: list[dict]) -> str:
+    """Cria legenda curta com uma história principal, sem empilhar insights concorrentes."""
+    snapshot, latest = instagram_daily.current_snapshot(insights)
+    table = snapshot["table"]
+    spotlight = editorial_spotlight(insights, matches)
+    story = _spotlight_sentence(spotlight)
+    partial = " (parcial)" if latest.get("matches", 10) < 10 else ""
+
+    lines = [
+        story,
+        f"Brasileirão {insights['season']} — rodada {latest['round']}{partial}.",
+        "",
+        f"Líder: {table[0]['team']} — {table[0]['points']} pts.",
+        f"G4: {', '.join(row['team'] for row in table[:4])}.",
+        f"Z4: {', '.join(row['team'] for row in table[-4:])}.",
+        "",
+        f"Mais números e evolução rodada a rodada: {instagram_daily.SITE_URL}",
+        "",
+        "#Brasileirao #Brasileirao2026 #FutebolBrasileiro #SerieA",
+    ]
+    return "\n".join(line for line in lines if line is not None)[:2200]
 
 
 def render_card(
