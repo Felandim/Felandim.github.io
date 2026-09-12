@@ -51,6 +51,39 @@ def insights(points=(50, 49, 47, 43), leader_changed=False):
 
 
 class InstagramEditorialTests(unittest.TestCase):
+    def test_high_scoring_match_detects_goal_fest(self):
+        matches = [
+            {"home": "Coritiba", "away": "Athletico-PR", "score": "3 x 3"},
+            {"home": "Flamengo", "away": "Santos", "score": "2 x 1"},
+        ]
+        spotlight = instagram_editorial.high_scoring_match_spotlight(matches)
+        self.assertIsNotNone(spotlight)
+        self.assertEqual(spotlight["kind"], "goal_fest")
+        self.assertEqual(spotlight["goals"], 6)
+        self.assertEqual(spotlight["text"], "Coritiba 3 x 3 Athletico-PR • 6 gols")
+
+    def test_high_scoring_match_requires_five_goals(self):
+        matches = [{"home": "Flamengo", "away": "Santos", "score": "2 x 2"}]
+        self.assertIsNone(instagram_editorial.high_scoring_match_spotlight(matches))
+
+    def test_goal_fest_replaces_generic_title_race_but_not_new_leader(self):
+        matches = [{"round": 24, "home": "Coritiba", "away": "Athletico-PR", "score": "3 x 3"}]
+        spotlight = instagram_editorial.editorial_spotlight(insights(), matches)
+        self.assertEqual(spotlight["kind"], "goal_fest")
+
+        spotlight = instagram_editorial.editorial_spotlight(insights(leader_changed=True), matches)
+        self.assertEqual(spotlight["kind"], "leader")
+
+    def test_goal_fest_caption_and_question_are_contextual(self):
+        data = insights((50, 45, 42, 39))
+        matches = [{"round": 24, "home": "Coritiba", "away": "Athletico-PR", "score": "3 x 3"}]
+        spotlight = instagram_editorial.editorial_spotlight(data, matches)
+        caption = instagram_editorial.build_caption(data, matches)
+        question = instagram_engagement.engagement_question(spotlight)
+        self.assertIn("Chuva de gols: Coritiba 3 x 3 Athletico-PR teve 6 gols no placar.", caption)
+        self.assertEqual(question, "Qual jogo da rodada ainda pode superar esses 6 gols?")
+        self.assertLessEqual(len(caption), 2200)
+
     def test_title_race_requires_three_teams_within_three_points(self):
         spotlight = instagram_editorial.title_race_spotlight(insights())
         self.assertIsNotNone(spotlight)
