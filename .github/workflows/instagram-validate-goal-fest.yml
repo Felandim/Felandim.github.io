@@ -1,0 +1,28 @@
+name: Validate Instagram Goal Fest
+
+on:
+  push:
+    paths:
+      - 'scripts/instagram_editorial.py'
+      - 'scripts/instagram_engagement.py'
+      - 'tests/test_instagram_editorial.py'
+      - '.github/workflows/instagram-validate-goal-fest.yml'
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with:
+          python-version: '3.11'
+      - run: pip install pillow requests
+      - name: Compile scripts
+        run: python -m py_compile scripts/instagram_daily.py scripts/instagram_matchday.py scripts/instagram_editorial.py scripts/instagram_engagement.py
+      - name: Run Instagram suite
+        run: python -m unittest tests/test_instagram_daily.py tests/test_instagram_clusters.py tests/test_instagram_engagement.py tests/test_instagram_matchday.py tests/test_instagram_momentum.py tests/test_instagram_leapfrog.py tests/test_instagram_editorial.py
+      - name: Validate current editorial output
+        run: |
+          python scripts/instagram_editorial.py caption
+          python scripts/instagram_editorial.py render --output /tmp/instagram-goal-fest.png
+          test -s /tmp/instagram-goal-fest.png
