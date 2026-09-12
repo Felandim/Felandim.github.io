@@ -18,6 +18,40 @@ HIGH_PRIORITY_KINDS = {
 }
 
 
+def high_scoring_match_spotlight(matches: list[dict], minimum_goals: int = 5) -> dict | None:
+    """Destaca o jogo mais goleador do dia quando o placar, por si só, já conta uma história forte."""
+    candidates = []
+    for match in matches:
+        score = instagram_daily._score(match.get("score", ""))
+        if not score:
+            continue
+        total_goals = score[0] + score[1]
+        if total_goals < minimum_goals:
+            continue
+        candidates.append((total_goals, abs(score[0] - score[1]), match))
+
+    if not candidates:
+        return None
+
+    total_goals, _, match = max(
+        candidates,
+        key=lambda item: (item[0], -item[1], item[2].get("home", "")),
+    )
+    return {
+        "kind": "goal_fest",
+        "label": "CHUVA DE GOLS",
+        "text": f"{match['home']} {match['score']} {match['away']} • {total_goals} gols",
+        "caption": (
+            f"Chuva de gols: {match['home']} {match['score']} {match['away']} "
+            f"teve {total_goals} gols no placar."
+        ),
+        "home": match.get("home", ""),
+        "away": match.get("away", ""),
+        "score": match.get("score", ""),
+        "goals": total_goals,
+    }
+
+
 def title_race_spotlight(
     insights: dict,
     maximum_gap: int = 3,
@@ -61,7 +95,7 @@ def editorial_spotlight(insights: dict, matches: list[dict]) -> dict:
     base = instagram_matchday.matchday_spotlight(insights, matches)
     if base.get("kind") in HIGH_PRIORITY_KINDS or base.get("kind") == "delayed_match":
         return base
-    return title_race_spotlight(insights) or base
+    return high_scoring_match_spotlight(matches) or title_race_spotlight(insights) or base
 
 
 def _spotlight_sentence(spotlight: dict) -> str:
