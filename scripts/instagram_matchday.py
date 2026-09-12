@@ -52,6 +52,98 @@ def delayed_match_spotlight(insights: dict, matches: list[dict]) -> dict | None:
     }
 
 
+def single_match_impact_spotlight(insights: dict, matches: list[dict]) -> dict | None:
+    """Em dias com um único jogo da rodada, destaca o impacto direto dele na tabela."""
+    if len(matches) != 1:
+        return None
+
+    match = matches[0]
+    snapshots = insights.get("snapshots", [])
+    rounds = insights.get("rounds", [])
+    if len(snapshots) < 2 or not rounds:
+        return None
+
+    latest_round = int(rounds[-1]["round"])
+    if int(match.get("round", 0)) != latest_round:
+        return None
+    if not instagram_daily._score(match.get("score", "")):
+        return None
+
+    previous = {row["team"]: row for row in snapshots[-2].get("table", [])}
+    current = {row["team"]: row for row in snapshots[-1].get("table", [])}
+    teams = [match.get("home"), match.get("away")]
+    candidates = []
+
+    for team in teams:
+        if not team or team not in previous or team not in current:
+            continue
+
+        before, after = previous[team], current[team]
+        before_pos, after_pos = int(before["position"]), int(after["position"])
+        before_pts, after_pts = int(before["points"]), int(after["points"])
+        movement = before_pos - after_pos
+        points_delta = after_pts - before_pts
+
+        if after_pos == 1 and before_pos != 1:
+            priority = 100
+            text = f"{team} assumiu a liderança com {after_pts} pts"
+            caption = f"{team} assumiu a liderança e chegou a {after_pts} pontos"
+        elif before_pos > 4 and after_pos <= 4:
+            priority = 90
+            text = f"{team} entrou no G4 e foi a {after_pts} pts"
+            caption = f"{team} entrou no G4 e chegou a {after_pts} pontos"
+        elif before_pos <= 4 and after_pos > 4:
+            priority = 90
+            text = f"{team} saiu do G4 e ficou em {after_pos}º"
+            caption = f"{team} saiu do G4 e passou a ocupar o {after_pos}º lugar"
+        elif before_pos >= 17 and after_pos <= 16:
+            priority = 85
+            text = f"{team} saiu do Z4 e subiu para {after_pos}º"
+            caption = f"{team} saiu do Z4 e subiu para o {after_pos}º lugar"
+        elif before_pos <= 16 and after_pos >= 17:
+            priority = 85
+            text = f"{team} entrou no Z4 e caiu para {after_pos}º"
+            caption = f"{team} entrou no Z4 e caiu para o {after_pos}º lugar"
+        elif movement > 0:
+            priority = 60 + movement
+            text = f"{team} subiu para {after_pos}º com {after_pts} pts"
+            caption = f"{team} subiu para o {after_pos}º lugar, com {after_pts} pontos"
+        elif movement < 0:
+            priority = 60 + abs(movement)
+            text = f"{team} caiu para {after_pos}º com {after_pts} pts"
+            caption = f"{team} caiu para o {after_pos}º lugar, com {after_pts} pontos"
+        elif points_delta > 0:
+            priority = 40 + max(0, 21 - after_pos)
+            text = f"{team} chegou a {after_pts} pts e segue em {after_pos}º"
+            caption = f"{team} chegou a {after_pts} pontos e segue em {after_pos}º"
+        else:
+            priority = 20 + max(0, 21 - after_pos)
+            text = f"{team} segue com {after_pts} pts em {after_pos}º"
+            caption = f"{team} segue com {after_pts} pontos em {after_pos}º"
+
+        candidates.append({
+            "priority": priority,
+            "team": team,
+            "text": text,
+            "caption": caption,
+            "position": after_pos,
+        })
+
+    if not candidates:
+        return None
+
+    best = max(candidates, key=lambda item: (item["priority"], -item["position"], item["team"]))
+    home, away, score = match["home"], match["away"], match["score"]
+    return {
+        "kind": "single_match_impact",
+        "label": "IMPACTO DO JOGO",
+        "text": best["text"],
+        "caption": f"Impacto do jogo: após {home} {score} {away}, {best['caption']}.",
+        "match": match,
+        "team": best["team"],
+    }
+
+
 def direct_leapfrog_spotlight(insights: dict, matches: list[dict]) -> dict | None:
     """Detecta confronto em que o vencedor começou abaixo e terminou acima do adversário."""
     snapshots = insights.get("snapshots", [])
@@ -294,6 +386,10 @@ def matchday_spotlight(insights: dict, matches: list[dict]) -> dict:
     delayed = delayed_match_spotlight(insights, matches)
     if delayed:
         return delayed
+
+    single_match = single_match_impact_spotlight(insights, matches)
+    if single_match:
+        return single_match
 
     base = instagram_daily.round_spotlight(insights, matches)
     high_priority = {
