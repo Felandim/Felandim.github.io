@@ -67,7 +67,10 @@ class InstagramEditorialTests(unittest.TestCase):
         self.assertIsNone(instagram_editorial.high_scoring_match_spotlight(matches))
 
     def test_goal_fest_replaces_generic_title_race_but_not_new_leader(self):
-        matches = [{"round": 24, "home": "Coritiba", "away": "Athletico-PR", "score": "3 x 3"}]
+        matches = [
+            {"round": 24, "home": "Coritiba", "away": "Athletico-PR", "score": "3 x 3"},
+            {"round": 24, "home": "Flamengo", "away": "Santos", "score": "1 x 0"},
+        ]
         spotlight = instagram_editorial.editorial_spotlight(insights(), matches)
         self.assertEqual(spotlight["kind"], "goal_fest")
 
