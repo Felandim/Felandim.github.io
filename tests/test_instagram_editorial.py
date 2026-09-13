@@ -84,6 +84,55 @@ class InstagramEditorialTests(unittest.TestCase):
         self.assertEqual(question, "Qual jogo da rodada ainda pode superar esses 6 gols?")
         self.assertLessEqual(len(caption), 2200)
 
+    def test_drawless_day_requires_four_decisive_matches(self):
+        matches = [
+            {"score": "1 x 0"},
+            {"score": "0 x 2"},
+            {"score": "3 x 1"},
+            {"score": "1 x 2"},
+        ]
+        spotlight = instagram_editorial.drawless_day_spotlight(matches)
+        self.assertIsNotNone(spotlight)
+        self.assertEqual(spotlight["kind"], "drawless_day")
+        self.assertEqual(spotlight["matches"], 4)
+        self.assertEqual(spotlight["text"], "4 jogos, 4 vencedores • nenhum empate")
+
+    def test_drawless_day_ignores_small_samples_and_days_with_draws(self):
+        self.assertIsNone(instagram_editorial.drawless_day_spotlight([
+            {"score": "1 x 0"}, {"score": "0 x 1"}, {"score": "2 x 1"},
+        ]))
+        self.assertIsNone(instagram_editorial.drawless_day_spotlight([
+            {"score": "1 x 0"}, {"score": "0 x 1"}, {"score": "2 x 1"}, {"score": "1 x 1"},
+        ]))
+
+    def test_drawless_day_replaces_generic_title_race_but_not_stronger_event(self):
+        matches = [
+            {"round": 24, "home": "Santos", "away": "Botafogo", "score": "1 x 0"},
+            {"round": 24, "home": "Cruzeiro", "away": "Fluminense", "score": "0 x 2"},
+            {"round": 24, "home": "Grêmio", "away": "Atlético-MG", "score": "3 x 1"},
+            {"round": 24, "home": "Athletico-PR", "away": "Bragantino", "score": "1 x 2"},
+        ]
+        spotlight = instagram_editorial.editorial_spotlight(insights(), matches)
+        self.assertEqual(spotlight["kind"], "drawless_day")
+
+        spotlight = instagram_editorial.editorial_spotlight(insights(leader_changed=True), matches)
+        self.assertEqual(spotlight["kind"], "leader")
+
+    def test_drawless_day_caption_and_question_are_contextual(self):
+        data = insights((50, 45, 42, 39))
+        matches = [
+            {"round": 24, "home": "Santos", "away": "Botafogo", "score": "1 x 0"},
+            {"round": 24, "home": "Cruzeiro", "away": "Fluminense", "score": "0 x 2"},
+            {"round": 24, "home": "Grêmio", "away": "Atlético-MG", "score": "3 x 1"},
+            {"round": 24, "home": "Athletico-PR", "away": "Bragantino", "score": "1 x 2"},
+        ]
+        spotlight = instagram_editorial.editorial_spotlight(data, matches)
+        caption = instagram_editorial.build_caption(data, matches)
+        question = instagram_engagement.engagement_question(spotlight)
+        self.assertIn("Dia sem empates: as 4 partidas disputadas terminaram com vencedor.", caption)
+        self.assertEqual(question, "Na próxima rodada, qual confronto tem mais cara de empate?")
+        self.assertLessEqual(len(caption), 2200)
+
     def test_title_race_requires_three_teams_within_three_points(self):
         spotlight = instagram_editorial.title_race_spotlight(insights())
         self.assertIsNotNone(spotlight)
