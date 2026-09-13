@@ -42,6 +42,8 @@ def engagement_question(spotlight: dict) -> str:
     if kind == "goal_fest":
         goals = spotlight.get("goals")
         return f"Qual jogo da rodada ainda pode superar esses {goals} gols?" if goals else "Qual jogo da rodada ainda pode superar esse placar?"
+    if kind == "drawless_day":
+        return "Na próxima rodada, qual confronto tem mais cara de empate?"
     if kind == "title_cluster":
         return "Quem sai desse pelotão como principal candidato ao título?"
     if kind == "g4_cluster":
