@@ -21,11 +21,11 @@ jobs:
         run: python -m py_compile scripts/instagram_daily.py scripts/instagram_matchday.py scripts/instagram_editorial.py scripts/instagram_engagement.py
       - name: Drawless tests
         run: python -m unittest tests.test_instagram_editorial.InstagramEditorialTests.test_drawless_day_requires_four_decisive_matches tests.test_instagram_editorial.InstagramEditorialTests.test_drawless_day_ignores_small_samples_and_days_with_draws tests.test_instagram_editorial.InstagramEditorialTests.test_drawless_day_replaces_generic_title_race_but_not_stronger_event tests.test_instagram_editorial.InstagramEditorialTests.test_drawless_day_caption_and_question_are_contextual
-      - name: Existing goal-fest tests
-        run: python -m unittest tests.test_instagram_editorial.InstagramEditorialTests.test_high_scoring_match_detects_goal_fest tests.test_instagram_editorial.InstagramEditorialTests.test_high_scoring_match_requires_five_goals tests.test_instagram_editorial.InstagramEditorialTests.test_goal_fest_replaces_generic_title_race_but_not_new_leader tests.test_instagram_editorial.InstagramEditorialTests.test_goal_fest_caption_and_question_are_contextual
-      - name: Existing title-race tests
-        run: python -m unittest tests.test_instagram_editorial.InstagramEditorialTests.test_title_race_requires_three_teams_within_three_points tests.test_instagram_editorial.InstagramEditorialTests.test_title_race_ignores_two_team_gap tests.test_instagram_editorial.InstagramEditorialTests.test_title_race_does_not_override_new_leader tests.test_instagram_editorial.InstagramEditorialTests.test_caption_and_question_use_title_race_context
-      - name: Existing caption tests
-        run: python -m unittest tests.test_instagram_editorial.InstagramEditorialTests.test_caption_keeps_one_editorial_story_instead_of_stat_dump tests.test_instagram_editorial.InstagramEditorialTests.test_engagement_question_is_inserted_before_site_cta
-      - name: Existing render test
-        run: python -m unittest tests.test_instagram_editorial.InstagramEditorialTests.test_render_keeps_instagram_dimensions
+      - name: Goal fest detection
+        run: python -m unittest tests.test_instagram_editorial.InstagramEditorialTests.test_high_scoring_match_detects_goal_fest
+      - name: Goal fest threshold
+        run: python -m unittest tests.test_instagram_editorial.InstagramEditorialTests.test_high_scoring_match_requires_five_goals
+      - name: Goal fest priority
+        run: python -m unittest tests.test_instagram_editorial.InstagramEditorialTests.test_goal_fest_replaces_generic_title_race_but_not_new_leader
+      - name: Goal fest copy
+        run: python -m unittest tests.test_instagram_editorial.InstagramEditorialTests.test_goal_fest_caption_and_question_are_contextual
