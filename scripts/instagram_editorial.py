@@ -52,6 +52,28 @@ def high_scoring_match_spotlight(matches: list[dict], minimum_goals: int = 5) ->
     }
 
 
+def drawless_day_spotlight(matches: list[dict], minimum_matches: int = 4) -> dict | None:
+    """Destaca dias cheios de jogos em que nenhuma partida terminou empatada."""
+    scored = []
+    for match in matches:
+        score = instagram_daily._score(match.get("score", ""))
+        if score:
+            scored.append(score)
+
+    if len(scored) < minimum_matches or any(home == away for home, away in scored):
+        return None
+
+    return {
+        "kind": "drawless_day",
+        "label": "DIA SEM EMPATES",
+        "text": f"{len(scored)} jogos, {len(scored)} vencedores • nenhum empate",
+        "caption": (
+            f"Dia sem empates: as {len(scored)} partidas disputadas terminaram com vencedor."
+        ),
+        "matches": len(scored),
+    }
+
+
 def title_race_spotlight(
     insights: dict,
     maximum_gap: int = 3,
@@ -95,7 +117,12 @@ def editorial_spotlight(insights: dict, matches: list[dict]) -> dict:
     base = instagram_matchday.matchday_spotlight(insights, matches)
     if base.get("kind") in HIGH_PRIORITY_KINDS or base.get("kind") == "delayed_match":
         return base
-    return high_scoring_match_spotlight(matches) or title_race_spotlight(insights) or base
+    return (
+        high_scoring_match_spotlight(matches)
+        or drawless_day_spotlight(matches)
+        or title_race_spotlight(insights)
+        or base
+    )
 
 
 def _spotlight_sentence(spotlight: dict) -> str:
