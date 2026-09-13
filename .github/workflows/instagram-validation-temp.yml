@@ -19,5 +19,13 @@ jobs:
       - run: pip install pillow requests
       - name: Compile Instagram scripts
         run: python -m py_compile scripts/instagram_daily.py scripts/instagram_matchday.py scripts/instagram_editorial.py scripts/instagram_engagement.py
-      - name: Run Instagram test suite
+      - name: Drawless detection
+        run: python -m unittest tests.test_instagram_editorial.InstagramEditorialTests.test_drawless_day_requires_four_decisive_matches tests.test_instagram_editorial.InstagramEditorialTests.test_drawless_day_ignores_small_samples_and_days_with_draws
+      - name: Drawless priority
+        run: python -m unittest tests.test_instagram_editorial.InstagramEditorialTests.test_drawless_day_replaces_generic_title_race_but_not_stronger_event
+      - name: Drawless copy
+        run: python -m unittest tests.test_instagram_editorial.InstagramEditorialTests.test_drawless_day_caption_and_question_are_contextual
+      - name: Existing editorial tests
+        run: python -m unittest tests/test_instagram_editorial.py
+      - name: Full Instagram test suite
         run: python -m unittest tests/test_instagram_daily.py tests/test_instagram_clusters.py tests/test_instagram_engagement.py tests/test_instagram_matchday.py tests/test_instagram_momentum.py tests/test_instagram_leapfrog.py tests/test_instagram_editorial.py
