@@ -74,6 +74,52 @@ def drawless_day_spotlight(matches: list[dict], minimum_matches: int = 4) -> dic
     }
 
 
+def defensive_streak_spotlight(
+    insights: dict,
+    rounds: int = 3,
+    minimum_points: int = 7,
+) -> dict | None:
+    """Destaca sequência recente sem sofrer gols, desde que também gere resultado na tabela."""
+    snapshots = insights.get("snapshots", [])
+    if len(snapshots) < rounds + 1:
+        return None
+
+    start, latest = snapshots[-(rounds + 1)], snapshots[-1]
+    start_by_team = {row["team"]: row for row in start.get("table", [])}
+    candidates = []
+
+    for row in latest.get("table", []):
+        previous = start_by_team.get(row["team"])
+        if previous is None or "ga" not in row or "ga" not in previous:
+            continue
+        goals_against = int(row["ga"]) - int(previous["ga"])
+        points = int(row["points"]) - int(previous["points"])
+        if goals_against != 0 or points < minimum_points:
+            continue
+        candidates.append({
+            "team": row["team"],
+            "points": points,
+            "position": int(row.get("position", 99)),
+        })
+
+    if not candidates:
+        return None
+
+    best = max(candidates, key=lambda item: (item["points"], -item["position"], item["team"]))
+    return {
+        "kind": "defensive_streak",
+        "label": "MURALHA",
+        "text": f"{best['team']} • {rounds} rodadas sem sofrer gol • {best['points']} pts",
+        "caption": (
+            f"Muralha: {best['team']} não sofreu gols nas últimas {rounds} rodadas "
+            f"e somou {best['points']} pontos no período."
+        ),
+        "team": best["team"],
+        "rounds": rounds,
+        "points": best["points"],
+    }
+
+
 def title_race_spotlight(
     insights: dict,
     maximum_gap: int = 3,
@@ -120,6 +166,7 @@ def editorial_spotlight(insights: dict, matches: list[dict]) -> dict:
     return (
         high_scoring_match_spotlight(matches)
         or drawless_day_spotlight(matches)
+        or defensive_streak_spotlight(insights)
         or title_race_spotlight(insights)
         or base
     )
