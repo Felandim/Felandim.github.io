@@ -77,6 +77,14 @@ def insights_without_leapfrog():
     }
 
 
+def normal_matchday_matches(primary_match):
+    """Representa uma rodada normal, sem acionar a regra de jogo único."""
+    return [
+        primary_match,
+        {"round": 24, "home": "Botafogo", "away": "Cruzeiro", "score": "1 x 1"},
+    ]
+
+
 class InstagramLeapfrogTests(unittest.TestCase):
     def test_detects_winner_that_overtakes_direct_opponent(self):
         matches = [{
@@ -101,9 +109,9 @@ class InstagramLeapfrogTests(unittest.TestCase):
 
     def test_leapfrog_replaces_generic_pressure_but_not_major_event(self):
         data = insights_after_leapfrog()
-        matches = [{
+        matches = normal_matchday_matches({
             "round": 24, "home": "Corinthians", "away": "Santos", "score": "2 x 0",
-        }]
+        })
         self.assertEqual(instagram_matchday.matchday_spotlight(data, matches)["kind"], "direct_leapfrog")
 
         data["rounds"][-1]["leader_changed"] = True
@@ -111,9 +119,9 @@ class InstagramLeapfrogTests(unittest.TestCase):
 
     def test_caption_and_question_are_contextual(self):
         data = insights_after_leapfrog()
-        matches = [{
+        matches = normal_matchday_matches({
             "round": 24, "home": "Corinthians", "away": "Santos", "score": "2 x 0",
-        }]
+        })
         spotlight = instagram_matchday.matchday_spotlight(data, matches)
         caption = instagram_matchday.build_caption(data, matches)
 
@@ -150,9 +158,9 @@ class InstagramDirectRivalTests(unittest.TestCase):
 
     def test_direct_rival_replaces_generic_pressure_but_not_leapfrog(self):
         data = insights_without_leapfrog()
-        matches = [{
+        matches = normal_matchday_matches({
             "round": 24, "home": "Corinthians", "away": "Santos", "score": "2 x 1",
-        }]
+        })
         self.assertEqual(instagram_matchday.matchday_spotlight(data, matches)["kind"], "direct_rival")
 
         leapfrog_data = insights_after_leapfrog()
@@ -160,9 +168,9 @@ class InstagramDirectRivalTests(unittest.TestCase):
 
     def test_caption_and_question_explain_the_direct_rival_context(self):
         data = insights_without_leapfrog()
-        matches = [{
+        matches = normal_matchday_matches({
             "round": 24, "home": "Corinthians", "away": "Santos", "score": "2 x 1",
-        }]
+        })
         spotlight = instagram_matchday.matchday_spotlight(data, matches)
         caption = instagram_matchday.build_caption(data, matches)
 
