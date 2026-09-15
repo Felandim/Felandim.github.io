@@ -52,6 +52,37 @@ def high_scoring_match_spotlight(matches: list[dict], minimum_goals: int = 5) ->
     }
 
 
+def away_dominance_spotlight(
+    matches: list[dict],
+    minimum_matches: int = 4,
+    minimum_share: float = 0.75,
+) -> dict | None:
+    """Destaca dias em que os visitantes vencem uma parcela incomum dos jogos."""
+    scored = [instagram_daily._score(match.get("score", "")) for match in matches]
+    scored = [score for score in scored if score]
+    if len(scored) < minimum_matches:
+        return None
+
+    away_wins = sum(away > home for home, away in scored)
+    share = away_wins / len(scored)
+    if share < minimum_share:
+        return None
+
+    percentage = round(share * 100)
+    return {
+        "kind": "away_dominance",
+        "label": "VISITANTES MANDARAM",
+        "text": f"{away_wins} vitórias fora em {len(scored)} jogos • {percentage}% do dia",
+        "caption": (
+            f"Visitantes mandaram: quem jogou fora venceu {away_wins} das {len(scored)} partidas "
+            f"do dia ({percentage}%)."
+        ),
+        "away_wins": away_wins,
+        "matches": len(scored),
+        "share": share,
+    }
+
+
 def drawless_day_spotlight(matches: list[dict], minimum_matches: int = 4) -> dict | None:
     """Destaca dias cheios de jogos em que nenhuma partida terminou empatada."""
     scored = []
@@ -165,6 +196,7 @@ def editorial_spotlight(insights: dict, matches: list[dict]) -> dict:
         return base
     return (
         high_scoring_match_spotlight(matches)
+        or away_dominance_spotlight(matches)
         or drawless_day_spotlight(matches)
         or defensive_streak_spotlight(insights)
         or title_race_spotlight(insights)
