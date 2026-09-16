@@ -39,6 +39,24 @@ class InstagramEngagementTests(unittest.TestCase):
             "A próxima rodada mantém esse nível de equilíbrio?",
         )
 
+    def test_title_cluster_question_names_real_contenders(self):
+        spotlight = {
+            "kind": "title_cluster",
+            "teams": ["Palmeiras", "Flamengo", "Cruzeiro", "Bahia"],
+            "text": "4 times separados por só 3 pontos no topo",
+        }
+        self.assertEqual(
+            instagram_engagement.engagement_question(spotlight),
+            "Hoje, quem está mais forte nessa disputa: Palmeiras, Flamengo, Cruzeiro?",
+        )
+
+    def test_title_cluster_question_keeps_fallback_without_team_data(self):
+        spotlight = {"kind": "title_cluster", "text": "3 times separados por só 2 pontos no topo"}
+        self.assertEqual(
+            instagram_engagement.engagement_question(spotlight),
+            "Quem sai desse pelotão como principal candidato ao título?",
+        )
+
     def test_question_is_inserted_before_site_cta(self):
         caption = "Resumo factual.\n\nMais números e evolução rodada a rodada: brasileiraoemrodadas.com.br\n\n#Brasileirao"
         spotlight = {"kind": "g4_cluster", "text": "4 times em até 3 pontos do 4º"}
