@@ -50,6 +50,10 @@ def engagement_question(spotlight: dict) -> str:
         team = spotlight.get("team", "")
         return f"Quem consegue furar a defesa do {team}?" if team else "Quanto tempo essa sequência sem sofrer gols dura?"
     if kind == "title_cluster":
+        teams = [str(team).strip() for team in spotlight.get("teams", []) if str(team).strip()]
+        if len(teams) >= 2:
+            options = ", ".join(teams[:3])
+            return f"Hoje, quem está mais forte nessa disputa: {options}?"
         return "Quem sai desse pelotão como principal candidato ao título?"
     if kind == "g4_cluster":
         return "Quem leva a quarta vaga nesse pelotão?"
