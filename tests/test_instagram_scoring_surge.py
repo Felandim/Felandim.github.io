@@ -33,6 +33,11 @@ class ScoringSurgeTests(unittest.TestCase):
     def test_requires_enough_current_matches(self):
         self.assertIsNone(instagram_editorial.scoring_surge_spotlight(data(18, 4)))
 
+    def test_requires_five_nearly_complete_history_rounds(self):
+        sample = data()
+        sample["rounds"][0]["matches"] = 4
+        self.assertIsNone(instagram_editorial.scoring_surge_spotlight(sample))
+
     def test_ignores_normal_scoring_round(self):
         self.assertIsNone(instagram_editorial.scoring_surge_spotlight(data(26, 10)))
 
