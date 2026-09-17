@@ -42,6 +42,8 @@ def engagement_question(spotlight: dict) -> str:
     if kind == "goal_fest":
         goals = spotlight.get("goals")
         return f"Qual jogo da rodada ainda pode superar esses {goals} gols?" if goals else "Qual jogo da rodada ainda pode superar esse placar?"
+    if kind == "scoring_surge":
+        return "Esse ritmo de gols se mantém até o fim da rodada?"
     if kind == "away_dominance":
         return "Na próxima rodada, os mandantes retomam a vantagem?"
     if kind == "drawless_day":
@@ -86,31 +88,19 @@ def with_engagement_question(caption: str, spotlight: dict, limit: int = 2200) -
     return caption[:limit]
 
 
-def _wait_for_container(
-    container_id: str,
-    access_token: str,
-    api_version: str,
-    timeout: float = 60,
-    interval: float = 2,
-) -> None:
+def _wait_for_container(container_id: str, access_token: str, api_version: str, timeout: float = 60, interval: float = 2) -> None:
     """Espera o Instagram terminar de processar o container antes do publish."""
     deadline = time.monotonic() + timeout
     url = f"https://graph.instagram.com/{api_version}/{container_id}"
     last_status = "UNKNOWN"
-
     while True:
-        response = requests.get(
-            url,
-            params={"fields": "status_code,status", "access_token": access_token},
-            timeout=30,
-        )
+        response = requests.get(url, params={"fields": "status_code,status", "access_token": access_token}, timeout=30)
         try:
             payload = response.json()
         except ValueError:
             payload = {"raw": response.text}
         if not response.ok:
             raise RuntimeError(f"Instagram container status {response.status_code}: {payload}")
-
         status_code = str(payload.get("status_code") or "").upper()
         last_status = status_code or str(payload.get("status") or "UNKNOWN")
         if status_code in {"FINISHED", "PUBLISHED"}:
@@ -122,30 +112,16 @@ def _wait_for_container(
         time.sleep(interval)
 
 
-def publish_when_ready(
-    instagram_daily,
-    image_url: str,
-    caption: str,
-    ig_user_id: str,
-    access_token: str,
-    api_version: str,
-) -> str:
+def publish_when_ready(instagram_daily, image_url: str, caption: str, ig_user_id: str, access_token: str, api_version: str) -> str:
     """Cria o container, aguarda o processamento e só então publica."""
     base = f"{instagram_daily.GRAPH_HOST}/{api_version}/{ig_user_id}"
-    container = instagram_daily._post(
-        f"{base}/media",
-        {"image_url": image_url, "caption": caption, "access_token": access_token},
-    )
+    container = instagram_daily._post(f"{base}/media", {"image_url": image_url, "caption": caption, "access_token": access_token})
     _wait_for_container(container["id"], access_token, api_version)
-    media = instagram_daily._post(
-        f"{base}/media_publish",
-        {"creation_id": container["id"], "access_token": access_token},
-    )
+    media = instagram_daily._post(f"{base}/media_publish", {"creation_id": container["id"], "access_token": access_token})
     return media["id"]
 
 
 def main() -> None:
-    # Imports tardios mantêm as funções de copy testáveis sem carregar PIL.
     import instagram_daily
     import instagram_editorial
     import instagram_matchday
@@ -163,11 +139,8 @@ def main() -> None:
     caption = with_engagement_question(instagram_editorial.build_caption(insights, matches), spotlight)
 
     media_id = publish_when_ready(
-        instagram_daily,
-        args.image_url,
-        caption,
-        os.environ["INSTAGRAM_IG_USER_ID"],
-        os.environ["INSTAGRAM_ACCESS_TOKEN"],
+        instagram_daily, args.image_url, caption,
+        os.environ["INSTAGRAM_IG_USER_ID"], os.environ["INSTAGRAM_ACCESS_TOKEN"],
         os.getenv("INSTAGRAM_API_VERSION", instagram_daily.DEFAULT_API_VERSION),
     )
     print(f"Publicado: {media_id}")
