@@ -158,7 +158,7 @@ class InstagramEditorialTests(unittest.TestCase):
         caption = instagram_editorial.build_caption(data, [])
         question = instagram_engagement.engagement_question(spotlight)
         self.assertIn("Briga pelo título: 3 times estão separados por apenas 3 pontos", caption)
-        self.assertEqual(question, "Quem sai desse pelotão como principal candidato ao título?")
+        self.assertEqual(question, "Hoje, quem está mais forte nessa disputa: Palmeiras, Flamengo, Bahia?")
         self.assertLessEqual(len(caption), 2200)
 
     def test_caption_keeps_one_editorial_story_instead_of_stat_dump(self):
@@ -178,7 +178,7 @@ class InstagramEditorialTests(unittest.TestCase):
         spotlight = instagram_editorial.editorial_spotlight(data, [])
         caption = instagram_editorial.build_caption(data, [])
         enriched = instagram_engagement.with_engagement_question(caption, spotlight)
-        question_index = enriched.index("Quem sai desse pelotão")
+        question_index = enriched.index("Hoje, quem está mais forte nessa disputa: Palmeiras, Flamengo, Bahia?")
         site_index = enriched.index("Mais números e evolução rodada a rodada:")
         self.assertLess(question_index, site_index)
         self.assertLessEqual(len(enriched), 2200)
