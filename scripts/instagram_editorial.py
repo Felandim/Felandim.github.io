@@ -204,8 +204,22 @@ def _spotlight_sentence(spotlight: dict) -> str:
     return f"{label}: {text}."
 
 
+def _standings_context(table: list[dict]) -> list[str]:
+    """Resume as duas fronteiras que mais importam sem repetir listas já visíveis no card."""
+    if len(table) < 17:
+        return []
+    title_gap = int(table[0]["points"]) - int(table[1]["points"])
+    z4_gap = int(table[15]["points"]) - int(table[16]["points"])
+    title_unit = "pt" if title_gap == 1 else "pts"
+    z4_unit = "pt" if z4_gap == 1 else "pts"
+    return [
+        f"Topo: {table[0]['team']} {table[0]['points']} x {table[1]['points']} {table[1]['team']} • {title_gap} {title_unit} de diferença.",
+        f"Corte do Z4: {table[15]['team']} {table[15]['points']} x {table[16]['points']} {table[16]['team']} • {z4_gap} {z4_unit}.",
+    ]
+
+
 def build_caption(insights: dict, matches: list[dict]) -> str:
-    """Cria legenda curta com uma história principal, sem empilhar insights concorrentes."""
+    """Cria legenda curta com uma história principal e contexto competitivo não redundante."""
     snapshot, latest = instagram_daily.current_snapshot(insights)
     table = snapshot["table"]
     spotlight = editorial_spotlight(insights, matches)
@@ -215,9 +229,7 @@ def build_caption(insights: dict, matches: list[dict]) -> str:
         story,
         f"Brasileirão {insights['season']} — rodada {latest['round']}{partial}.",
         "",
-        f"Líder: {table[0]['team']} — {table[0]['points']} pts.",
-        f"G4: {', '.join(row['team'] for row in table[:4])}.",
-        f"Z4: {', '.join(row['team'] for row in table[-4:])}.",
+        *_standings_context(table),
         "",
         f"Mais números e evolução rodada a rodada: {instagram_daily.SITE_URL}",
         "",
