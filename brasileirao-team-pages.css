@@ -58,6 +58,23 @@
   margin-bottom: 1rem;
 }
 
+.team-history .br-table-wrap {
+  max-height: min(65vh, 36rem);
+  overflow: auto;
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
+  border-radius: 0.75rem;
+}
+
+.team-history .br-table thead th {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background: var(--br-ink, #101714);
+  color: #f6f4ec;
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.16);
+}
+
 .team-history td,
 .team-history th {
   white-space: nowrap;
@@ -126,6 +143,14 @@
   .team-kpis,
   .team-page-nav {
     grid-template-columns: 1fr;
+  }
+
+  .team-history {
+    padding-inline: 1rem;
+  }
+
+  .team-history .br-table-wrap {
+    max-height: 60vh;
   }
 
   .team-page-nav a:nth-child(2) {
