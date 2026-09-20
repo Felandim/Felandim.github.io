@@ -28,6 +28,9 @@ def engagement_question(spotlight: dict) -> str:
         return f"{winner} confirma a reação na próxima rodada?" if winner else "A zebra confirma a reação na próxima rodada?"
     if kind == "delayed_match":
         return "Esse jogo atrasado muda sua leitura da tabela?"
+    if kind == "single_match_impact":
+        team = str(spotlight.get("team", "")).strip()
+        return f"Esse resultado muda o que você espera do {team} na próxima rodada?" if team else "Esse resultado muda sua leitura para a próxima rodada?"
     if kind == "direct_leapfrog":
         winner = spotlight.get("winner", "")
         return f"{winner} consegue se manter à frente na próxima rodada?" if winner else "A ultrapassagem se sustenta na próxima rodada?"
