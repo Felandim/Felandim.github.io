@@ -32,6 +32,20 @@ class InstagramEngagementTests(unittest.TestCase):
             "Esse jogo atrasado muda sua leitura da tabela?",
         )
 
+    def test_single_match_impact_question_names_affected_team(self):
+        spotlight = {"kind": "single_match_impact", "team": "Vasco", "text": "Vasco saiu do Z4 e subiu para 16º"}
+        self.assertEqual(
+            instagram_engagement.engagement_question(spotlight),
+            "Esse resultado muda o que você espera do Vasco na próxima rodada?",
+        )
+
+    def test_single_match_impact_question_has_safe_fallback(self):
+        spotlight = {"kind": "single_match_impact", "text": "Impacto relevante na tabela"}
+        self.assertEqual(
+            instagram_engagement.engagement_question(spotlight),
+            "Esse resultado muda sua leitura para a próxima rodada?",
+        )
+
     def test_tight_matchday_question_asks_about_competitive_balance(self):
         spotlight = {"kind": "tight_matches", "text": "4 de 5 jogos do dia decididos por até 1 gol"}
         self.assertEqual(
