@@ -153,6 +153,20 @@
     max-height: 60vh;
   }
 
+  .team-history .br-table th:first-child,
+  .team-history .br-table td:first-child {
+    position: sticky;
+    left: 0;
+    z-index: 1;
+    background: var(--br-paper, #fff);
+    box-shadow: 8px 0 12px -12px rgba(16, 23, 20, 0.8);
+  }
+
+  .team-history .br-table thead th:first-child {
+    z-index: 3;
+    background: var(--br-ink, #101714);
+  }
+
   .team-page-nav a:nth-child(2) {
     grid-column: auto;
     grid-row: auto;
