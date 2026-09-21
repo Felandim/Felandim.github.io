@@ -6,6 +6,7 @@ on:
       - 'serie_a_2026/**'
       - 'brasileirao_2026/**'
       - 'brasileirao-team-pages.css'
+      - 'tests/test_team_pages_css.py'
       - '.github/workflows/serie-a-2026-update.yml'
   push:
     branches:
@@ -13,6 +14,7 @@ on:
     paths:
       - 'brasileirao_2026/**'
       - 'brasileirao-team-pages.css'
+      - 'tests/test_team_pages_css.py'
       - '.github/workflows/serie-a-2026-update.yml'
   schedule:
     - cron: '0 */6 * * *'
@@ -67,6 +69,8 @@ jobs:
           assert all(sum(match['round'] == number for match in matches) == 10 for number in rounds)
           print('38 rodadas e 380 partidas validadas.')
           PY
+      - name: Test team page UX
+        run: python -m unittest tests/test_team_pages_css.py
 
   update:
     if: github.event_name != 'pull_request'
@@ -104,6 +108,8 @@ jobs:
           assert all(sum(match['round'] == number for match in matches) == 10 for number in rounds)
           print('38 rodadas e 380 partidas validadas.')
           PY
+      - name: Test team page UX
+        run: python -m unittest tests/test_team_pages_css.py
       - name: Commit generated data
         run: |
           if git diff --quiet data/serie_a_2026.json data/serie_a_2026_scorers.json data/brasileirao_2026_insights.json docs/serie_a_2026/index.html index.html brasileirao assets/og sitemap.xml; then
