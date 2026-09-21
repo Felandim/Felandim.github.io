@@ -2881,16 +2881,6 @@
       "url": "https://ge.globo.com/pr/futebol/brasileirao-serie-b/jogo/20-09-2026/londrina-fortaleza.ghtml"
     },
     {
-      "away": "Operário-PR",
-      "date": "21/09/2026",
-      "home": "Criciúma",
-      "round": 29,
-      "score": "-",
-      "stadium": "Heriberto Hülse",
-      "time": "19:30",
-      "url": "https://ge.globo.com/sc/futebol/brasileirao-serie-b/jogo/21-09-2026/criciuma-operario-pr.ghtml"
-    },
-    {
       "away": "Náutico",
       "date": "21/09/2026",
       "home": "Cuiabá",
@@ -2899,6 +2889,16 @@
       "stadium": "Arena Pantanal",
       "time": "21:30",
       "url": "https://ge.globo.com/mt/futebol/brasileirao-serie-b/jogo/21-09-2026/cuiaba-nautico.ghtml"
+    },
+    {
+      "away": "Operário-PR",
+      "date": "22/09/2026",
+      "home": "Criciúma",
+      "round": 29,
+      "score": "-",
+      "stadium": "Heriberto Hülse",
+      "time": "19:30",
+      "url": "https://ge.globo.com/sc/futebol/brasileirao-serie-b/jogo/21-09-2026/criciuma-operario-pr.ghtml"
     },
     {
       "away": "São Bernardo",
@@ -3031,16 +3031,6 @@
       "url": ""
     },
     {
-      "away": "Ceará",
-      "date": "02/10/2026",
-      "home": "Avaí",
-      "round": 31,
-      "score": "-",
-      "stadium": "Ressacada",
-      "time": "19:30",
-      "url": ""
-    },
-    {
       "away": "Criciúma",
       "date": "02/10/2026",
       "home": "Londrina",
@@ -3068,6 +3058,16 @@
       "score": "-",
       "stadium": "Castelão (CE)",
       "time": "21:35",
+      "url": ""
+    },
+    {
+      "away": "Ceará",
+      "date": "03/10/2026",
+      "home": "Avaí",
+      "round": 31,
+      "score": "-",
+      "stadium": "Ressacada",
+      "time": "11:00",
       "url": ""
     },
     {
