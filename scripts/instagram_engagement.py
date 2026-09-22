@@ -49,6 +49,8 @@ def engagement_question(spotlight: dict) -> str:
         return "Esse ritmo de gols se mantém até o fim da rodada?"
     if kind == "away_dominance":
         return "Na próxima rodada, os mandantes retomam a vantagem?"
+    if kind == "home_dominance":
+        return "Na próxima rodada, quem consegue quebrar a força dos mandantes?"
     if kind == "drawless_day":
         return "Na próxima rodada, qual confronto tem mais cara de empate?"
     if kind == "defensive_streak":
