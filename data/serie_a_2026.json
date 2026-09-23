@@ -2961,16 +2961,6 @@
       "url": ""
     },
     {
-      "away": "Botafogo",
-      "date": "11/10/2026",
-      "home": "Coritiba",
-      "round": 30,
-      "score": "-",
-      "stadium": "Couto Pereira",
-      "time": "19:30",
-      "url": ""
-    },
-    {
       "away": "Mirassol",
       "date": "11/10/2026",
       "home": "Bahia",
@@ -2978,6 +2968,16 @@
       "score": "-",
       "stadium": "Casa de Apostas Arena Fonte Nova",
       "time": "19:30",
+      "url": ""
+    },
+    {
+      "away": "Botafogo",
+      "date": "12/10/2026",
+      "home": "Coritiba",
+      "round": 30,
+      "score": "-",
+      "stadium": "Couto Pereira",
+      "time": "16:00",
       "url": ""
     },
     {
