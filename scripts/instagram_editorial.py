@@ -54,6 +54,30 @@ def scoring_surge_spotlight(insights: dict, minimum_matches: int = 5, history_ro
     return {"kind":"scoring_surge","label":"RODADA OFENSIVA","text":f"{current_rate:.1f} gols/jogo • {percentage}% acima das últimas {history_rounds}","caption":f"Rodada ofensiva: são {current_rate:.1f} gols por jogo até aqui, {percentage}% acima da média das últimas {history_rounds} rodadas ({history_rate:.1f}).","rate":current_rate,"history_rate":history_rate,"lift":lift,"history_rounds":history_rounds}
 
 
+def scoring_drought_spotlight(insights: dict, minimum_matches: int = 5, history_rounds: int = 5, minimum_drop: float = 0.25, maximum_rate: float = 1.8) -> dict | None:
+    """Destaca uma rodada realmente travada comparando-a ao ritmo recente do campeonato."""
+    rounds = insights.get("rounds", [])
+    if len(rounds) < history_rounds + 1:
+        return None
+    current = rounds[-1]
+    current_matches, current_goals = int(current.get("matches") or 0), int(current.get("goals") or 0)
+    if current_matches < minimum_matches:
+        return None
+    history = [row for row in rounds[:-1] if int(row.get("matches") or 0) >= 8 and row.get("goals") is not None][-history_rounds:]
+    if len(history) < history_rounds:
+        return None
+    history_matches = sum(int(row["matches"]) for row in history)
+    history_goals = sum(int(row["goals"]) for row in history)
+    if history_matches <= 0 or history_goals <= 0:
+        return None
+    current_rate, history_rate = current_goals / current_matches, history_goals / history_matches
+    drop = 1 - current_rate / history_rate
+    if current_rate > maximum_rate or drop < minimum_drop:
+        return None
+    percentage = round(drop * 100)
+    return {"kind":"scoring_drought","label":"RODADA TRAVADA","text":f"{current_rate:.1f} gols/jogo • {percentage}% abaixo das últimas {history_rounds}","caption":f"Rodada travada: são só {current_rate:.1f} gols por jogo até aqui, {percentage}% abaixo da média das últimas {history_rounds} rodadas ({history_rate:.1f}).","rate":current_rate,"history_rate":history_rate,"drop":drop,"history_rounds":history_rounds}
+
+
 def away_dominance_spotlight(matches: list[dict], minimum_matches: int = 4, minimum_share: float = 0.75) -> dict | None:
     scored = [score for match in matches if (score := instagram_daily._score(match.get("score", "")))]
     if len(scored) < minimum_matches:
@@ -124,7 +148,7 @@ def editorial_spotlight(insights: dict, matches: list[dict]) -> dict:
     base = instagram_matchday.matchday_spotlight(insights, matches)
     if base.get("kind") in HIGH_PRIORITY_KINDS or base.get("kind") == "delayed_match":
         return base
-    return high_scoring_match_spotlight(matches) or scoring_surge_spotlight(insights) or away_dominance_spotlight(matches) or home_dominance_spotlight(matches) or drawless_day_spotlight(matches) or defensive_streak_spotlight(insights) or title_race_spotlight(insights) or base
+    return high_scoring_match_spotlight(matches) or scoring_surge_spotlight(insights) or scoring_drought_spotlight(insights) or away_dominance_spotlight(matches) or home_dominance_spotlight(matches) or drawless_day_spotlight(matches) or defensive_streak_spotlight(insights) or title_race_spotlight(insights) or base
 
 
 def _spotlight_sentence(spotlight: dict) -> str:
