@@ -47,6 +47,8 @@ def engagement_question(spotlight: dict) -> str:
         return f"Qual jogo da rodada ainda pode superar esses {goals} gols?" if goals else "Qual jogo da rodada ainda pode superar esse placar?"
     if kind == "scoring_surge":
         return "Esse ritmo de gols se mantém até o fim da rodada?"
+    if kind == "scoring_drought":
+        return "A rodada destrava ou termina com cara de jogo amarrado?"
     if kind == "away_dominance":
         return "Na próxima rodada, os mandantes retomam a vantagem?"
     if kind == "home_dominance":
