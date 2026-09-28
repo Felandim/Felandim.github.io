@@ -177,3 +177,23 @@ def test_shared_site_script_loads_plausible_only_on_production():
     source = (ROOT / "site.js").read_text(encoding="utf-8")
     assert "location.hostname === 'felandim.github.io'" in source
     assert "https://plausible.io/js/script.js" in source
+
+
+
+def test_standings_abbreviations_have_accessible_tooltips():
+    script = (ROOT / "brasileirao.js").read_text(encoding="utf-8")
+    css = (ROOT / "style.css").read_text(encoding="utf-8")
+    for abbreviation, label in {
+        "Pts": "Pontos",
+        "J": "Jogos disputados",
+        "V": "Vitórias",
+        "E": "Empates",
+        "D": "Derrotas",
+        "SG": "Saldo de gols",
+    }.items():
+        assert f'"{abbreviation}": "{label}"' in script
+    assert 'querySelectorAll("[data-standings-table] thead th")' in script
+    assert 'trigger.setAttribute("aria-label"' in script
+    assert 'event.key === "Escape"' in script
+    assert ".br-tooltip-trigger:focus-visible" in css
+    assert ".br-tooltip-bubble" in css
