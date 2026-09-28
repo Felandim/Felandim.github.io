@@ -21,6 +21,72 @@
   const teamLogoUrl = team => `https://images.fotmob.com/image_resources/logo/teamlogo/${teamLogoIds[team]}.png`;
   const teamBadge = (team, variant = "inline") => `<span class="br-team-with-badge br-team-with-badge-${variant}"><img class="br-team-badge" src="${teamLogoUrl(team)}" alt="" aria-hidden="true" width="48" height="48" loading="lazy" decoding="async"><span>${safe(team)}</span></span>`;
 
+
+  const standingsTooltipLabels = {
+    "Pts": "Pontos",
+    "J": "Jogos disputados",
+    "V": "Vitórias",
+    "E": "Empates",
+    "D": "Derrotas",
+    "SG": "Saldo de gols",
+  };
+
+  function initStandingsTooltips() {
+    const headers = [...document.querySelectorAll("[data-standings-table] thead th")];
+    const triggers = headers.filter(header => standingsTooltipLabels[header.textContent.trim()]);
+    if (!triggers.length) return;
+
+    const bubble = document.createElement("div");
+    bubble.className = "br-tooltip-bubble";
+    bubble.setAttribute("role", "tooltip");
+    bubble.hidden = true;
+    document.body.append(bubble);
+
+    const hide = () => {
+      bubble.hidden = true;
+      bubble.textContent = "";
+    };
+
+    const show = trigger => {
+      const label = trigger.dataset.tooltip;
+      if (!label) return;
+      bubble.textContent = label;
+      bubble.hidden = false;
+      const rect = trigger.getBoundingClientRect();
+      const bubbleRect = bubble.getBoundingClientRect();
+      const left = Math.max(8, Math.min(window.innerWidth - bubbleRect.width - 8, rect.left + rect.width / 2 - bubbleRect.width / 2));
+      const preferredTop = rect.bottom + 8;
+      const top = preferredTop + bubbleRect.height <= window.innerHeight - 8
+        ? preferredTop
+        : Math.max(8, rect.top - bubbleRect.height - 8);
+      bubble.style.left = `${left}px`;
+      bubble.style.top = `${top}px`;
+    };
+
+    triggers.forEach(trigger => {
+      const label = standingsTooltipLabels[trigger.textContent.trim()];
+      trigger.classList.add("br-tooltip-trigger");
+      trigger.tabIndex = 0;
+      trigger.dataset.tooltip = label;
+      trigger.setAttribute("aria-label", `${trigger.textContent.trim()}: ${label}`);
+      trigger.addEventListener("pointerenter", () => show(trigger));
+      trigger.addEventListener("pointerleave", hide);
+      trigger.addEventListener("focus", () => show(trigger));
+      trigger.addEventListener("blur", hide);
+      trigger.addEventListener("keydown", event => {
+        if (event.key === "Escape") {
+          hide();
+          trigger.blur();
+        }
+      });
+    });
+
+    window.addEventListener("scroll", hide, { passive: true });
+    window.addEventListener("resize", hide);
+  }
+
+  initStandingsTooltips();
+
   function standingsRows(rows) {
     return rows.map(row => {
       const zone = row.position <= 4 ? "g4" : row.position >= 17 ? "z4" : "";
