@@ -197,3 +197,52 @@ def test_standings_abbreviations_have_accessible_tooltips():
     assert 'event.key === "Escape"' in script
     assert ".br-tooltip-trigger:focus-visible" in css
     assert ".br-tooltip-bubble" in css
+
+
+
+def test_team_finder_is_accessible_progressive_and_filters_names():
+    home = (ROOT / "index.html").read_text(encoding="utf-8")
+    hub = (ROOT / "brasileirao/index.html").read_text(encoding="utf-8")
+    script = (ROOT / "brasileirao.js").read_text(encoding="utf-8")
+    css = (ROOT / "style.css").read_text(encoding="utf-8")
+
+    for source, suffix in ((home, "home"), (hub, "hub")):
+        assert f'id="team-search-{suffix}"' in source
+        assert f'aria-controls="team-list-{suffix}"' in source
+        assert f'aria-describedby="team-search-status-{suffix}"' in source
+        assert 'data-team-finder' in source
+        assert source.count('class="br-team-chip"') == 20
+
+    assert '<script src="../brasileirao.js" defer></script>' in hub
+    assert 'normalize("NFD")' in script
+    assert '.includes(query)' in script
+    assert 'event.key === "Escape"' in script
+    assert 'visible === 1 ? "time encontrado" : "times encontrados"' in script
+    assert ".br-team-chip[hidden]" in css
+    assert ".br-team-search-row:focus-within" in css
+
+
+def test_team_finder_filters_accent_insensitively_in_browser():
+    from playwright.sync_api import sync_playwright
+
+    with sync_playwright() as playwright:
+        browser = playwright.chromium.launch()
+        page = browser.new_page()
+        page.goto((ROOT / "brasileirao/index.html").as_uri(), wait_until="domcontentloaded")
+        search = page.locator("#team-search-hub")
+        assert search.is_visible()
+
+        search.fill("sao")
+        visible = page.locator("#team-list-hub .br-team-chip:visible")
+        assert visible.count() == 1
+        assert "São Paulo" in visible.first.text_content()
+        assert page.locator("#team-search-status-hub").text_content() == "1 time encontrado."
+
+        search.fill("time inexistente")
+        assert page.locator("#team-list-hub .br-team-chip:visible").count() == 0
+        assert page.locator("#team-empty-hub").is_visible()
+
+        page.locator("[data-team-search-clear]").click()
+        assert page.locator("#team-list-hub .br-team-chip:visible").count() == 20
+        assert page.locator("#team-search-status-hub").text_content() == "20 times disponíveis."
+        browser.close()

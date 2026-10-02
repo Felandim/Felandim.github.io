@@ -87,6 +87,57 @@
 
   initStandingsTooltips();
 
+
+  const normalizeTeamSearch = value => value
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLocaleLowerCase("pt-BR")
+    .trim();
+
+  function initTeamFinders() {
+    document.querySelectorAll("[data-team-finder]").forEach(finder => {
+      const input = finder.querySelector("[data-team-search]");
+      const clear = finder.querySelector("[data-team-search-clear]");
+      const list = document.getElementById(finder.dataset.teamList);
+      const empty = document.getElementById(finder.dataset.teamEmpty);
+      const status = document.getElementById(input?.getAttribute("aria-describedby"));
+      if (!input || !clear || !list || !empty || !status) return;
+
+      const teams = [...list.querySelectorAll(".br-team-chip")];
+      const update = () => {
+        const query = normalizeTeamSearch(input.value);
+        let visible = 0;
+        teams.forEach(team => {
+          const matches = !query || normalizeTeamSearch(team.textContent).includes(query);
+          team.hidden = !matches;
+          if (matches) visible += 1;
+        });
+        clear.hidden = !query;
+        empty.hidden = visible !== 0;
+        status.textContent = query
+          ? `${visible} ${visible === 1 ? "time encontrado" : "times encontrados"}.`
+          : `${teams.length} times disponíveis.`;
+      };
+
+      finder.hidden = false;
+      input.addEventListener("input", update);
+      input.addEventListener("keydown", event => {
+        if (event.key === "Escape" && input.value) {
+          input.value = "";
+          update();
+        }
+      });
+      clear.addEventListener("click", () => {
+        input.value = "";
+        update();
+        input.focus();
+      });
+      update();
+    });
+  }
+
+  initTeamFinders();
+
   function standingsRows(rows) {
     return rows.map(row => {
       const zone = row.position <= 4 ? "g4" : row.position >= 17 ? "z4" : "";

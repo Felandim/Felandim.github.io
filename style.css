@@ -927,3 +927,82 @@ h3 { margin-bottom: 12px; font-size: 1.35rem; }
 @media (prefers-reduced-motion: reduce) {
   .br-tooltip-bubble { transition: none; }
 }
+
+
+/* Instant, progressively enhanced team finder */
+.br-team-finder {
+  max-width: 720px;
+  margin: -16px 0 24px;
+}
+.br-team-finder[hidden],
+.br-team-chip[hidden],
+.br-team-empty[hidden],
+.br-team-search-row button[hidden] {
+  display: none;
+}
+.br-team-finder label {
+  display: block;
+  margin-bottom: 8px;
+  color: #59645d;
+  font-size: .68rem;
+  font-weight: 900;
+  letter-spacing: .11em;
+  text-transform: uppercase;
+}
+.br-team-search-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  border: 2px solid var(--br-ink);
+  background: #fff;
+}
+.br-team-search-row:focus-within {
+  outline: 3px solid var(--br-hot);
+  outline-offset: 3px;
+}
+.br-team-search-row input {
+  min-width: 0;
+  padding: 15px 16px;
+  color: var(--br-ink);
+  background: transparent;
+  border: 0;
+  font: inherit;
+  font-weight: 750;
+  outline: 0;
+}
+.br-team-search-row input::placeholder { color: #79847d; }
+.br-team-search-row button {
+  padding: 0 16px;
+  color: #f6f4ec;
+  background: var(--br-ink);
+  border: 0;
+  font: inherit;
+  font-size: .75rem;
+  font-weight: 850;
+  cursor: pointer;
+}
+.br-team-search-row button:hover,
+.br-team-search-row button:focus-visible {
+  color: var(--br-ink);
+  background: var(--br-hot);
+  outline: 0;
+}
+.br-team-search-status {
+  min-height: 1.3em;
+  margin: 8px 0 0;
+  color: #68736c;
+  font-size: .72rem;
+  font-weight: 750;
+}
+.br-team-empty {
+  margin: 0;
+  padding: 28px;
+  color: #566159;
+  background: var(--br-soft);
+  border: 1px solid var(--br-line);
+  text-align: center;
+}
+
+@media (max-width: 720px) {
+  .br-team-finder { margin-top: -8px; }
+  .br-team-search-row input { padding: 14px; }
+}
