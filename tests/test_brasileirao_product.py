@@ -246,3 +246,65 @@ def test_team_finder_filters_accent_insensitively_in_browser():
         assert page.locator("#team-list-hub .br-team-chip:visible").count() == 20
         assert page.locator("#team-search-status-hub").text_content() == "20 times disponíveis."
         browser.close()
+
+
+
+def test_round_selectors_keep_shareable_url_state():
+    source = (ROOT / "brasileirao.js").read_text(encoding="utf-8")
+    assert 'searchParams.get("rodada")' in source
+    assert 'searchParams.set("rodada", select.value)' in source
+    assert 'history.pushState({ rodada: select.value }' in source
+    assert source.count('window.addEventListener("popstate"') == 2
+    assert 'hasRoundOption(select, requested)' in source
+
+
+def test_round_selectors_restore_url_and_browser_history():
+    from functools import partial
+    from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
+    from threading import Thread
+    from playwright.sync_api import sync_playwright
+
+    class QuietHandler(SimpleHTTPRequestHandler):
+        def log_message(self, format, *args):
+            pass
+
+    server = ThreadingHTTPServer(
+        ("127.0.0.1", 0),
+        partial(QuietHandler, directory=str(ROOT)),
+    )
+    thread = Thread(target=server.serve_forever, daemon=True)
+    thread.start()
+    base_url = f"http://127.0.0.1:{server.server_port}"
+
+    try:
+        with sync_playwright() as playwright:
+            browser = playwright.chromium.launch()
+            page = browser.new_page()
+
+            page.goto(
+                f"{base_url}/brasileirao/classificacao-rodada-a-rodada.html?rodada=10",
+                wait_until="domcontentloaded",
+            )
+            standings = page.locator("[data-round-select]")
+            page.wait_for_function("document.querySelector('[data-round-select]').value === '10'")
+            standings.select_option("11")
+            page.wait_for_url("**?rodada=11")
+            page.go_back()
+            page.wait_for_function("document.querySelector('[data-round-select]').value === '10'")
+
+            page.goto(
+                f"{base_url}/brasileirao/artilharia-rodada-a-rodada.html?rodada=5",
+                wait_until="domcontentloaded",
+            )
+            scorers = page.locator("[data-scorer-round-select]")
+            page.wait_for_function("document.querySelector('[data-scorer-round-select]').value === '5'")
+            scorers.select_option("6")
+            page.wait_for_url("**?rodada=6")
+            page.go_back()
+            page.wait_for_function("document.querySelector('[data-scorer-round-select]').value === '5'")
+
+            browser.close()
+    finally:
+        server.shutdown()
+        server.server_close()
+        thread.join(timeout=5)

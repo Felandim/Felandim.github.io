@@ -164,8 +164,20 @@
     return `<svg class="br-multi-chart" viewBox="0 0 ${width} ${height}" role="img" aria-label="Evolução dos oito primeiros times até a rodada ${round}">${guides}${lines}</svg><ul class="br-chart-legend">${legend}</ul>`;
   }
 
+  const hasRoundOption = (select, value) => [...select.options].some(option => option.value === value);
+  const restoreRoundFromUrl = (select, fallback) => {
+    const requested = new URL(location.href).searchParams.get("rodada");
+    select.value = requested && hasRoundOption(select, requested) ? requested : fallback;
+  };
+  const pushRoundToUrl = select => {
+    const url = new URL(location.href);
+    url.searchParams.set("rodada", select.value);
+    history.pushState({ rodada: select.value }, "", url);
+  };
+
   const roundSelect = document.querySelector("[data-round-select]");
   if (roundSelect) {
+    const defaultRound = roundSelect.value;
     loadInsights().then(data => {
       const table = document.querySelector("[data-standings-table] tbody");
       const chart = document.querySelector("[data-multi-chart]");
@@ -175,7 +187,15 @@
         table.innerHTML = standingsRows(snapshot.table);
         chart.innerHTML = multiChart(snapshot.table, data.snapshots, round);
       };
-      roundSelect.addEventListener("change", update);
+      restoreRoundFromUrl(roundSelect, defaultRound);
+      roundSelect.addEventListener("change", () => {
+        pushRoundToUrl(roundSelect);
+        update();
+      });
+      window.addEventListener("popstate", () => {
+        restoreRoundFromUrl(roundSelect, defaultRound);
+        update();
+      });
       update();
     }).catch(error => document.querySelector("[data-multi-chart]").textContent = error.message);
   }
@@ -188,6 +208,7 @@
 
   const scorerSelect = document.querySelector("[data-scorer-round-select]");
   if (scorerSelect) {
+    const defaultRound = scorerSelect.value;
     loadInsights().then(data => {
       const table = document.querySelector("[data-scorer-table] tbody");
       const chart = document.querySelector("[data-scorer-chart]");
@@ -196,7 +217,15 @@
         table.innerHTML = snapshot.ranking.map((row, index) => `<tr><td>${index + 1}</td><th scope="row">${safe(row.name)}</th><td><a href="times/${slugify(row.team)}.html">${teamBadge(row.team, "table")}</a></td><td><strong>${row.goals}</strong></td></tr>`).join("");
         chart.innerHTML = scorerChart(snapshot.ranking);
       };
-      scorerSelect.addEventListener("change", update);
+      restoreRoundFromUrl(scorerSelect, defaultRound);
+      scorerSelect.addEventListener("change", () => {
+        pushRoundToUrl(scorerSelect);
+        update();
+      });
+      window.addEventListener("popstate", () => {
+        restoreRoundFromUrl(scorerSelect, defaultRound);
+        update();
+      });
       update();
     }).catch(error => document.querySelector("[data-scorer-chart]").textContent = error.message);
   }
