@@ -254,7 +254,9 @@ def test_round_selectors_keep_shareable_url_state():
     assert 'searchParams.get("rodada")' in source
     assert 'searchParams.set("rodada", select.value)' in source
     assert 'history.pushState({ rodada: select.value }' in source
-    assert source.count('window.addEventListener("popstate"') == 2
+    assert source.count('window.addEventListener("popstate"') >= 2
+    assert source.count("restoreRoundFromUrl(roundSelect, defaultRound)") == 2
+    assert source.count("restoreRoundFromUrl(scorerSelect, defaultRound)") == 2
     assert 'hasRoundOption(select, requested)' in source
 
 
