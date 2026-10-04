@@ -175,6 +175,42 @@
     history.pushState({ rodada: select.value }, "", url);
   };
 
+  function initRoundStepper(select) {
+    const control = select.closest(".br-control");
+    if (!control || control.querySelector("[data-round-stepper]")) return;
+
+    const navigation = document.createElement("nav");
+    navigation.className = "br-round-stepper";
+    navigation.dataset.roundStepper = "";
+    navigation.setAttribute("aria-label", "Navegação entre rodadas");
+    navigation.innerHTML = '<button type="button" data-round-previous>← Anterior</button><button type="button" data-round-next>Próxima →</button>';
+    control.append(navigation);
+
+    const previous = navigation.querySelector("[data-round-previous]");
+    const next = navigation.querySelector("[data-round-next]");
+    const sync = () => {
+      const index = select.selectedIndex;
+      const previousOption = select.options[index - 1];
+      const nextOption = select.options[index + 1];
+      previous.disabled = !previousOption;
+      next.disabled = !nextOption;
+      previous.setAttribute("aria-label", previousOption ? `Ir para ${previousOption.textContent}` : "Não há rodada anterior");
+      next.setAttribute("aria-label", nextOption ? `Ir para ${nextOption.textContent}` : "Não há próxima rodada");
+    };
+    const move = direction => {
+      const target = select.selectedIndex + direction;
+      if (target < 0 || target >= select.options.length) return;
+      select.selectedIndex = target;
+      select.dispatchEvent(new Event("change", { bubbles: true }));
+    };
+
+    previous.addEventListener("click", () => move(-1));
+    next.addEventListener("click", () => move(1));
+    select.addEventListener("change", sync);
+    window.addEventListener("popstate", sync);
+    sync();
+  }
+
   const roundSelect = document.querySelector("[data-round-select]");
   if (roundSelect) {
     const defaultRound = roundSelect.value;
@@ -196,6 +232,7 @@
         restoreRoundFromUrl(roundSelect, defaultRound);
         update();
       });
+      initRoundStepper(roundSelect);
       update();
     }).catch(error => document.querySelector("[data-multi-chart]").textContent = error.message);
   }
@@ -226,6 +263,7 @@
         restoreRoundFromUrl(scorerSelect, defaultRound);
         update();
       });
+      initRoundStepper(scorerSelect);
       update();
     }).catch(error => document.querySelector("[data-scorer-chart]").textContent = error.message);
   }

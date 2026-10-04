@@ -1006,3 +1006,44 @@ h3 { margin-bottom: 12px; font-size: 1.35rem; }
   .br-team-finder { margin-top: -8px; }
   .br-team-search-row input { padding: 14px; }
 }
+
+
+/* Fast previous/next navigation for historical rounds */
+.br-round-stepper {
+  display: flex;
+  gap: 8px;
+  margin-left: auto;
+}
+.br-round-stepper button {
+  min-height: 42px;
+  padding: 10px 13px;
+  color: #f6f4ec;
+  background: transparent;
+  border: 1px solid #59665f;
+  font: inherit;
+  font-size: .72rem;
+  font-weight: 850;
+  cursor: pointer;
+}
+.br-round-stepper button:hover:not(:disabled),
+.br-round-stepper button:focus-visible {
+  color: var(--br-ink);
+  background: var(--br-hot);
+  border-color: var(--br-hot);
+  outline: 0;
+}
+.br-round-stepper button:focus-visible {
+  box-shadow: 0 0 0 3px #101714, 0 0 0 5px var(--br-hot);
+}
+.br-round-stepper button:disabled {
+  opacity: .38;
+  cursor: not-allowed;
+}
+
+@media (max-width: 720px) {
+  .br-round-stepper {
+    width: 100%;
+    margin-left: 0;
+  }
+  .br-round-stepper button { flex: 1; }
+}

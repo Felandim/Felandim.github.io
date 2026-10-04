@@ -258,6 +258,20 @@ def test_round_selectors_keep_shareable_url_state():
     assert 'hasRoundOption(select, requested)' in source
 
 
+def test_round_steppers_are_accessible_and_keep_the_select_as_fallback():
+    source = (ROOT / "brasileirao.js").read_text(encoding="utf-8")
+    css = (ROOT / "style.css").read_text(encoding="utf-8")
+    assert 'navigation.setAttribute("aria-label", "Navegação entre rodadas")' in source
+    assert 'data-round-previous' in source
+    assert 'data-round-next' in source
+    assert 'select.dispatchEvent(new Event("change", { bubbles: true }))' in source
+    assert "previous.disabled = !previousOption" in source
+    assert "next.disabled = !nextOption" in source
+    assert source.count("initRoundStepper(") == 3
+    assert ".br-round-stepper button:disabled" in css
+    assert ".br-round-stepper button:focus-visible" in css
+
+
 def test_round_selectors_restore_url_and_browser_history():
     from functools import partial
     from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
@@ -298,8 +312,13 @@ def test_round_selectors_restore_url_and_browser_history():
             )
             scorers = page.locator("[data-scorer-round-select]")
             page.wait_for_function("document.querySelector('[data-scorer-round-select]').value === '5'")
-            scorers.select_option("6")
+            previous = page.locator("[data-round-previous]")
+            next_round = page.locator("[data-round-next]")
+            assert previous.is_visible()
+            assert next_round.is_visible()
+            next_round.click()
             page.wait_for_url("**?rodada=6")
+            assert scorers.input_value() == "6"
             page.go_back()
             page.wait_for_function("document.querySelector('[data-scorer-round-select]').value === '5'")
 
