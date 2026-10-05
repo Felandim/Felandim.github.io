@@ -1047,3 +1047,50 @@ h3 { margin-bottom: 12px; font-size: 1.35rem; }
   }
   .br-round-stepper button { flex: 1; }
 }
+
+
+/* Accessible loading and recoverable error states */
+.br-load-state {
+  min-height: 280px;
+  display: grid;
+  place-items: center;
+  align-content: center;
+  gap: 14px;
+  color: #c6cec9;
+  text-align: center;
+}
+.br-load-state > span {
+  width: 32px;
+  height: 32px;
+  border: 3px solid #4f5c54;
+  border-top-color: var(--br-hot);
+  border-radius: 50%;
+  animation: br-spin .8s linear infinite;
+}
+.br-load-state strong { font-size: .88rem; }
+.br-load-state p {
+  max-width: 360px;
+  margin: 0;
+  color: #95a098;
+  font-size: .76rem;
+}
+.br-load-state button {
+  padding: 10px 15px;
+  color: var(--br-ink);
+  background: var(--br-hot);
+  border: 0;
+  font: inherit;
+  font-size: .75rem;
+  font-weight: 850;
+  cursor: pointer;
+}
+.br-load-state button:focus-visible {
+  outline: 2px solid #f6f4ec;
+  outline-offset: 3px;
+}
+.br-control[aria-busy="true"] { opacity: .82; }
+@keyframes br-spin { to { transform: rotate(360deg); } }
+
+@media (prefers-reduced-motion: reduce) {
+  .br-load-state > span { animation: none; }
+}

@@ -274,6 +274,19 @@ def test_round_steppers_are_accessible_and_keep_the_select_as_fallback():
     assert ".br-round-stepper button:focus-visible" in css
 
 
+def test_round_views_expose_loading_and_recoverable_error_states():
+    source = (ROOT / "brasileirao.js").read_text(encoding="utf-8")
+    css = (ROOT / "style.css").read_text(encoding="utf-8")
+    assert 'target.setAttribute("aria-busy", "true")' in source
+    assert 'role="status"' in source
+    assert 'role="alert"' in source
+    assert 'data-round-reload' in source
+    assert source.count('setRoundViewState(') == 7
+    assert ".br-load-state" in css
+    assert "@keyframes br-spin" in css
+    assert "@media (prefers-reduced-motion: reduce)" in css
+
+
 def test_round_selectors_restore_url_and_browser_history():
     from functools import partial
     from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
@@ -323,6 +336,20 @@ def test_round_selectors_restore_url_and_browser_history():
             assert scorers.input_value() == "6"
             page.go_back()
             page.wait_for_function("document.querySelector('[data-scorer-round-select]').value === '5'")
+
+            error_page = browser.new_page()
+            error_page.route(
+                "**/data/brasileirao_2026_insights.json",
+                lambda route: route.fulfill(status=503, body="{}"),
+            )
+            error_page.goto(
+                f"{base_url}/brasileirao/classificacao-rodada-a-rodada.html",
+                wait_until="domcontentloaded",
+            )
+            alert = error_page.locator(".br-load-error[role='alert']")
+            assert alert.is_visible()
+            assert error_page.locator("[data-round-select]").is_disabled()
+            assert error_page.locator("[data-round-reload]").is_visible()
 
             browser.close()
     finally:

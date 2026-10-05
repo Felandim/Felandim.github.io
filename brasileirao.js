@@ -211,12 +211,33 @@
     sync();
   }
 
+  function setRoundViewState(select, target, state) {
+    const control = select.closest(".br-control");
+    const isLoading = state === "loading";
+    select.disabled = state !== "ready";
+
+    if (isLoading) {
+      control?.setAttribute("aria-busy", "true");
+      target.setAttribute("aria-busy", "true");
+      target.innerHTML = '<div class="br-load-state" role="status"><span aria-hidden="true"></span><strong>Carregando histórico…</strong></div>';
+      return;
+    }
+
+    control?.removeAttribute("aria-busy");
+    target.removeAttribute("aria-busy");
+    if (state === "error") {
+      target.innerHTML = '<div class="br-load-state br-load-error" role="alert"><strong>Não foi possível carregar o histórico.</strong><p>Verifique sua conexão e tente novamente.</p><button type="button" data-round-reload>Recarregar</button></div>';
+      target.querySelector("[data-round-reload]")?.addEventListener("click", () => location.reload());
+    }
+  }
+
   const roundSelect = document.querySelector("[data-round-select]");
   if (roundSelect) {
     const defaultRound = roundSelect.value;
+    const chart = document.querySelector("[data-multi-chart]");
+    setRoundViewState(roundSelect, chart, "loading");
     loadInsights().then(data => {
       const table = document.querySelector("[data-standings-table] tbody");
-      const chart = document.querySelector("[data-multi-chart]");
       const update = () => {
         const round = Number(roundSelect.value);
         const snapshot = data.snapshots.find(item => item.round === round);
@@ -234,7 +255,8 @@
       });
       initRoundStepper(roundSelect);
       update();
-    }).catch(error => document.querySelector("[data-multi-chart]").textContent = error.message);
+      setRoundViewState(roundSelect, chart, "ready");
+    }).catch(() => setRoundViewState(roundSelect, chart, "error"));
   }
 
   function scorerChart(ranking) {
@@ -246,9 +268,10 @@
   const scorerSelect = document.querySelector("[data-scorer-round-select]");
   if (scorerSelect) {
     const defaultRound = scorerSelect.value;
+    const chart = document.querySelector("[data-scorer-chart]");
+    setRoundViewState(scorerSelect, chart, "loading");
     loadInsights().then(data => {
       const table = document.querySelector("[data-scorer-table] tbody");
-      const chart = document.querySelector("[data-scorer-chart]");
       const update = () => {
         const snapshot = data.scorers.find(item => item.round === Number(scorerSelect.value));
         table.innerHTML = snapshot.ranking.map((row, index) => `<tr><td>${index + 1}</td><th scope="row">${safe(row.name)}</th><td><a href="times/${slugify(row.team)}.html">${teamBadge(row.team, "table")}</a></td><td><strong>${row.goals}</strong></td></tr>`).join("");
@@ -265,7 +288,8 @@
       });
       initRoundStepper(scorerSelect);
       update();
-    }).catch(error => document.querySelector("[data-scorer-chart]").textContent = error.message);
+      setRoundViewState(scorerSelect, chart, "ready");
+    }).catch(() => setRoundViewState(scorerSelect, chart, "error"));
   }
 
 
