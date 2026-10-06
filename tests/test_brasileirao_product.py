@@ -274,6 +274,21 @@ def test_round_steppers_are_accessible_and_keep_the_select_as_fallback():
     assert ".br-round-stepper button:focus-visible" in css
 
 
+
+def test_standings_team_focus_is_accessible_persistent_and_shareable():
+    source = (ROOT / "brasileirao.js").read_text(encoding="utf-8")
+    css = (ROOT / "style.css").read_text(encoding="utf-8")
+    assert 'data-team-focus-select' in source
+    assert 'aria-live="polite"' in source
+    assert 'searchParams.set("time", selected)' in source
+    assert 'localStorage.setItem(teamFocusStorageKey, selected)' in source
+    assert 'link.setAttribute("aria-current", "true")' in source
+    assert 'prefers-reduced-motion: reduce' in source
+    assert ".br-table tbody tr.is-focused" in css
+    assert ".br-team-focus a:focus-visible" in css
+    assert "@media (max-width: 720px)" in css
+
+
 def test_round_views_expose_loading_and_recoverable_error_states():
     source = (ROOT / "brasileirao.js").read_text(encoding="utf-8")
     css = (ROOT / "style.css").read_text(encoding="utf-8")
@@ -320,6 +335,28 @@ def test_round_selectors_restore_url_and_browser_history():
             page.wait_for_url("**?rodada=11")
             page.go_back()
             page.wait_for_function("document.querySelector('[data-round-select]').value === '10'")
+
+            team_focus = page.locator("[data-team-focus-select]")
+            assert team_focus.is_visible()
+            team_focus.select_option("flamengo")
+            page.wait_for_url("**time=flamengo")
+            focused_row = page.locator("[data-standings-table] tbody tr.is-focused")
+            assert focused_row.count() == 1
+            assert "Flamengo" in focused_row.text_content()
+            assert focused_row.locator("th a").get_attribute("aria-current") == "true"
+            assert "Flamengo:" in page.locator("[data-team-focus-status]").text_content()
+            assert page.evaluate("localStorage.getItem('brasileirao-team-focus')") == "flamengo"
+
+            standings.select_option("12")
+            page.wait_for_url("**rodada=12&time=flamengo")
+            assert "Flamengo" in page.locator("[data-standings-table] tbody tr.is-focused").text_content()
+
+            page.goto(
+                f"{base_url}/brasileirao/classificacao-rodada-a-rodada.html?rodada=12",
+                wait_until="domcontentloaded",
+            )
+            page.wait_for_function("document.querySelector('[data-team-focus-select]').value === 'flamengo'")
+            assert "Flamengo" in page.locator("[data-standings-table] tbody tr.is-focused").text_content()
 
             page.goto(
                 f"{base_url}/brasileirao/artilharia-rodada-a-rodada.html?rodada=5",

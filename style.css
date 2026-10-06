@@ -1094,3 +1094,70 @@ h3 { margin-bottom: 12px; font-size: 1.35rem; }
 @media (prefers-reduced-motion: reduce) {
   .br-load-state > span { animation: none; }
 }
+
+
+/* Persistent team focus in the historical standings */
+.br-control {
+  flex-wrap: wrap;
+}
+.br-team-focus {
+  display: grid;
+  grid-template-columns: auto minmax(150px, 1fr) auto;
+  align-items: center;
+  gap: 8px 12px;
+}
+.br-team-focus label {
+  font-size: .72rem;
+  font-weight: 850;
+}
+.br-team-focus select {
+  min-width: 170px;
+}
+.br-team-focus a {
+  color: var(--br-hot);
+  font-size: .72rem;
+  font-weight: 850;
+  text-decoration: none;
+}
+.br-team-focus a:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.br-team-focus a:focus-visible {
+  border-radius: 2px;
+  outline: 2px solid var(--br-hot);
+  outline-offset: 4px;
+}
+.br-team-focus-status {
+  grid-column: 1 / -1;
+  min-height: 1.2em;
+  margin: 0;
+  color: #cbd4cf;
+  font-size: .7rem;
+  font-weight: 700;
+}
+.br-table tbody tr.is-focused {
+  box-shadow: inset 5px 0 0 var(--br-hot);
+  scroll-margin-block: 100px;
+}
+.br-table tbody tr.is-focused > * {
+  background: #f1fbcf;
+}
+.br-table tbody tr.is-focused th a:focus-visible {
+  outline: 3px solid var(--br-ink);
+  outline-offset: 3px;
+}
+
+@media (max-width: 720px) {
+  .br-team-focus {
+    width: 100%;
+    grid-template-columns: 1fr auto;
+  }
+  .br-team-focus label,
+  .br-team-focus-status {
+    grid-column: 1 / -1;
+  }
+  .br-team-focus select {
+    min-width: 0;
+  }
+}

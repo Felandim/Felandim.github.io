@@ -211,6 +211,83 @@
     sync();
   }
 
+  const teamFocusStorageKey = "brasileirao-team-focus";
+
+  function initStandingsTeamFocus(table, roundSelect) {
+    const control = roundSelect.closest(".br-control");
+    if (!control || control.querySelector("[data-team-focus]")) return () => {};
+
+    const teams = Object.keys(teamLogoIds).sort((a, b) => a.localeCompare(b, "pt-BR"));
+    const focus = document.createElement("div");
+    focus.className = "br-team-focus";
+    focus.dataset.teamFocus = "";
+    focus.innerHTML = `<label for="team-focus-select">Destacar time</label><select id="team-focus-select" data-team-focus-select><option value="">Nenhum time</option>${teams.map(team => `<option value="${slugify(team)}">${safe(team)}</option>`).join("")}</select><a data-team-focus-profile hidden>Ver perfil →</a><p class="br-team-focus-status" data-team-focus-status aria-live="polite"></p>`;
+    control.append(focus);
+
+    const focusSelect = focus.querySelector("[data-team-focus-select]");
+    const profile = focus.querySelector("[data-team-focus-profile]");
+    const status = focus.querySelector("[data-team-focus-status]");
+    const validSlugs = new Set([...focusSelect.options].map(option => option.value).filter(Boolean));
+    const requested = new URL(location.href).searchParams.get("time");
+    let stored = "";
+    try {
+      stored = localStorage.getItem(teamFocusStorageKey) || "";
+    } catch {}
+    focusSelect.value = validSlugs.has(requested) ? requested : validSlugs.has(stored) ? stored : "";
+
+    const apply = ({ persist = false, scroll = false } = {}) => {
+      const selected = focusSelect.value;
+      let selectedRow = null;
+      [...table.tBodies[0].rows].forEach(row => {
+        const link = row.querySelector("th a");
+        const matches = Boolean(selected && link?.getAttribute("href")?.endsWith(`/${selected}.html`));
+        row.classList.toggle("is-focused", matches);
+        if (matches) {
+          selectedRow = row;
+          link.setAttribute("aria-current", "true");
+        } else {
+          link?.removeAttribute("aria-current");
+        }
+      });
+
+      if (selectedRow) {
+        const link = selectedRow.querySelector("th a");
+        const team = link.textContent.trim();
+        const position = selectedRow.cells[0].textContent.trim();
+        const points = selectedRow.cells[2].textContent.trim();
+        profile.hidden = false;
+        profile.href = `times/${selected}.html`;
+        profile.setAttribute("aria-label", `Ver perfil de ${team}`);
+        status.textContent = `${team}: ${position}º lugar, ${points} pontos nesta rodada.`;
+        if (scroll) {
+          selectedRow.scrollIntoView({
+            block: "center",
+            behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth",
+          });
+        }
+      } else {
+        profile.hidden = true;
+        profile.removeAttribute("href");
+        status.textContent = selected ? "Time não encontrado nesta rodada." : "";
+      }
+
+      if (persist) {
+        const url = new URL(location.href);
+        if (selected) url.searchParams.set("time", selected);
+        else url.searchParams.delete("time");
+        history.replaceState(history.state, "", url);
+        try {
+          if (selected) localStorage.setItem(teamFocusStorageKey, selected);
+          else localStorage.removeItem(teamFocusStorageKey);
+        } catch {}
+      }
+    };
+
+    focusSelect.addEventListener("change", () => apply({ persist: true, scroll: true }));
+    apply();
+    return apply;
+  }
+
   function setRoundViewState(select, target, state) {
     const control = select.closest(".br-control");
     const isLoading = state === "loading";
@@ -237,12 +314,15 @@
     const chart = document.querySelector("[data-multi-chart]");
     setRoundViewState(roundSelect, chart, "loading");
     loadInsights().then(data => {
-      const table = document.querySelector("[data-standings-table] tbody");
+      const table = document.querySelector("[data-standings-table]");
+      const tableBody = table.querySelector("tbody");
+      const applyTeamFocus = initStandingsTeamFocus(table, roundSelect);
       const update = () => {
         const round = Number(roundSelect.value);
         const snapshot = data.snapshots.find(item => item.round === round);
-        table.innerHTML = standingsRows(snapshot.table);
+        tableBody.innerHTML = standingsRows(snapshot.table);
         chart.innerHTML = multiChart(snapshot.table, data.snapshots, round);
+        applyTeamFocus();
       };
       restoreRoundFromUrl(roundSelect, defaultRound);
       roundSelect.addEventListener("change", () => {
