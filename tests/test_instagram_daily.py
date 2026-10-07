@@ -6,6 +6,7 @@ from pathlib import Path
 from zoneinfo import ZoneInfo
 
 MODULE_PATH = Path(__file__).resolve().parents[1] / "scripts" / "instagram_daily.py"
+ROOT = MODULE_PATH.parents[1]
 spec = importlib.util.spec_from_file_location("instagram_daily", MODULE_PATH)
 instagram_daily = importlib.util.module_from_spec(spec)
 assert spec.loader is not None
