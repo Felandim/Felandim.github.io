@@ -392,6 +392,7 @@ def test_round_selectors_restore_url_and_browser_history():
             page.wait_for_function("document.querySelector('[data-scorer-round-select]').value === '5'")
 
             mobile_page = browser.new_page(viewport={"width": 390, "height": 844})
+            mobile_page.bring_to_front()
             mobile_page.goto(
                 f"{base_url}/brasileirao/classificacao-rodada-a-rodada.html",
                 wait_until="domcontentloaded",
