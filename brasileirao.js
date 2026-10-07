@@ -138,6 +138,61 @@
 
   initTeamFinders();
 
+  function initScrollableTables() {
+    document.querySelectorAll(".br-table-wrap").forEach((wrapper, index) => {
+      const table = wrapper.querySelector("table");
+      if (!table || wrapper.dataset.scrollEnhanced === "true") return;
+      wrapper.dataset.scrollEnhanced = "true";
+      wrapper.tabIndex = 0;
+      wrapper.setAttribute("role", "region");
+
+      const label = table.hasAttribute("data-standings-table")
+        ? "Classificação com rolagem horizontal"
+        : table.hasAttribute("data-scorer-table")
+          ? "Artilharia com rolagem horizontal"
+          : "Tabela com rolagem horizontal";
+      wrapper.setAttribute("aria-label", label);
+
+      const tools = document.createElement("div");
+      tools.className = "br-table-scroll-tools";
+      tools.dataset.tableScrollTools = "";
+      tools.hidden = true;
+      tools.innerHTML = `<p><strong>Mais colunas</strong><span>Use os botões ou as setas do teclado.</span></p><div><button type="button" data-table-scroll-previous aria-label="Ver colunas anteriores">← Voltar</button><button type="button" data-table-scroll-next aria-label="Ver próximas colunas">Avançar →</button></div>`;
+      wrapper.before(tools);
+
+      const previous = tools.querySelector("[data-table-scroll-previous]");
+      const next = tools.querySelector("[data-table-scroll-next]");
+      const update = () => {
+        const maxScroll = Math.max(0, wrapper.scrollWidth - wrapper.clientWidth);
+        const scrollable = maxScroll > 2;
+        const atStart = wrapper.scrollLeft <= 2;
+        const atEnd = wrapper.scrollLeft >= maxScroll - 2;
+        tools.hidden = !scrollable;
+        wrapper.classList.toggle("is-scrollable", scrollable);
+        wrapper.classList.toggle("at-scroll-start", atStart);
+        wrapper.classList.toggle("at-scroll-end", atEnd);
+        previous.disabled = !scrollable || atStart;
+        next.disabled = !scrollable || atEnd;
+      };
+      const move = direction => {
+        const distance = Math.max(240, Math.round(wrapper.clientWidth * .75));
+        wrapper.scrollBy({
+          left: distance * direction,
+          behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth",
+        });
+      };
+
+      previous.addEventListener("click", () => move(-1));
+      next.addEventListener("click", () => move(1));
+      wrapper.addEventListener("scroll", update, { passive: true });
+      if ("ResizeObserver" in window) new ResizeObserver(update).observe(wrapper);
+      else window.addEventListener("resize", update, { passive: true });
+      requestAnimationFrame(update);
+    });
+  }
+
+  initScrollableTables();
+
   function standingsRows(rows) {
     return rows.map(row => {
       const zone = row.position <= 4 ? "g4" : row.position >= 17 ? "z4" : "";

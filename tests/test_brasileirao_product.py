@@ -275,6 +275,20 @@ def test_round_steppers_are_accessible_and_keep_the_select_as_fallback():
 
 
 
+
+def test_wide_tables_offer_accessible_scroll_controls():
+    source = (ROOT / "brasileirao.js").read_text(encoding="utf-8")
+    css = (ROOT / "style.css").read_text(encoding="utf-8")
+    assert 'wrapper.setAttribute("role", "region")' in source
+    assert 'data-table-scroll-previous' in source
+    assert 'data-table-scroll-next' in source
+    assert 'ResizeObserver' in source
+    assert 'prefers-reduced-motion: reduce' in source
+    assert ".br-table-scroll-tools button:focus-visible" in css
+    assert '.br-table-wrap[tabindex="0"]:focus-visible' in css
+    assert ".br-table-scroll-tools[hidden]" in css
+
+
 def test_standings_team_focus_is_accessible_persistent_and_shareable():
     source = (ROOT / "brasileirao.js").read_text(encoding="utf-8")
     css = (ROOT / "style.css").read_text(encoding="utf-8")
@@ -373,6 +387,23 @@ def test_round_selectors_restore_url_and_browser_history():
             assert scorers.input_value() == "6"
             page.go_back()
             page.wait_for_function("document.querySelector('[data-scorer-round-select]').value === '5'")
+
+            mobile_page = browser.new_page(viewport={"width": 390, "height": 844})
+            mobile_page.goto(
+                f"{base_url}/brasileirao/classificacao-rodada-a-rodada.html",
+                wait_until="domcontentloaded",
+            )
+            scroll_tools = mobile_page.locator("[data-table-scroll-tools]").first
+            scroll_tools.wait_for(state="visible")
+            scroll_previous = scroll_tools.locator("[data-table-scroll-previous]")
+            scroll_next = scroll_tools.locator("[data-table-scroll-next]")
+            assert scroll_previous.is_disabled()
+            assert scroll_next.is_enabled()
+            scroll_next.click()
+            mobile_page.wait_for_function(
+                "document.querySelector('.br-table-wrap').scrollLeft > 0"
+            )
+            assert scroll_previous.is_enabled()
 
             error_page = browser.new_page()
             error_page.route(

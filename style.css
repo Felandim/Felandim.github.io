@@ -1161,3 +1161,84 @@ h3 { margin-bottom: 12px; font-size: 1.35rem; }
     min-width: 0;
   }
 }
+
+
+/* Accessible controls for horizontally scrollable tables */
+.br-table-scroll-tools {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 10px 12px;
+  color: var(--br-ink);
+  background: var(--br-soft);
+  border: 1px solid var(--br-line);
+  border-bottom: 0;
+}
+.br-table-scroll-tools[hidden] {
+  display: none;
+}
+.br-table-scroll-tools p {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 8px;
+  margin: 0;
+  font-size: .7rem;
+}
+.br-table-scroll-tools p strong {
+  font-weight: 900;
+  text-transform: uppercase;
+}
+.br-table-scroll-tools p span {
+  color: #647068;
+}
+.br-table-scroll-tools > div {
+  display: flex;
+  gap: 6px;
+}
+.br-table-scroll-tools button {
+  min-height: 38px;
+  padding: 8px 11px;
+  color: #f6f4ec;
+  background: var(--br-ink);
+  border: 1px solid var(--br-ink);
+  font: inherit;
+  font-size: .7rem;
+  font-weight: 850;
+  cursor: pointer;
+}
+.br-table-scroll-tools button:hover:not(:disabled),
+.br-table-scroll-tools button:focus-visible {
+  color: var(--br-ink);
+  background: var(--br-hot);
+  border-color: var(--br-hot);
+  outline: 0;
+}
+.br-table-scroll-tools button:focus-visible {
+  box-shadow: 0 0 0 3px var(--br-soft), 0 0 0 5px var(--br-ink);
+}
+.br-table-scroll-tools button:disabled {
+  opacity: .38;
+  cursor: not-allowed;
+}
+.br-table-wrap.is-scrollable:not(.at-scroll-end) {
+  box-shadow: inset -18px 0 16px -16px rgba(16, 23, 20, .6);
+}
+.br-table-wrap.is-scrollable:not(.at-scroll-start) {
+  border-left-color: var(--br-hot);
+}
+.br-table-wrap[tabindex="0"]:focus-visible {
+  outline: 3px solid var(--br-hot);
+  outline-offset: 3px;
+}
+
+@media (max-width: 520px) {
+  .br-table-scroll-tools {
+    align-items: stretch;
+    flex-direction: column;
+  }
+  .br-table-scroll-tools > div {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+}
