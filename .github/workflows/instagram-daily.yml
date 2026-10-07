@@ -1,6 +1,13 @@
 name: Publish Daily Instagram Summary
 
 on:
+  push:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/instagram-daily.yml'
+      - 'scripts/instagram_*.py'
+      - 'tests/test_instagram*.py'
   schedule:
     # 10:00 em São Paulo (UTC-3). O job só publica se houve jogo concluído no dia anterior.
     - cron: '0 13 * * *'
@@ -31,39 +38,8 @@ jobs:
       - name: Test Instagram automation
         run: python -m unittest tests/test_instagram_daily.py tests/test_instagram_clusters.py tests/test_instagram_engagement.py tests/test_instagram_matchday.py tests/test_instagram_momentum.py tests/test_instagram_leapfrog.py tests/test_instagram_editorial.py tests/test_instagram_single_match_impact.py tests/test_instagram_defense.py tests/test_instagram_away_dominance.py tests/test_instagram_home_dominance.py
 
-      - name: Validate Instagram token
-        run: |
-          python - <<'PY'
-          import os
-          import requests
-
-          ig_user_id = os.environ['INSTAGRAM_IG_USER_ID']
-          token = os.environ['INSTAGRAM_ACCESS_TOKEN']
-          api_version = os.environ['INSTAGRAM_API_VERSION']
-          if not token:
-              raise SystemExit('INSTAGRAM_ACCESS_TOKEN is not configured.')
-
-          base = f'https://graph.instagram.com/{api_version}/{ig_user_id}'
-          response = requests.get(
-              base,
-              params={'fields': 'id,username', 'access_token': token},
-              timeout=30,
-          )
-          response.raise_for_status()
-          profile = response.json()
-          if not profile.get('id'):
-              raise SystemExit('Instagram API returned no account identifier.')
-
-          media = requests.get(
-              f'{base}/media',
-              params={'fields': 'id', 'limit': 1, 'access_token': token},
-              timeout=30,
-          )
-          media.raise_for_status()
-          print(f"Instagram token validated for {profile.get('username', 'configured account')}.")
-          PY
-
       - name: Check if yesterday had completed matches
+        if: github.event_name != 'push'
         id: should_post
         run: |
           if python - <<'PY'
@@ -89,8 +65,55 @@ jobs:
             echo "publish=false" >> "$GITHUB_OUTPUT"
           fi
 
+      - name: Validate Instagram token
+        if: github.event_name != 'push' && steps.should_post.outputs.publish == 'true'
+        run: |
+          python - <<'PY'
+          import os
+          import requests
+          from requests.adapters import HTTPAdapter
+          from urllib3.util.retry import Retry
+
+          ig_user_id = os.environ['INSTAGRAM_IG_USER_ID']
+          token = os.environ['INSTAGRAM_ACCESS_TOKEN']
+          api_version = os.environ['INSTAGRAM_API_VERSION']
+          if not token:
+              raise SystemExit('INSTAGRAM_ACCESS_TOKEN is not configured.')
+
+          retry = Retry(
+              total=4,
+              connect=3,
+              read=3,
+              backoff_factor=2,
+              status_forcelist=(429, 500, 502, 503, 504),
+              allowed_methods=frozenset({'GET'}),
+              respect_retry_after_header=True,
+          )
+          session = requests.Session()
+          session.mount('https://', HTTPAdapter(max_retries=retry))
+
+          base = f'https://graph.instagram.com/{api_version}/{ig_user_id}'
+          response = session.get(
+              base,
+              params={'fields': 'id,username', 'access_token': token},
+              timeout=30,
+          )
+          response.raise_for_status()
+          profile = response.json()
+          if not profile.get('id'):
+              raise SystemExit('Instagram API returned no account identifier.')
+
+          media = session.get(
+              f'{base}/media',
+              params={'fields': 'id', 'limit': 1, 'access_token': token},
+              timeout=30,
+          )
+          media.raise_for_status()
+          print(f"Instagram token validated for {profile.get('username', 'configured account')}.")
+          PY
+
       - name: Explain no-match skip
-        if: steps.should_post.outputs.publish != 'true'
+        if: github.event_name != 'push' && steps.should_post.outputs.publish != 'true'
         run: echo "No completed Serie A matches yesterday; Instagram publishing was skipped."
 
       - name: Render daily card

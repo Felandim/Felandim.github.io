@@ -229,5 +229,31 @@ class InstagramDailyTests(unittest.TestCase):
                 self.assertEqual(image.size, (1080, 1350))
 
 
+class InstagramWorkflowResilienceTests(unittest.TestCase):
+    def test_no_match_check_precedes_token_validation(self):
+        workflow = (ROOT / ".github/workflows/instagram-daily.yml").read_text(encoding="utf-8")
+        self.assertLess(
+            workflow.index("Check if yesterday had completed matches"),
+            workflow.index("Validate Instagram token"),
+        )
+        self.assertIn(
+            "if: github.event_name != 'push' && steps.should_post.outputs.publish == 'true'",
+            workflow,
+        )
+
+    def test_token_validation_retries_only_transient_api_errors(self):
+        workflow = (ROOT / ".github/workflows/instagram-daily.yml").read_text(encoding="utf-8")
+        self.assertIn("Retry(", workflow)
+        self.assertIn("status_forcelist=(429, 500, 502, 503, 504)", workflow)
+        self.assertIn("HTTPAdapter(max_retries=retry)", workflow)
+        self.assertIn("response.raise_for_status()", workflow)
+
+    def test_push_validation_cannot_publish(self):
+        workflow = (ROOT / ".github/workflows/instagram-daily.yml").read_text(encoding="utf-8")
+        self.assertIn("push:", workflow)
+        self.assertIn("if: github.event_name != 'push'", workflow)
+        self.assertIn("steps.should_post.outputs.publish == 'true'", workflow)
+
+
 if __name__ == "__main__":
     unittest.main()
