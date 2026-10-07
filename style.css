@@ -1254,3 +1254,9 @@ h3 { margin-bottom: 12px; font-size: 1.35rem; }
     min-width: 560px;
   }
 }
+
+
+/* Allow wide tables to scroll inside their grid column instead of widening the page */
+.br-analysis-grid > * {
+  min-width: 0;
+}
