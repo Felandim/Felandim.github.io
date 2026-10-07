@@ -288,6 +288,7 @@ def test_wide_tables_offer_accessible_scroll_controls():
     assert '.br-table-wrap[tabindex="0"]:focus-visible' in css
     assert ".br-table-scroll-tools[hidden]" in css
     assert ".br-table[data-standings-table]" in css
+    assert "width: 720px" in css
     assert "min-width: 720px" in css
 
 
