@@ -1242,3 +1242,13 @@ h3 { margin-bottom: 12px; font-size: 1.35rem; }
     grid-template-columns: 1fr 1fr;
   }
 }
+
+
+@media (max-width: 720px) {
+  .br-table[data-standings-table] {
+    min-width: 720px;
+  }
+  .br-table[data-scorer-table] {
+    min-width: 560px;
+  }
+}

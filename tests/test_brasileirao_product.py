@@ -287,6 +287,8 @@ def test_wide_tables_offer_accessible_scroll_controls():
     assert ".br-table-scroll-tools button:focus-visible" in css
     assert '.br-table-wrap[tabindex="0"]:focus-visible' in css
     assert ".br-table-scroll-tools[hidden]" in css
+    assert ".br-table[data-standings-table]" in css
+    assert "min-width: 720px" in css
 
 
 def test_standings_team_focus_is_accessible_persistent_and_shareable():
