@@ -3135,7 +3135,7 @@
       "date": "07/10/2026",
       "home": "Operário-PR",
       "round": 32,
-      "score": "1 x 0",
+      "score": "1 x 2",
       "stadium": "Germano Krüger",
       "time": "19:30",
       "url": "https://ge.globo.com/pr/futebol/brasileirao-serie-b/jogo/07-10-2026/operario-pr-botafogo-sp.ghtml"
@@ -3145,7 +3145,7 @@
       "date": "07/10/2026",
       "home": "Avaí",
       "round": 32,
-      "score": "2 x 0",
+      "score": "2 x 1",
       "stadium": "Ressacada",
       "time": "19:30",
       "url": "https://ge.globo.com/sc/futebol/brasileirao-serie-b/jogo/07-10-2026/avai-londrina.ghtml"
@@ -3155,7 +3155,7 @@
       "date": "07/10/2026",
       "home": "América-MG",
       "round": 32,
-      "score": "-",
+      "score": "0 x 1",
       "stadium": "Independência",
       "time": "20:30",
       "url": "https://ge.globo.com/mg/zona-da-mata-centro-oeste/futebol/brasileirao-serie-b/jogo/07-10-2026/america-mg-fortaleza.ghtml"
@@ -3165,7 +3165,7 @@
       "date": "07/10/2026",
       "home": "CRB",
       "round": 32,
-      "score": "-",
+      "score": "3 x 1",
       "stadium": "Rei Pelé (AL)",
       "time": "20:30",
       "url": "https://ge.globo.com/al/futebol/brasileirao-serie-b/jogo/07-10-2026/crb-atletico-go.ghtml"
@@ -3175,7 +3175,7 @@
       "date": "07/10/2026",
       "home": "Vila Nova",
       "round": 32,
-      "score": "-",
+      "score": "0 x 0",
       "stadium": "OBA",
       "time": "20:30",
       "url": "https://ge.globo.com/go/futebol/brasileirao-serie-b/jogo/07-10-2026/vila-nova-cuiaba.ghtml"
@@ -3401,63 +3401,23 @@
       "url": ""
     },
     {
-      "away": "Fortaleza",
-      "date": "24/10/2026",
-      "home": "Ponte Preta",
-      "round": 35,
-      "score": "-",
-      "stadium": "",
-      "time": "12:00",
-      "url": ""
-    },
-    {
-      "away": "Vila Nova",
-      "date": "24/10/2026",
-      "home": "São Bernardo",
-      "round": 35,
-      "score": "-",
-      "stadium": "",
-      "time": "12:00",
-      "url": ""
-    },
-    {
-      "away": "Cuiabá",
-      "date": "24/10/2026",
-      "home": "América-MG",
-      "round": 35,
-      "score": "-",
-      "stadium": "",
-      "time": "12:00",
-      "url": ""
-    },
-    {
       "away": "Athletic Club",
-      "date": "24/10/2026",
+      "date": "23/10/2026",
       "home": "Operário-PR",
       "round": 35,
       "score": "-",
-      "stadium": "",
-      "time": "12:00",
+      "stadium": "Germano Krüger",
+      "time": "19:30",
       "url": ""
     },
     {
-      "away": "Goiás",
-      "date": "24/10/2026",
-      "home": "Ceará",
+      "away": "Criciúma",
+      "date": "23/10/2026",
+      "home": "Sport",
       "round": 35,
       "score": "-",
-      "stadium": "",
-      "time": "12:00",
-      "url": ""
-    },
-    {
-      "away": "Novorizontino",
-      "date": "24/10/2026",
-      "home": "Atlético-GO",
-      "round": 35,
-      "score": "-",
-      "stadium": "",
-      "time": "12:00",
+      "stadium": "Ilha do Retiro",
+      "time": "21:00",
       "url": ""
     },
     {
@@ -3466,18 +3426,38 @@
       "home": "Avaí",
       "round": 35,
       "score": "-",
-      "stadium": "",
-      "time": "12:00",
+      "stadium": "Ressacada",
+      "time": "16:00",
       "url": ""
     },
     {
-      "away": "Criciúma",
+      "away": "Vila Nova",
       "date": "24/10/2026",
-      "home": "Sport",
+      "home": "São Bernardo",
       "round": 35,
       "score": "-",
-      "stadium": "",
-      "time": "12:00",
+      "stadium": "Primeiro de Maio",
+      "time": "16:30",
+      "url": ""
+    },
+    {
+      "away": "Novorizontino",
+      "date": "24/10/2026",
+      "home": "Atlético-GO",
+      "round": 35,
+      "score": "-",
+      "stadium": "Antônio Accioly",
+      "time": "16:30",
+      "url": ""
+    },
+    {
+      "away": "Fortaleza",
+      "date": "24/10/2026",
+      "home": "Ponte Preta",
+      "round": 35,
+      "score": "-",
+      "stadium": "Moisés Lucarelli",
+      "time": "18:30",
       "url": ""
     },
     {
@@ -3486,18 +3466,48 @@
       "home": "CRB",
       "round": 35,
       "score": "-",
-      "stadium": "",
-      "time": "12:00",
+      "stadium": "Rei Pelé (AL)",
+      "time": "18:30",
+      "url": ""
+    },
+    {
+      "away": "Cuiabá",
+      "date": "26/10/2026",
+      "home": "América-MG",
+      "round": 35,
+      "score": "-",
+      "stadium": "Independência",
+      "time": "19:30",
       "url": ""
     },
     {
       "away": "Náutico",
-      "date": "24/10/2026",
+      "date": "26/10/2026",
       "home": "Juventude",
       "round": 35,
       "score": "-",
-      "stadium": "",
-      "time": "12:00",
+      "stadium": "Alfredo Jaconi",
+      "time": "20:30",
+      "url": ""
+    },
+    {
+      "away": "Goiás",
+      "date": "27/10/2026",
+      "home": "Ceará",
+      "round": 35,
+      "score": "-",
+      "stadium": "Castelão (CE)",
+      "time": "20:00",
+      "url": ""
+    },
+    {
+      "away": "Ponte Preta",
+      "date": "30/10/2026",
+      "home": "Criciúma",
+      "round": 36,
+      "score": "-",
+      "stadium": "Heriberto Hülse",
+      "time": "19:30",
       "url": ""
     },
     {
@@ -3506,68 +3516,18 @@
       "home": "Botafogo-SP",
       "round": 36,
       "score": "-",
-      "stadium": "",
-      "time": "12:00",
+      "stadium": "Arena Nicnet (Santa Cruz)",
+      "time": "16:00",
       "url": ""
     },
     {
-      "away": "Operário-PR",
+      "away": "Juventude",
       "date": "31/10/2026",
-      "home": "Novorizontino",
+      "home": "Vila Nova",
       "round": 36,
       "score": "-",
-      "stadium": "",
-      "time": "12:00",
-      "url": ""
-    },
-    {
-      "away": "Ceará",
-      "date": "31/10/2026",
-      "home": "Athletic Club",
-      "round": 36,
-      "score": "-",
-      "stadium": "",
-      "time": "12:00",
-      "url": ""
-    },
-    {
-      "away": "América-MG",
-      "date": "31/10/2026",
-      "home": "Londrina",
-      "round": 36,
-      "score": "-",
-      "stadium": "",
-      "time": "12:00",
-      "url": ""
-    },
-    {
-      "away": "Atlético-GO",
-      "date": "31/10/2026",
-      "home": "Fortaleza",
-      "round": 36,
-      "score": "-",
-      "stadium": "",
-      "time": "12:00",
-      "url": ""
-    },
-    {
-      "away": "CRB",
-      "date": "31/10/2026",
-      "home": "Goiás",
-      "round": 36,
-      "score": "-",
-      "stadium": "",
-      "time": "12:00",
-      "url": ""
-    },
-    {
-      "away": "Ponte Preta",
-      "date": "31/10/2026",
-      "home": "Criciúma",
-      "round": 36,
-      "score": "-",
-      "stadium": "",
-      "time": "12:00",
+      "stadium": "OBA",
+      "time": "18:00",
       "url": ""
     },
     {
@@ -3576,88 +3536,108 @@
       "home": "Náutico",
       "round": 36,
       "score": "-",
-      "stadium": "",
-      "time": "12:00",
-      "url": ""
-    },
-    {
-      "away": "São Bernardo",
-      "date": "31/10/2026",
-      "home": "Cuiabá",
-      "round": 36,
-      "score": "-",
-      "stadium": "",
-      "time": "12:00",
-      "url": ""
-    },
-    {
-      "away": "Juventude",
-      "date": "31/10/2026",
-      "home": "Vila Nova",
-      "round": 36,
-      "score": "-",
-      "stadium": "",
-      "time": "12:00",
-      "url": ""
-    },
-    {
-      "away": "Londrina",
-      "date": "07/11/2026",
-      "home": "Botafogo-SP",
-      "round": 37,
-      "score": "-",
-      "stadium": "",
-      "time": "12:00",
-      "url": ""
-    },
-    {
-      "away": "Fortaleza",
-      "date": "07/11/2026",
-      "home": "Novorizontino",
-      "round": 37,
-      "score": "-",
-      "stadium": "",
-      "time": "12:00",
-      "url": ""
-    },
-    {
-      "away": "Atlético-GO",
-      "date": "07/11/2026",
-      "home": "Athletic Club",
-      "round": 37,
-      "score": "-",
-      "stadium": "",
-      "time": "12:00",
-      "url": ""
-    },
-    {
-      "away": "Sport",
-      "date": "07/11/2026",
-      "home": "Operário-PR",
-      "round": 37,
-      "score": "-",
-      "stadium": "",
-      "time": "12:00",
+      "stadium": "Aflitos",
+      "time": "19:30",
       "url": ""
     },
     {
       "away": "América-MG",
-      "date": "07/11/2026",
-      "home": "Ceará",
-      "round": 37,
+      "date": "01/11/2026",
+      "home": "Londrina",
+      "round": 36,
       "score": "-",
-      "stadium": "",
-      "time": "12:00",
+      "stadium": "VGD",
+      "time": "16:00",
       "url": ""
     },
     {
-      "away": "Ponte Preta",
-      "date": "07/11/2026",
+      "away": "Operário-PR",
+      "date": "01/11/2026",
+      "home": "Novorizontino",
+      "round": 36,
+      "score": "-",
+      "stadium": "Jorge Ismael de Biasi",
+      "time": "18:30",
+      "url": ""
+    },
+    {
+      "away": "São Bernardo",
+      "date": "01/11/2026",
+      "home": "Cuiabá",
+      "round": 36,
+      "score": "-",
+      "stadium": "Arena Pantanal",
+      "time": "18:30",
+      "url": ""
+    },
+    {
+      "away": "Atlético-GO",
+      "date": "02/11/2026",
+      "home": "Fortaleza",
+      "round": 36,
+      "score": "-",
+      "stadium": "Castelão (CE)",
+      "time": "16:00",
+      "url": ""
+    },
+    {
+      "away": "Ceará",
+      "date": "02/11/2026",
+      "home": "Athletic Club",
+      "round": 36,
+      "score": "-",
+      "stadium": "Arena Sicredi",
+      "time": "18:00",
+      "url": ""
+    },
+    {
+      "away": "CRB",
+      "date": "02/11/2026",
       "home": "Goiás",
+      "round": 36,
+      "score": "-",
+      "stadium": "Hailé Pinheiro (Serrinha)",
+      "time": "20:30",
+      "url": ""
+    },
+    {
+      "away": "Londrina",
+      "date": "06/11/2026",
+      "home": "Botafogo-SP",
       "round": 37,
       "score": "-",
-      "stadium": "",
-      "time": "12:00",
+      "stadium": "Arena Nicnet (Santa Cruz)",
+      "time": "19:30",
+      "url": ""
+    },
+    {
+      "away": "Sport",
+      "date": "06/11/2026",
+      "home": "Operário-PR",
+      "round": 37,
+      "score": "-",
+      "stadium": "Germano Krüger",
+      "time": "19:30",
+      "url": ""
+    },
+    {
+      "away": "Criciúma",
+      "date": "06/11/2026",
+      "home": "Vila Nova",
+      "round": 37,
+      "score": "-",
+      "stadium": "OBA",
+      "time": "20:30",
+      "url": ""
+    },
+    {
+      "away": "Juventude",
+      "date": "06/11/2026",
+      "home": "Cuiabá",
+      "round": 37,
+      "score": "-",
+      "stadium": "Arena Pantanal",
+      "time": "21:30",
       "url": ""
     },
     {
@@ -3666,8 +3646,18 @@
       "home": "Avaí",
       "round": 37,
       "score": "-",
-      "stadium": "",
-      "time": "12:00",
+      "stadium": "Ressacada",
+      "time": "16:00",
+      "url": ""
+    },
+    {
+      "away": "Fortaleza",
+      "date": "07/11/2026",
+      "home": "Novorizontino",
+      "round": 37,
+      "score": "-",
+      "stadium": "Jorge Ismael de Biasi",
+      "time": "16:10",
       "url": ""
     },
     {
@@ -3676,28 +3666,38 @@
       "home": "Náutico",
       "round": 37,
       "score": "-",
-      "stadium": "",
-      "time": "12:00",
+      "stadium": "Aflitos",
+      "time": "21:30",
       "url": ""
     },
     {
-      "away": "Juventude",
-      "date": "07/11/2026",
-      "home": "Cuiabá",
+      "away": "Atlético-GO",
+      "date": "08/11/2026",
+      "home": "Athletic Club",
       "round": 37,
       "score": "-",
-      "stadium": "",
-      "time": "12:00",
+      "stadium": "Arena Sicredi",
+      "time": "16:00",
       "url": ""
     },
     {
-      "away": "Criciúma",
-      "date": "07/11/2026",
-      "home": "Vila Nova",
+      "away": "América-MG",
+      "date": "08/11/2026",
+      "home": "Ceará",
       "round": 37,
       "score": "-",
-      "stadium": "",
-      "time": "12:00",
+      "stadium": "Castelão (CE)",
+      "time": "19:15",
+      "url": ""
+    },
+    {
+      "away": "Ponte Preta",
+      "date": "08/11/2026",
+      "home": "Goiás",
+      "round": 37,
+      "score": "-",
+      "stadium": "Hailé Pinheiro (Serrinha)",
+      "time": "19:15",
       "url": ""
     },
     {
@@ -3706,8 +3706,8 @@
       "home": "Ponte Preta",
       "round": 38,
       "score": "-",
-      "stadium": "",
-      "time": "12:00",
+      "stadium": "Moisés Lucarelli",
+      "time": "16:30",
       "url": ""
     },
     {
@@ -3717,7 +3717,7 @@
       "round": 38,
       "score": "-",
       "stadium": "Primeiro de Maio",
-      "time": "12:00",
+      "time": "16:30",
       "url": ""
     },
     {
@@ -3726,8 +3726,8 @@
       "home": "América-MG",
       "round": 38,
       "score": "-",
-      "stadium": "",
-      "time": "12:00",
+      "stadium": "Independência",
+      "time": "16:30",
       "url": ""
     },
     {
@@ -3736,8 +3736,8 @@
       "home": "Londrina",
       "round": 38,
       "score": "-",
-      "stadium": "",
-      "time": "12:00",
+      "stadium": "VGD",
+      "time": "16:30",
       "url": ""
     },
     {
@@ -3746,8 +3746,8 @@
       "home": "Fortaleza",
       "round": 38,
       "score": "-",
-      "stadium": "",
-      "time": "12:00",
+      "stadium": "Castelão (CE)",
+      "time": "16:30",
       "url": ""
     },
     {
@@ -3756,8 +3756,8 @@
       "home": "Atlético-GO",
       "round": 38,
       "score": "-",
-      "stadium": "",
-      "time": "12:00",
+      "stadium": "Antônio Accioly",
+      "time": "16:30",
       "url": ""
     },
     {
@@ -3766,8 +3766,8 @@
       "home": "Criciúma",
       "round": 38,
       "score": "-",
-      "stadium": "",
-      "time": "12:00",
+      "stadium": "Heriberto Hülse",
+      "time": "16:30",
       "url": ""
     },
     {
@@ -3776,8 +3776,8 @@
       "home": "Sport",
       "round": 38,
       "score": "-",
-      "stadium": "",
-      "time": "12:00",
+      "stadium": "Ilha do Retiro",
+      "time": "16:30",
       "url": ""
     },
     {
@@ -3786,8 +3786,8 @@
       "home": "CRB",
       "round": 38,
       "score": "-",
-      "stadium": "",
-      "time": "12:00",
+      "stadium": "Rei Pelé (AL)",
+      "time": "16:30",
       "url": ""
     },
     {
@@ -3796,8 +3796,8 @@
       "home": "Juventude",
       "round": 38,
       "score": "-",
-      "stadium": "",
-      "time": "12:00",
+      "stadium": "Alfredo Jaconi",
+      "time": "16:30",
       "url": ""
     }
   ],
