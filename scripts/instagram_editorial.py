@@ -103,6 +103,19 @@ def home_dominance_spotlight(matches: list[dict], minimum_matches: int = 4, mini
     return {"kind":"home_dominance","label":"MANDO PESOU","text":f"{home_wins} vitórias em casa em {len(scored)} jogos • {percentage}% do dia","caption":f"Mando pesou: os mandantes venceram {home_wins} das {len(scored)} partidas do dia ({percentage}%).","home_wins":home_wins,"matches":len(scored),"share":share}
 
 
+def draw_dominance_spotlight(matches: list[dict], minimum_matches: int = 4, minimum_share: float = 0.75) -> dict | None:
+    """Destaca um recorte amplo de jogos em que ninguém conseguiu abrir vantagem."""
+    scored = [score for match in matches if (score := instagram_daily._score(match.get("score", "")))]
+    if len(scored) < minimum_matches:
+        return None
+    draws = sum(home == away for home, away in scored)
+    share = draws / len(scored)
+    if share < minimum_share:
+        return None
+    percentage = round(share * 100)
+    return {"kind":"draw_dominance","label":"EMPATE EM ALTA","text":f"{draws} empates em {len(scored)} jogos • {percentage}% do dia","caption":f"Empate em alta: {draws} das {len(scored)} partidas do dia terminaram iguais ({percentage}%).","draws":draws,"matches":len(scored),"share":share}
+
+
 def drawless_day_spotlight(matches: list[dict], minimum_matches: int = 4) -> dict | None:
     scored = [score for match in matches if (score := instagram_daily._score(match.get("score", "")))]
     if len(scored) < minimum_matches or any(home == away for home, away in scored):
@@ -148,7 +161,7 @@ def editorial_spotlight(insights: dict, matches: list[dict]) -> dict:
     base = instagram_matchday.matchday_spotlight(insights, matches)
     if base.get("kind") in HIGH_PRIORITY_KINDS or base.get("kind") == "delayed_match":
         return base
-    return high_scoring_match_spotlight(matches) or scoring_surge_spotlight(insights) or scoring_drought_spotlight(insights) or away_dominance_spotlight(matches) or home_dominance_spotlight(matches) or drawless_day_spotlight(matches) or defensive_streak_spotlight(insights) or title_race_spotlight(insights) or base
+    return high_scoring_match_spotlight(matches) or scoring_surge_spotlight(insights) or scoring_drought_spotlight(insights) or away_dominance_spotlight(matches) or home_dominance_spotlight(matches) or draw_dominance_spotlight(matches) or drawless_day_spotlight(matches) or defensive_streak_spotlight(insights) or title_race_spotlight(insights) or base
 
 
 def _spotlight_sentence(spotlight: dict) -> str:

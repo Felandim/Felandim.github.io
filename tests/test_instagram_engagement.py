@@ -53,6 +53,13 @@ class InstagramEngagementTests(unittest.TestCase):
             "A próxima rodada mantém esse nível de equilíbrio?",
         )
 
+    def test_draw_dominance_question_invites_a_specific_prediction(self):
+        spotlight = {"kind": "draw_dominance", "text": "3 empates em 4 jogos • 75% do dia"}
+        self.assertEqual(
+            instagram_engagement.engagement_question(spotlight),
+            "Qual time está mais perto de transformar equilíbrio em vitória?",
+        )
+
     def test_title_cluster_question_names_real_contenders(self):
         spotlight = {
             "kind": "title_cluster",

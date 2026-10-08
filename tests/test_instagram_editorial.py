@@ -100,6 +100,43 @@ class InstagramEditorialTests(unittest.TestCase):
         self.assertEqual(spotlight["matches"], 4)
         self.assertEqual(spotlight["text"], "4 jogos, 4 vencedores • nenhum empate")
 
+    def test_draw_dominance_requires_four_matches_and_seventy_five_percent(self):
+        matches = [
+            {"score": "1 x 1"},
+            {"score": "0 x 0"},
+            {"score": "2 x 2"},
+            {"score": "1 x 0"},
+        ]
+        spotlight = instagram_editorial.draw_dominance_spotlight(matches)
+        self.assertIsNotNone(spotlight)
+        self.assertEqual(spotlight["kind"], "draw_dominance")
+        self.assertEqual(spotlight["draws"], 3)
+        self.assertEqual(spotlight["text"], "3 empates em 4 jogos • 75% do dia")
+
+    def test_draw_dominance_ignores_small_or_weaker_samples(self):
+        self.assertIsNone(instagram_editorial.draw_dominance_spotlight([
+            {"score": "1 x 1"}, {"score": "0 x 0"}, {"score": "2 x 2"},
+        ]))
+        self.assertIsNone(instagram_editorial.draw_dominance_spotlight([
+            {"score": "1 x 1"}, {"score": "0 x 0"}, {"score": "2 x 1"}, {"score": "1 x 0"},
+        ]))
+
+    def test_draw_dominance_drives_caption_and_engagement_question(self):
+        data = insights((50, 45, 42, 39))
+        matches = [
+            {"round": 24, "home": "Santos", "away": "Botafogo", "score": "1 x 1"},
+            {"round": 24, "home": "Cruzeiro", "away": "Fluminense", "score": "0 x 0"},
+            {"round": 24, "home": "Grêmio", "away": "Atlético-MG", "score": "2 x 2"},
+            {"round": 24, "home": "Athletico-PR", "away": "Bragantino", "score": "1 x 0"},
+        ]
+        spotlight = instagram_editorial.editorial_spotlight(data, matches)
+        caption = instagram_editorial.build_caption(data, matches)
+        question = instagram_engagement.engagement_question(spotlight)
+        self.assertEqual(spotlight["kind"], "draw_dominance")
+        self.assertIn("Empate em alta: 3 das 4 partidas do dia terminaram iguais (75%).", caption)
+        self.assertEqual(question, "Qual time está mais perto de transformar equilíbrio em vitória?")
+        self.assertLessEqual(len(caption), 2200)
+
     def test_drawless_day_ignores_small_samples_and_days_with_draws(self):
         self.assertIsNone(instagram_editorial.drawless_day_spotlight([
             {"score": "1 x 0"}, {"score": "0 x 1"}, {"score": "2 x 1"},

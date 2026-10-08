@@ -118,6 +118,7 @@ def test_standings_render_badges_initially_and_after_round_change():
 
 def test_team_badges_cover_hub_scorers_comparison_team_and_round_pages():
     insights = load("brasileirao_2026_insights.json")
+    matches = load("serie_a_2026.json")["matches"]
     hub = (ROOT / "brasileirao" / "index.html").read_text(encoding="utf-8")
     scorers = (ROOT / "brasileirao" / "artilharia-rodada-a-rodada.html").read_text(encoding="utf-8")
     comparison = (ROOT / "brasileirao" / "comparador-times.html").read_text(encoding="utf-8")
@@ -125,6 +126,11 @@ def test_team_badges_cover_hub_scorers_comparison_team_and_round_pages():
     latest_round = ROOT / "brasileirao" / "rodadas" / f'rodada-{insights["current_round"]}.html'
     round_source = latest_round.read_text(encoding="utf-8")
     script = (ROOT / "brasileirao.js").read_text(encoding="utf-8")
+    completed_in_latest_round = sum(
+        int(match["round"]) == insights["current_round"]
+        and re.match(r"^\d+\s*x\s*\d+", match.get("score", "")) is not None
+        for match in matches
+    )
 
     assert hub.count("br-team-with-badge-chip") == 20
     assert scorers.count("br-team-with-badge-table") == len(insights["scorers"][-1]["ranking"])
@@ -134,8 +140,9 @@ def test_team_badges_cover_hub_scorers_comparison_team_and_round_pages():
     assert "br-team-with-badge-form" in team
     assert "br-team-with-badge-heading" in team
     assert team.count("br-team-with-badge-nav") == 2
-    assert round_source.count("br-team-with-badge-result-home") == 10
-    assert round_source.count("br-team-with-badge-result-away") == 10
+    assert completed_in_latest_round > 0
+    assert round_source.count("br-team-with-badge-result-home") == completed_in_latest_round
+    assert round_source.count("br-team-with-badge-result-away") == completed_in_latest_round
     for variant in ("legend", "scorer", "compare", "summary", "sentence"):
         assert f'teamBadge(row.team, "{variant}")' in script or f'teamBadge(profileA.team, "{variant}")' in script or f'teamBadge(leader.team, "{variant}")' in script or f'teamBadge(trailer.team, "{variant}")' in script
 
