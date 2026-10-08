@@ -1,4 +1,5 @@
 {
-  "timestamp_utc": "2026-10-04T17:20:20.980832+00:00",
-  "outcome": "success"
+  "timestamp_utc": "2026-10-08T19:10:33.764801+00:00",
+  "outcome": "failure",
+  "detail": "Falha de publicação; resposta bruta da API suprimida por segurança."
 }
