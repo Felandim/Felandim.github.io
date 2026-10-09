@@ -281,6 +281,29 @@ def test_round_steppers_are_accessible_and_keep_the_select_as_fallback():
     assert ".br-round-stepper button:focus-visible" in css
 
 
+def test_round_archive_has_progressive_previous_and_next_navigation():
+    insights = load("brasileirao_2026_insights.json")
+    current_round = insights["current_round"]
+    first = (ROOT / "brasileirao/rodadas/rodada-1.html").read_text(encoding="utf-8")
+    middle = (ROOT / "brasileirao/rodadas/rodada-2.html").read_text(encoding="utf-8")
+    latest = (ROOT / "brasileirao/rodadas" / f"rodada-{current_round}.html").read_text(encoding="utf-8")
+    css = (ROOT / "style.css").read_text(encoding="utf-8")
+
+    for source in (first, middle, latest):
+        assert 'aria-label="Navegação entre resumos de rodadas"' in source
+        assert 'href="../index.html#rodadas"' in source
+        assert "Todas as rodadas" in source
+    assert 'rel="prev"' not in first
+    assert 'rel="next" href="rodada-2.html"' in first
+    assert 'rel="prev" href="rodada-1.html"' in middle
+    assert 'rel="next" href="rodada-3.html"' in middle
+    assert f'aria-current="page">Rodada {current_round} de {current_round}' in latest
+    assert 'rel="next"' not in latest
+    assert f'rel="prev" href="rodada-{current_round - 1}.html"' in latest
+    assert ".br-round-pagination a:focus-visible" in css
+    assert "grid-template-columns: 1fr auto 1fr" in css
+
+
 
 
 def test_wide_tables_offer_accessible_scroll_controls():

@@ -92,6 +92,40 @@ class InstagramEngagementTests(unittest.TestCase):
         self.assertEqual(enhanced.count("Quem consegue abrir distância do Z4?"), 1)
 
     @patch.object(instagram_engagement.time, "sleep", return_value=None)
+    @patch.object(instagram_engagement.time, "monotonic", side_effect=[0, 1])
+    @patch.object(instagram_engagement.requests, "get")
+    def test_wait_for_image_url_retries_until_public_png_is_available(self, get, _monotonic, _sleep):
+        unavailable = Mock(ok=False, status_code=404, headers={}, content=b"")
+        available = Mock(
+            ok=True,
+            status_code=200,
+            headers={"content-type": "image/png"},
+            content=b"\x89PNG\r\n\x1a\ncard",
+        )
+        get.side_effect = [unavailable, available]
+
+        instagram_engagement._wait_for_image_url("https://example.test/card.png", timeout=30, interval=0)
+
+        self.assertEqual(get.call_count, 2)
+
+    @patch.object(instagram_engagement.time, "sleep", return_value=None)
+    def test_create_container_retries_transient_api_failure(self, sleep):
+        instagram_daily = Mock()
+        instagram_daily._post.side_effect = [RuntimeError("imagem indisponível"), {"id": "container-1"}]
+
+        container = instagram_engagement._create_container_with_retry(
+            instagram_daily,
+            "https://graph.instagram.com/v23.0/account/media",
+            {"image_url": "https://example.test/card.png"},
+            attempts=2,
+            interval=0,
+        )
+
+        self.assertEqual(container["id"], "container-1")
+        self.assertEqual(instagram_daily._post.call_count, 2)
+        sleep.assert_called_once_with(0)
+
+    @patch.object(instagram_engagement.time, "sleep", return_value=None)
     @patch.object(instagram_engagement.time, "monotonic", side_effect=[0, 1, 2])
     @patch.object(instagram_engagement.requests, "get")
     def test_wait_for_container_polls_until_finished(self, get, _monotonic, _sleep):

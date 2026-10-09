@@ -722,6 +722,33 @@ h3 { margin-bottom: 12px; font-size: 1.35rem; }
 .br-round-hero { position: relative; overflow: hidden; }
 .br-round-number { position: absolute; right: max(20px, calc((100vw - 1220px) / 2)); top: 15px; color: #2c3731; font-size: clamp(12rem, 30vw, 27rem); font-weight: 950; line-height: 1; letter-spacing: -.1em; }
 .br-round-hero h1, .br-round-hero p { position: relative; }
+.br-round-pagination { background: #18231f; border-top: 1px solid #334139; }
+.br-round-pagination .br-shell {
+  min-height: 76px;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: stretch;
+  gap: 16px;
+}
+.br-round-pagination a {
+  display: flex;
+  align-items: center;
+  padding: 16px 0;
+  color: #f6f4ec;
+  font-size: .78rem;
+  font-weight: 850;
+  text-decoration: none;
+}
+.br-round-pagination a:last-child { justify-content: flex-end; text-align: right; }
+.br-round-pagination a:hover { color: var(--br-hot); }
+.br-round-pagination a:focus-visible { outline: 3px solid var(--br-hot); outline-offset: -3px; }
+.br-round-pagination-index {
+  flex-direction: column;
+  justify-content: center;
+  color: var(--br-hot) !important;
+  text-align: center;
+}
+.br-round-pagination-index span { color: #9da9a2; font-size: .68rem; }
 .br-round-grid { display: grid; grid-template-columns: 1.15fr .85fr; gap: 80px; }
 .br-round-grid h2 { font-size: 2.4rem; }
 .br-results { border-top: 2px solid var(--br-ink); }
@@ -1003,6 +1030,9 @@ h3 { margin-bottom: 12px; font-size: 1.35rem; }
 }
 
 @media (max-width: 720px) {
+  .br-round-pagination .br-shell { min-height: 68px; gap: 8px; }
+  .br-round-pagination a { font-size: .7rem; }
+  .br-round-pagination-index span { font-size: .62rem; }
   .br-team-finder { margin-top: -8px; }
   .br-team-search-row input { padding: 14px; }
 }

@@ -11,6 +11,38 @@ from pathlib import Path
 import requests
 
 
+def _wait_for_image_url(image_url: str, timeout: float = 60, interval: float = 2) -> None:
+    """Confirma que o card público já pode ser baixado antes de chamar o Instagram."""
+    deadline = time.monotonic() + timeout
+    last_status = "indisponível"
+    while True:
+        try:
+            response = requests.get(image_url, timeout=30)
+            content_type = response.headers.get("content-type", "").lower()
+            if response.ok and content_type.startswith("image/") and response.content.startswith(b"\x89PNG\r\n\x1a\n"):
+                return
+            last_status = f"HTTP {response.status_code} ({content_type or 'sem content-type'})"
+        except requests.RequestException as exc:
+            last_status = exc.__class__.__name__
+        if time.monotonic() >= deadline:
+            raise TimeoutError(f"O card não ficou publicamente disponível em {timeout}s; último estado: {last_status}")
+        time.sleep(interval)
+
+
+def _create_container_with_retry(instagram_daily, url: str, data: dict, attempts: int = 4, interval: float = 3) -> dict:
+    """Repete a criação do container, etapa sujeita a atraso de propagação da imagem."""
+    last_error = None
+    for attempt in range(1, attempts + 1):
+        try:
+            return instagram_daily._post(url, data)
+        except RuntimeError as exc:
+            last_error = exc
+            if attempt == attempts:
+                raise
+            time.sleep(interval * attempt)
+    raise last_error  # pragma: no cover
+
+
 def engagement_question(spotlight: dict) -> str:
     """Cria uma pergunta curta e específica a partir do destaque editorial escolhido."""
     kind = spotlight.get("kind", "")
@@ -124,7 +156,12 @@ def _wait_for_container(container_id: str, access_token: str, api_version: str, 
 def publish_when_ready(instagram_daily, image_url: str, caption: str, ig_user_id: str, access_token: str, api_version: str) -> str:
     """Cria o container, aguarda o processamento e só então publica."""
     base = f"{instagram_daily.GRAPH_HOST}/{api_version}/{ig_user_id}"
-    container = instagram_daily._post(f"{base}/media", {"image_url": image_url, "caption": caption, "access_token": access_token})
+    _wait_for_image_url(image_url)
+    container = _create_container_with_retry(
+        instagram_daily,
+        f"{base}/media",
+        {"image_url": image_url, "caption": caption, "access_token": access_token},
+    )
     _wait_for_container(container["id"], access_token, api_version)
     media = instagram_daily._post(f"{base}/media_publish", {"creation_id": container["id"], "access_token": access_token})
     return media["id"]
