@@ -60,6 +60,13 @@ class InstagramEngagementTests(unittest.TestCase):
             "Qual time está mais perto de transformar equilíbrio em vitória?",
         )
 
+    def test_both_teams_scored_question_invites_match_prediction(self):
+        spotlight = {"kind": "both_teams_scored", "text": "4 de 5 jogos com gols dos dois times • 80% do dia"}
+        self.assertEqual(
+            instagram_engagement.engagement_question(spotlight),
+            "Na próxima rodada, qual duelo promete gols dos dois lados?",
+        )
+
     def test_title_cluster_question_names_real_contenders(self):
         spotlight = {
             "kind": "title_cluster",

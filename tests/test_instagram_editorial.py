@@ -100,6 +100,43 @@ class InstagramEditorialTests(unittest.TestCase):
         self.assertEqual(spotlight["matches"], 4)
         self.assertEqual(spotlight["text"], "4 jogos, 4 vencedores • nenhum empate")
 
+    def test_both_teams_scored_requires_four_matches_and_seventy_five_percent(self):
+        matches = [
+            {"score": "1 x 1"},
+            {"score": "2 x 1"},
+            {"score": "1 x 2"},
+            {"score": "2 x 0"},
+        ]
+        spotlight = instagram_editorial.both_teams_scored_spotlight(matches)
+        self.assertIsNotNone(spotlight)
+        self.assertEqual(spotlight["kind"], "both_teams_scored")
+        self.assertEqual(spotlight["both_scored"], 3)
+        self.assertEqual(spotlight["text"], "3 de 4 jogos com gols dos dois times • 75% do dia")
+
+    def test_both_teams_scored_ignores_small_or_weaker_samples(self):
+        self.assertIsNone(instagram_editorial.both_teams_scored_spotlight([
+            {"score": "1 x 1"}, {"score": "2 x 1"}, {"score": "1 x 2"},
+        ]))
+        self.assertIsNone(instagram_editorial.both_teams_scored_spotlight([
+            {"score": "1 x 1"}, {"score": "2 x 0"}, {"score": "0 x 1"}, {"score": "2 x 2"},
+        ]))
+
+    def test_both_teams_scored_drives_caption_and_engagement_question(self):
+        data = insights((50, 45, 42, 39))
+        matches = [
+            {"round": 24, "home": "Santos", "away": "Botafogo", "score": "1 x 1"},
+            {"round": 24, "home": "Cruzeiro", "away": "Fluminense", "score": "2 x 1"},
+            {"round": 24, "home": "Grêmio", "away": "Atlético-MG", "score": "1 x 2"},
+            {"round": 24, "home": "Athletico-PR", "away": "Bragantino", "score": "2 x 2"},
+        ]
+        spotlight = instagram_editorial.editorial_spotlight(data, matches)
+        caption = instagram_editorial.build_caption(data, matches)
+        question = instagram_engagement.engagement_question(spotlight)
+        self.assertEqual(spotlight["kind"], "both_teams_scored")
+        self.assertIn("Lá e cá: 4 das 4 partidas do dia tiveram gols dos dois times (100%).", caption)
+        self.assertEqual(question, "Na próxima rodada, qual duelo promete gols dos dois lados?")
+        self.assertLessEqual(len(caption), 2200)
+
     def test_draw_dominance_requires_four_matches_and_seventy_five_percent(self):
         matches = [
             {"score": "1 x 1"},
