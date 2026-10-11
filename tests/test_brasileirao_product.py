@@ -99,7 +99,12 @@ def test_rankings_render_proportional_team_badges():
     rankings = (ROOT / "brasileirao" / "rankings-recordes.html").read_text(encoding="utf-8")
     home = (ROOT / "index.html").read_text(encoding="utf-8")
     assert rankings.count('class="br-team-badge"') == 36
-    assert home.count('class="br-team-badge"') >= 38
+    assert home.count("br-team-with-badge-chip") == 20
+    assert home.count("br-team-with-badge-table") == 6
+    assert home.count("br-team-with-badge-preview") == 4
+    assert home.count("br-team-with-badge-headline") == 2
+    for variant in ("cover", "ticker", "leader-card", "scorer"):
+        assert home.count(f"br-team-with-badge-{variant}") == 1
     assert 'aria-hidden="true" width="48" height="48" loading="lazy" decoding="async"' in rankings
     assert rankings.count('alt=""') >= 36
     css = (ROOT / "style.css").read_text(encoding="utf-8")
@@ -267,6 +272,19 @@ def test_round_selectors_keep_shareable_url_state():
     assert 'hasRoundOption(select, requested)' in source
 
 
+def test_round_views_offer_accessible_native_share_with_copy_fallback():
+    source = (ROOT / "brasileirao.js").read_text(encoding="utf-8")
+    css = (ROOT / "style.css").read_text(encoding="utf-8")
+    assert 'data-round-share-button' in source
+    assert 'data-round-share-status aria-live="polite"' in source
+    assert 'navigator.share(shareData)' in source
+    assert 'navigator.clipboard.writeText(shareUrl.href)' in source
+    assert 'shareUrl.searchParams.set("time", focusedTeam)' in source
+    assert source.count("initRoundShare(") == 3
+    assert ".br-view-share button:focus-visible" in css
+    assert ".br-view-share-status" in css
+
+
 def test_round_steppers_are_accessible_and_keep_the_select_as_fallback():
     source = (ROOT / "brasileirao.js").read_text(encoding="utf-8")
     css = (ROOT / "style.css").read_text(encoding="utf-8")
@@ -372,6 +390,13 @@ def test_round_selectors_restore_url_and_browser_history():
         with sync_playwright() as playwright:
             browser = playwright.chromium.launch()
             page = browser.new_page()
+            page.add_init_script("""
+              Object.defineProperty(navigator, "share", { configurable: true, value: undefined });
+              Object.defineProperty(navigator, "clipboard", {
+                configurable: true,
+                value: { writeText: async value => { window.__copiedUrl = value; } },
+              });
+            """)
 
             page.goto(
                 f"{base_url}/brasileirao/classificacao-rodada-a-rodada.html?rodada=10",
@@ -405,6 +430,12 @@ def test_round_selectors_restore_url_and_browser_history():
             )
             page.wait_for_function("document.querySelector('[data-team-focus-select]').value === 'flamengo'")
             assert "Flamengo" in page.locator("[data-standings-table] tbody tr.is-focused").text_content()
+            standings_share = page.locator("[data-round-share-button]")
+            assert standings_share.is_visible()
+            standings_share.click()
+            page.wait_for_function("window.__copiedUrl?.includes('rodada=12')")
+            assert "time=flamengo" in page.evaluate("window.__copiedUrl")
+            assert page.locator("[data-round-share-status]").text_content() == "Link copiado."
 
             page.goto(
                 f"{base_url}/brasileirao/artilharia-rodada-a-rodada.html?rodada=5",
@@ -421,6 +452,9 @@ def test_round_selectors_restore_url_and_browser_history():
             assert scorers.input_value() == "6"
             page.go_back()
             page.wait_for_function("document.querySelector('[data-scorer-round-select]').value === '5'")
+            page.locator("[data-round-share-button]").click()
+            page.wait_for_function("window.__copiedUrl?.includes('rodada=5')")
+            assert page.locator("[data-round-share-status]").text_content() == "Link copiado."
 
             mobile_page = browser.new_page(viewport={"width": 390, "height": 844})
             mobile_page.bring_to_front()

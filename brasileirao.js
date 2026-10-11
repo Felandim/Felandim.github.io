@@ -266,6 +266,46 @@
     sync();
   }
 
+  function initRoundShare(select, viewLabel) {
+    const control = select.closest(".br-control");
+    if (!control || control.parentElement.querySelector(":scope > [data-round-share]")) return;
+
+    const share = document.createElement("div");
+    share.className = "br-view-share";
+    share.dataset.roundShare = "";
+    share.innerHTML = `<div><strong>Compartilhe esta visão</strong><span>O link preserva a rodada${viewLabel === "Classificação" ? " e o time destacado" : " escolhida"}.</span></div><button type="button" data-round-share-button>Compartilhar</button><p class="br-view-share-status" data-round-share-status aria-live="polite"></p>`;
+    control.after(share);
+
+    const button = share.querySelector("[data-round-share-button]");
+    const status = share.querySelector("[data-round-share-status]");
+    button.addEventListener("click", async () => {
+      const round = select.options[select.selectedIndex]?.textContent || "Rodada atual";
+      const shareUrl = new URL(location.href);
+      const focusedTeam = document.querySelector("[data-team-focus-select]")?.value;
+      if (viewLabel === "Classificação" && focusedTeam) shareUrl.searchParams.set("time", focusedTeam);
+      const shareData = {
+        title: `${viewLabel} do Brasileirão 2026 — ${round}`,
+        text: `${viewLabel} do Brasileirão 2026 após a ${round.toLowerCase()}.`,
+        url: shareUrl.href,
+      };
+      if (navigator.share) {
+        try {
+          await navigator.share(shareData);
+          status.textContent = "Visão compartilhada.";
+        } catch (shareError) {
+          if (shareError.name !== "AbortError") status.textContent = "Não foi possível compartilhar.";
+        }
+        return;
+      }
+      try {
+        await navigator.clipboard.writeText(shareUrl.href);
+        status.textContent = "Link copiado.";
+      } catch {
+        status.textContent = "Copie o endereço exibido na barra do navegador.";
+      }
+    });
+  }
+
   const teamFocusStorageKey = "brasileirao-team-focus";
 
   function initStandingsTeamFocus(table, roundSelect) {
@@ -389,6 +429,7 @@
         update();
       });
       initRoundStepper(roundSelect);
+      initRoundShare(roundSelect, "Classificação");
       update();
       setRoundViewState(roundSelect, chart, "ready");
     }).catch(() => setRoundViewState(roundSelect, chart, "error"));
@@ -422,6 +463,7 @@
         update();
       });
       initRoundStepper(scorerSelect);
+      initRoundShare(scorerSelect, "Artilharia");
       update();
       setRoundViewState(scorerSelect, chart, "ready");
     }).catch(() => setRoundViewState(scorerSelect, chart, "error"));
