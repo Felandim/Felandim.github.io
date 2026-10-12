@@ -13,7 +13,56 @@ import instagram_daily
 import instagram_matchday
 
 
-HIGH_PRIORITY_KINDS = {"leader", "g4", "z4", "upset", "g4_cluster", "z4_cluster"}
+HIGH_PRIORITY_KINDS = {"leader", "g4", "z4", "upset"}
+
+DERBY_NAMES = {
+    frozenset(("Athletico-PR", "Coritiba")): "Atletiba",
+    frozenset(("Atlético-MG", "Cruzeiro")): "Clássico Mineiro",
+    frozenset(("Bahia", "Vitória")): "Ba-Vi",
+    frozenset(("Botafogo", "Flamengo")): "Clássico da Rivalidade",
+    frozenset(("Botafogo", "Fluminense")): "Clássico Vovô",
+    frozenset(("Botafogo", "Vasco")): "Clássico da Amizade",
+    frozenset(("Corinthians", "Palmeiras")): "Dérbi Paulista",
+    frozenset(("Corinthians", "Santos")): "Clássico Alvinegro",
+    frozenset(("Corinthians", "São Paulo")): "Majestoso",
+    frozenset(("Flamengo", "Fluminense")): "Fla-Flu",
+    frozenset(("Flamengo", "Vasco")): "Clássico dos Milhões",
+    frozenset(("Fluminense", "Vasco")): "Clássico dos Gigantes",
+    frozenset(("Grêmio", "Internacional")): "Gre-Nal",
+    frozenset(("Palmeiras", "Santos")): "Clássico da Saudade",
+    frozenset(("Palmeiras", "São Paulo")): "Choque-Rei",
+    frozenset(("Santos", "São Paulo")): "San-São",
+}
+
+
+def _join_pt(items: list[str]) -> str:
+    if len(items) < 2:
+        return "".join(items)
+    return f"{', '.join(items[:-1])} e {items[-1]}"
+
+
+def derby_day_spotlight(matches: list[dict], minimum_derbies: int = 2) -> dict | None:
+    """Destaca datas com vários clássicos concluídos, sem depender de imagens dos jogos."""
+    derbies = []
+    for match in matches:
+        if not instagram_daily._score(match.get("score", "")):
+            continue
+        name = DERBY_NAMES.get(frozenset((match.get("home", ""), match.get("away", ""))))
+        if name:
+            derbies.append({"name": name, "home": match["home"], "away": match["away"], "score": match["score"]})
+    if len(derbies) < minimum_derbies:
+        return None
+    names = [item["name"] for item in derbies]
+    results = [f"{item['home']} {item['score']} {item['away']}" for item in derbies]
+    return {
+        "kind":"derby_day",
+        "label":"DIA DE CLÁSSICOS",
+        "text":f"{len(derbies)} clássicos no mesmo dia • {_join_pt(names)}",
+        "caption":f"Dia de clássicos: {'; '.join(results)}.",
+        "derbies":names,
+        "results":results,
+        "count":len(derbies),
+    }
 
 
 def high_scoring_match_spotlight(matches: list[dict], minimum_goals: int = 5) -> dict | None:
@@ -182,7 +231,7 @@ def editorial_spotlight(insights: dict, matches: list[dict]) -> dict:
     base = instagram_matchday.matchday_spotlight(insights, matches)
     if base.get("kind") in HIGH_PRIORITY_KINDS or base.get("kind") == "delayed_match":
         return base
-    return high_scoring_match_spotlight(matches) or scoring_surge_spotlight(insights) or scoring_drought_spotlight(insights) or both_teams_scored_spotlight(matches) or away_dominance_spotlight(matches) or home_dominance_spotlight(matches) or draw_dominance_spotlight(matches) or drawless_day_spotlight(matches) or defensive_streak_spotlight(insights) or title_race_spotlight(insights) or base
+    return derby_day_spotlight(matches) or high_scoring_match_spotlight(matches) or scoring_surge_spotlight(insights) or scoring_drought_spotlight(insights) or both_teams_scored_spotlight(matches) or away_dominance_spotlight(matches) or home_dominance_spotlight(matches) or draw_dominance_spotlight(matches) or drawless_day_spotlight(matches) or defensive_streak_spotlight(insights) or title_race_spotlight(insights) or base
 
 
 def _spotlight_sentence(spotlight: dict) -> str:

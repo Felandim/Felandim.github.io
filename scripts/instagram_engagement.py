@@ -74,6 +74,8 @@ def engagement_question(spotlight: dict) -> str:
         return "Quem leva vantagem nessa disputa direta?"
     if kind == "tight_matches":
         return "A próxima rodada mantém esse nível de equilíbrio?"
+    if kind == "derby_day":
+        return "Qual clássico mais mexeu com você?"
     if kind == "goal_fest":
         goals = spotlight.get("goals")
         return f"Qual jogo da rodada ainda pode superar esses {goals} gols?" if goals else "Qual jogo da rodada ainda pode superar esse placar?"

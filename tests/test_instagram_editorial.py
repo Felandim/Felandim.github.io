@@ -51,6 +51,57 @@ def insights(points=(50, 49, 47, 43), leader_changed=False):
 
 
 class InstagramEditorialTests(unittest.TestCase):
+    def test_derby_day_detects_multiple_classics_and_names_them(self):
+        matches = [
+            {"home": "Flamengo", "away": "Fluminense", "score": "1 x 0"},
+            {"home": "Palmeiras", "away": "Corinthians", "score": "4 x 1"},
+            {"home": "Grêmio", "away": "Internacional", "score": "1 x 1"},
+            {"home": "Bahia", "away": "Mirassol", "score": "1 x 0"},
+        ]
+        spotlight = instagram_editorial.derby_day_spotlight(matches)
+        self.assertIsNotNone(spotlight)
+        self.assertEqual(spotlight["kind"], "derby_day")
+        self.assertEqual(spotlight["count"], 3)
+        self.assertEqual(spotlight["derbies"], ["Fla-Flu", "Dérbi Paulista", "Gre-Nal"])
+        self.assertEqual(spotlight["text"], "3 clássicos no mesmo dia • Fla-Flu, Dérbi Paulista e Gre-Nal")
+
+    def test_derby_day_requires_two_completed_classics(self):
+        self.assertIsNone(instagram_editorial.derby_day_spotlight([
+            {"home": "Flamengo", "away": "Fluminense", "score": "1 x 0"},
+            {"home": "Palmeiras", "away": "Corinthians", "score": "-"},
+            {"home": "Bahia", "away": "Mirassol", "score": "1 x 0"},
+        ]))
+
+    def test_derby_day_outweighs_goal_fest_but_not_table_change(self):
+        matches = [
+            {"round": 24, "home": "Palmeiras", "away": "Corinthians", "score": "4 x 1"},
+            {"round": 24, "home": "Flamengo", "away": "Fluminense", "score": "1 x 0"},
+        ]
+        self.assertEqual(instagram_editorial.editorial_spotlight(insights(), matches)["kind"], "derby_day")
+        self.assertEqual(instagram_editorial.editorial_spotlight(insights(leader_changed=True), matches)["kind"], "leader")
+
+    def test_derby_day_outweighs_static_boundary_cluster(self):
+        data = insights((50, 49, 48, 47, 46, 45))
+        matches = [
+            {"round": 24, "home": "Palmeiras", "away": "Corinthians", "score": "2 x 1"},
+            {"round": 24, "home": "Flamengo", "away": "Fluminense", "score": "1 x 0"},
+        ]
+        self.assertEqual(instagram_editorial.instagram_matchday.matchday_spotlight(data, matches)["kind"], "g4_cluster")
+        self.assertEqual(instagram_editorial.editorial_spotlight(data, matches)["kind"], "derby_day")
+
+    def test_derby_day_caption_and_question_are_contextual(self):
+        data = insights((50, 45, 42, 39))
+        matches = [
+            {"round": 24, "home": "Flamengo", "away": "Fluminense", "score": "1 x 0"},
+            {"round": 24, "home": "Palmeiras", "away": "Corinthians", "score": "4 x 1"},
+        ]
+        spotlight = instagram_editorial.editorial_spotlight(data, matches)
+        caption = instagram_editorial.build_caption(data, matches)
+        question = instagram_engagement.engagement_question(spotlight)
+        self.assertIn("Dia de clássicos: Flamengo 1 x 0 Fluminense; Palmeiras 4 x 1 Corinthians.", caption)
+        self.assertEqual(question, "Qual clássico mais mexeu com você?")
+        self.assertLessEqual(len(caption), 2200)
+
     def test_high_scoring_match_detects_goal_fest(self):
         matches = [
             {"home": "Coritiba", "away": "Athletico-PR", "score": "3 x 3"},

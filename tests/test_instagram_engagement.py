@@ -53,6 +53,13 @@ class InstagramEngagementTests(unittest.TestCase):
             "A próxima rodada mantém esse nível de equilíbrio?",
         )
 
+    def test_derby_day_question_invites_emotional_response(self):
+        spotlight = {"kind": "derby_day", "text": "3 clássicos no mesmo dia"}
+        self.assertEqual(
+            instagram_engagement.engagement_question(spotlight),
+            "Qual clássico mais mexeu com você?",
+        )
+
     def test_draw_dominance_question_invites_a_specific_prediction(self):
         spotlight = {"kind": "draw_dominance", "text": "3 empates em 4 jogos • 75% do dia"}
         self.assertEqual(
