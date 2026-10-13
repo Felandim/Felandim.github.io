@@ -27,7 +27,9 @@ class PublishError(RuntimeError):
 
 def load_manifest() -> dict:
     manifest = json.loads((ROOT / "publish.json").read_text(encoding="utf-8"))
-    if manifest["account_id"] != "17841429981371844" or manifest["username"] != "brasileiraoemrodadas":
+    if (manifest["account_id"] != "17841429981371844"
+            or manifest["api_profile_id"] != "27834175349616492"
+            or manifest["username"] != "brasileiraoemrodadas"):
         raise PublishError("A conta não corresponde à publicação autorizada.")
     if len(manifest["images"]) != 3 or not 0 < len(manifest["caption"]) <= 2200:
         raise PublishError("Quantidade de imagens ou legenda inválida.")
@@ -98,11 +100,12 @@ def verified_media(api: Instagram, media_id: str) -> dict:
 def publish(manifest: dict, api: Instagram, source_base: str) -> dict:
     account_id = manifest["account_id"]
     profile = api.request("GET", account_id, fields="id,username")
-    if str(profile.get("id")) != account_id or profile.get("username") != manifest["username"]:
+    # O ID do perfil retornado pela API difere do ID legado usado no endpoint.
+    if str(profile.get("id")) != manifest["api_profile_id"] or profile.get("username") != manifest["username"]:
         raise PublishError(
             "Identidade divergente; nenhuma publicação criada. "
             f"Username corresponde: {profile.get('username') == manifest['username']}; "
-            f"ID corresponde: {str(profile.get('id')) == account_id}; "
+            f"ID corresponde: {str(profile.get('id')) == manifest['api_profile_id']}; "
             f"perfil retornado: {profile.get('username')!r}, ID {profile.get('id')!r}."
         )
     # A leitura precisa funcionar antes de qualquer criação, para impedir duplicação.
