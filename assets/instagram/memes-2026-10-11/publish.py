@@ -99,7 +99,12 @@ def publish(manifest: dict, api: Instagram, source_base: str) -> dict:
     account_id = manifest["account_id"]
     profile = api.request("GET", account_id, fields="id,username")
     if str(profile.get("id")) != account_id or profile.get("username") != manifest["username"]:
-        raise PublishError("A identidade retornada pelo Instagram não corresponde à conta autorizada.")
+        raise PublishError(
+            "Identidade divergente; nenhuma publicação criada. "
+            f"Username corresponde: {profile.get('username') == manifest['username']}; "
+            f"ID corresponde: {str(profile.get('id')) == account_id}; "
+            f"perfil retornado: {profile.get('username')!r}, ID {profile.get('id')!r}."
+        )
     # A leitura precisa funcionar antes de qualquer criação, para impedir duplicação.
     recent = api.request("GET", f"{account_id}/media", fields="id,caption", limit=100)
     for media in recent.get("data", []):
