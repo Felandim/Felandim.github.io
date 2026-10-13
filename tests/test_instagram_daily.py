@@ -234,7 +234,7 @@ class InstagramWorkflowResilienceTests(unittest.TestCase):
     def test_no_match_check_precedes_token_validation(self):
         workflow = (ROOT / ".github/workflows/instagram-daily.yml").read_text(encoding="utf-8")
         self.assertLess(
-            workflow.index("Check if yesterday had completed matches"),
+            workflow.index("Select closed round blocks"),
             workflow.index("Validate Instagram token"),
         )
         self.assertIn(
@@ -258,3 +258,4 @@ class InstagramWorkflowResilienceTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
