@@ -260,6 +260,25 @@ def test_team_finder_filters_accent_insensitively_in_browser():
         browser.close()
 
 
+def test_scorer_finder_is_accessible_progressive_and_keeps_static_fallback():
+    page = (ROOT / "brasileirao" / "artilharia-rodada-a-rodada.html").read_text(encoding="utf-8")
+    script = (ROOT / "brasileirao.js").read_text(encoding="utf-8")
+    css = (ROOT / "style.css").read_text(encoding="utf-8")
+
+    assert 'data-scorer-finder hidden' in page
+    assert 'id="scorer-search"' in page
+    assert 'aria-controls="scorer-table-body"' in page
+    assert 'aria-describedby="scorer-search-status"' in page
+    assert 'data-scorer-empty hidden' in page
+    assert page.count("<tr>") > 1
+    assert "function initScorerFinder(table)" in script
+    assert "normalizeTeamSearch(playerAndTeam).includes(query)" in script
+    assert 'visible === 1 ? "jogador encontrado" : "jogadores encontrados"' in script
+    assert "applyScorerFilter();" in script
+    assert ".br-scorer-search-row:focus-within" in css
+    assert ".br-scorer-table tbody tr[hidden]" in css
+
+
 
 def test_round_selectors_keep_shareable_url_state():
     source = (ROOT / "brasileirao.js").read_text(encoding="utf-8")
@@ -443,6 +462,24 @@ def test_round_selectors_restore_url_and_browser_history():
             )
             scorers = page.locator("[data-scorer-round-select]")
             page.wait_for_function("document.querySelector('[data-scorer-round-select]').value === '5'")
+            scorer_finder = page.locator("[data-scorer-finder]")
+            scorer_finder.wait_for(state="visible")
+            scorer_search = page.locator("[data-scorer-search]")
+            total_scorers = page.locator("[data-scorer-table] tbody tr").count()
+            scorer_search.fill("vinicius")
+            visible_scorers = page.locator("[data-scorer-table] tbody tr:visible")
+            assert visible_scorers.count() == 1
+            assert "Carlos Vinícius" in visible_scorers.first.text_content()
+            assert page.locator("#scorer-search-status").text_content() == "1 jogador encontrado."
+
+            scorer_search.fill("jogador inexistente")
+            assert visible_scorers.count() == 0
+            assert page.locator("[data-scorer-empty]").is_visible()
+            scorer_search.press("Escape")
+            assert scorer_search.input_value() == ""
+            assert visible_scorers.count() == total_scorers
+
+            scorer_search.fill("palmeiras")
             previous = page.locator("[data-round-previous]")
             next_round = page.locator("[data-round-next]")
             assert previous.is_visible()
@@ -450,6 +487,8 @@ def test_round_selectors_restore_url_and_browser_history():
             next_round.click()
             page.wait_for_url("**?rodada=6")
             assert scorers.input_value() == "6"
+            assert scorer_search.input_value() == "palmeiras"
+            assert visible_scorers.count() > 0
             page.go_back()
             page.wait_for_function("document.querySelector('[data-scorer-round-select]').value === '5'")
             page.locator("[data-round-share-button]").click()

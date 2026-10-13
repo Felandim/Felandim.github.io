@@ -1038,6 +1038,78 @@ h3 { margin-bottom: 12px; font-size: 1.35rem; }
 }
 
 
+/* Instant scorer search; the unfiltered table remains the no-JavaScript fallback */
+.br-scorer-finder { margin: 0 0 14px; }
+.br-scorer-finder[hidden],
+.br-scorer-table tbody tr[hidden],
+.br-scorer-empty[hidden],
+.br-scorer-search-row button[hidden] {
+  display: none;
+}
+.br-scorer-finder label {
+  display: block;
+  margin-bottom: 8px;
+  color: #59645d;
+  font-size: .68rem;
+  font-weight: 900;
+  letter-spacing: .11em;
+  text-transform: uppercase;
+}
+.br-scorer-search-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  background: #fff;
+  border: 2px solid var(--br-ink);
+}
+.br-scorer-search-row:focus-within {
+  outline: 3px solid var(--br-hot);
+  outline-offset: 3px;
+}
+.br-scorer-search-row input {
+  min-width: 0;
+  padding: 13px 14px;
+  color: var(--br-ink);
+  background: transparent;
+  border: 0;
+  font: inherit;
+  font-weight: 750;
+  outline: 0;
+}
+.br-scorer-search-row input::placeholder { color: #79847d; }
+.br-scorer-search-row button {
+  padding: 0 14px;
+  color: #f6f4ec;
+  background: var(--br-ink);
+  border: 0;
+  font: inherit;
+  font-size: .75rem;
+  font-weight: 850;
+  cursor: pointer;
+}
+.br-scorer-search-row button:hover,
+.br-scorer-search-row button:focus-visible {
+  color: var(--br-ink);
+  background: var(--br-hot);
+  outline: 0;
+}
+.br-scorer-search-status {
+  min-height: 1.3em;
+  margin: 7px 0 0;
+  color: #68736c;
+  font-size: .72rem;
+  font-weight: 750;
+}
+.br-scorer-empty {
+  margin: 0;
+  padding: 28px;
+  color: #566159;
+  background: var(--br-soft);
+  border: 1px solid var(--br-line);
+  border-top: 0;
+  text-align: center;
+}
+
+
 /* Fast previous/next navigation for historical rounds */
 .br-round-stepper {
   display: flex;

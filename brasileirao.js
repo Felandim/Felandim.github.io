@@ -441,17 +441,62 @@
     return `<ol class="br-goal-bars">${top.map((row, index) => `<li><span>${index + 1}</span><div><strong>${safe(row.name)}</strong><small>${teamBadge(row.team, "scorer")}</small><i style="width:${(row.goals / max) * 100}%"></i></div><b>${row.goals}</b></li>`).join("")}</ol>`;
   }
 
+  function initScorerFinder(table) {
+    const finder = document.querySelector("[data-scorer-finder]");
+    const input = finder?.querySelector("[data-scorer-search]");
+    const clear = finder?.querySelector("[data-scorer-search-clear]");
+    const status = document.getElementById(input?.getAttribute("aria-describedby"));
+    const empty = document.querySelector("[data-scorer-empty]");
+    if (!finder || !input || !clear || !status || !empty) return () => {};
+
+    const apply = () => {
+      const query = normalizeTeamSearch(input.value);
+      const rows = [...table.tBodies[0].rows];
+      let visible = 0;
+      rows.forEach(row => {
+        const playerAndTeam = `${row.cells[1]?.textContent || ""} ${row.cells[2]?.textContent || ""}`;
+        const matches = !query || normalizeTeamSearch(playerAndTeam).includes(query);
+        row.hidden = !matches;
+        if (matches) visible += 1;
+      });
+      clear.hidden = !query;
+      empty.hidden = visible !== 0;
+      status.textContent = query
+        ? `${visible} ${visible === 1 ? "jogador encontrado" : "jogadores encontrados"}.`
+        : `${rows.length} ${rows.length === 1 ? "jogador disponível" : "jogadores disponíveis"}.`;
+    };
+
+    finder.hidden = false;
+    input.addEventListener("input", apply);
+    input.addEventListener("keydown", event => {
+      if (event.key === "Escape" && input.value) {
+        input.value = "";
+        apply();
+      }
+    });
+    clear.addEventListener("click", () => {
+      input.value = "";
+      apply();
+      input.focus();
+    });
+    apply();
+    return apply;
+  }
+
   const scorerSelect = document.querySelector("[data-scorer-round-select]");
   if (scorerSelect) {
     const defaultRound = scorerSelect.value;
     const chart = document.querySelector("[data-scorer-chart]");
     setRoundViewState(scorerSelect, chart, "loading");
     loadInsights().then(data => {
-      const table = document.querySelector("[data-scorer-table] tbody");
+      const scorerTable = document.querySelector("[data-scorer-table]");
+      const table = scorerTable.querySelector("tbody");
+      const applyScorerFilter = initScorerFinder(scorerTable);
       const update = () => {
         const snapshot = data.scorers.find(item => item.round === Number(scorerSelect.value));
         table.innerHTML = snapshot.ranking.map((row, index) => `<tr><td>${index + 1}</td><th scope="row">${safe(row.name)}</th><td><a href="times/${slugify(row.team)}.html">${teamBadge(row.team, "table")}</a></td><td><strong>${row.goals}</strong></td></tr>`).join("");
         chart.innerHTML = scorerChart(snapshot.ranking);
+        applyScorerFilter();
       };
       restoreRoundFromUrl(scorerSelect, defaultRound);
       scorerSelect.addEventListener("change", () => {
