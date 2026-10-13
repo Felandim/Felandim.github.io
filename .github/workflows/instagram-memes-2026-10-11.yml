@@ -1,0 +1,33 @@
+name: Publish approved memes carousel - 2026-10-11
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - assets/instagram/memes-2026-10-11/publish.json
+
+permissions:
+  contents: read
+
+concurrency:
+  group: instagram-memes-2026-10-11
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    if: github.repository == 'Felandim/Felandim.github.io'
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with:
+          python-version: '3.11'
+      - name: Install publishing dependencies
+        run: pip install pillow
+      - name: Validate the three approved cards
+        run: python assets/instagram/memes-2026-10-11/publish.py
+      - name: Publish one carousel and verify the result
+        env:
+          INSTAGRAM_ACCESS_TOKEN: ${{ secrets.INSTAGRAM_ACCESS_TOKEN }}
+        run: python assets/instagram/memes-2026-10-11/publish.py --publish
