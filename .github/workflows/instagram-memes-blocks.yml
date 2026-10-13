@@ -1,0 +1,39 @@
+name: Publish memes for confirmed round blocks
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'assets/instagram/memes-blocks/**/publish.json'
+      - 'scripts/instagram_memes.py'
+      - '.github/workflows/instagram-memes-blocks.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: instagram-memes-blocks
+  cancel-in-progress: false
+jobs:
+  publish:
+    if: github.repository == 'Felandim/Felandim.github.io'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: main
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with:
+          python-version: '3.11'
+      - run: pip install pillow
+      - name: Configure durable receipts
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+      - name: Verify actual account and source summaries
+        env:
+          INSTAGRAM_ACCESS_TOKEN: ${{ secrets.INSTAGRAM_ACCESS_TOKEN }}
+        run: python scripts/instagram_memes.py
+      - name: Publish reviewed three-image manifests and persist receipts
+        env:
+          INSTAGRAM_ACCESS_TOKEN: ${{ secrets.INSTAGRAM_ACCESS_TOKEN }}
+        run: python scripts/instagram_memes.py --publish
