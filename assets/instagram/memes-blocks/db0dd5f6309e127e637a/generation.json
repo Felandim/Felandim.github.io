@@ -1,0 +1,34 @@
+{
+  "tool": "image_gen",
+  "prompts": [
+    {
+      "file": "01-derbi",
+      "refs": [
+        "/workspace/scratch/32c29c99ce09/refs/palmeiras_corinthians.jpg",
+        "/workspace/scratch/32c29c99ce09/carousel-publication/assets/instagram/memes-2026-10-11/01-palmeiras-corinthians.jpg"
+      ],
+      "prompt": "Use case: compositing. Create ONE entirely NEW Brazilian football Internet meme, portrait 4:5 1080x1350 composition. Image 1 is the verified real Palmeiras 4x1 Corinthians match photo; preserve and cut out its real celebrating Palmeiras player and defeated Corinthians player, do not fabricate a new match photo. Image 2 is only the approved chaotic handmade collage STYLE reference; DO NOT reuse its Ralph Simpsons character, joke, headline, lost penalty claim or eighth loss wording. New template: the classic THIS IS FINE cartoon dog calmly drinking coffee in a burning room, with a badly pasted Corinthians crest on the dog's shirt. Huge real Palmeiras celebrator head from image 1 pasted crookedly in upper left laughing, with gross white scissor edges; tiny defeated Corinthians photo sticker upper right. The dog is the main character lower center, exaggerated calm blank face while four cartoon footballs and green flames surround him. All obviously comic montage, no real injuries. Joke: taking consolation in a consolation goal despite a 4–1 derby loss. Exact very legible Portuguese main text top: 'O CORINTIANO DEPOIS DO DÉRBI:'; huge speech bubble from dog: 'PELO MENOS NÃO FOI DE ZERO'. Crooked scoreboard strip: 'PALMEIRAS 4 × 1 CORINTHIANS'. Small footer '30ª RODADA • 11/10/2026' and '@brasileiraoemrodadas'. Yellow torn tape, white rough paper, black heavy Impact lettering, green scribbles, absurd proportions and amateur meme energy like SouthAmericaMemes, not a polished sports poster. Keep text within safe edges, 4:5, no other facts, no photo credit text (credits go in caption)."
+    },
+    {
+      "file": "02-braga",
+      "refs": [
+        "/workspace/scratch/32c29c99ce09/memes-recurring/braga.jpg",
+        "/workspace/scratch/32c29c99ce09/carousel-publication/assets/instagram/memes-2026-10-11/01-palmeiras-corinthians.jpg"
+      ],
+      "prompt": "Use case: compositing. Create ONE Brazilian football meme portrait 4:5 (1080x1350 composition) with an immediately recognizable classic meme template and a real match photo. Input 1 is verified photo of Bragantino celebrating its 4–2 win over Cruzeiro on 12/10/2026, photographer Ari Ferreira. Preserve the real players and maroon kit in crude photo cutouts. Input 2 is STYLE ONLY: chaotic Brazilian internet collage, yellow crooked headline tape, rough scissors, gross thick white outlines and absurd heads, not its content. Two-panel joke: upper half Pablo Escobar waiting sadly on bench (classic 'sad Pablo Escobar' meme) wearing badly pasted Bragantino crest, comically tiny body; exact text 'BRAGANTINO: 6 JOGOS SEM VENCER'. Lower half classic Leonardo DiCaprio laughing with a drink (Django laughing meme), and the huge happy face of the real frontmost Bragantino player from input 1 crudely pasted nearby, celebration photo as crooked backdrop; exact main punchline 'AÍ O CRUZEIRO VEIO ME VISITAR'. Add small crooked sticker 'EU TAVA GUARDANDO OS GOLS'. Clear final score strip 'BRAGANTINO 4 × 2 CRUZEIRO'. Small footer '30ª RODADA • 12/10/2026' and '@brasileiraoemrodadas'. This is a visibly silly fan joke about ending a six-game winless streak with four goals, not player speech or a news quote. Strong comedy visual contrast: lonely waiting vs uncontrollable laughter. Keep text correct, extremely legible, no additional game details, no fabricated credits, no plastic AI style, no sleek graphic layout."
+    },
+    {
+      "file": "03-athletico",
+      "refs": [
+        "/workspace/scratch/32c29c99ce09/memes-recurring/chape.jpg",
+        "/workspace/scratch/32c29c99ce09/carousel-publication/assets/instagram/memes-2026-10-11/01-palmeiras-corinthians.jpg"
+      ],
+      "prompt": "Use case: compositing. Create ONE Brazilian football meme, portrait 4:5 1080x1350 composition. Input 1 is verified actual Chapecoense players huddle photograph from Chapecoense 1–4 Athletico-PR, 12/10/2026; preserve the photo as visibly pasted rough cutout, no invented match photograph. Input 2 is STYLE only: intentionally crooked Brazilian meme collage, white scissor borders, yellow tapes, heavy black Impact typography, absurd proportions, SouthAmericaMemes energy. New template: iconic confused John Travolta from Pulp Fiction standing and looking around with arms out. Put a crudely pasted Athletico-PR crest on his black suit and a small label 'ATHLETICO'. He is huge on the left, searching for the opposing defense. On the right, the real Chapecoense huddle is absurdly miniaturized and pasted on a cheap office meeting table, still recognizable in green football uniforms, comic montage only. Main top line, exact: 'CADÊ A MARCAÇÃO?'. A thick childish crooked arrow points at the Chape huddle with exact reply 'TÁ EM REUNIÃO'. Bottom big tilted score strip 'CHAPECOENSE 1 × 4 ATHLETICO-PR'. A red and black sticker says '4 GOLS E 3º LUGAR'. Small footer '30ª RODADA • 12/10/2026' and '@brasileiraoemrodadas'. The joke is the football defense metaphorically busy in a meeting while Athletico scores four and moves into third in league. Do NOT reference any tragedy, aircraft, death or disaster. Humor from absurd meeting and confused Travolta only. Correct legible text with safe margins; no extra factual claims or credits."
+    }
+  ],
+  "review": {
+    "facts": "Scores, dates, six-game winless sequence and Athletico third place verified against cited sources; all three games in published block.",
+    "visuals": "Reviewed all three generated images: readable Portuguese text; new templates (This Is Fine, sad Pablo/DiCaprio, confused Travolta); no recycled approved meme.",
+    "summary_verification": "API account listing confirmed source summary 17869163970663488 at https://www.instagram.com/p/Decl6o6FO48/; old carousel alone present before this publication."
+  }
+}

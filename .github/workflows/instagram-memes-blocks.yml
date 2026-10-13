@@ -25,6 +25,8 @@ jobs:
         with:
           python-version: '3.11'
       - run: pip install pillow
+      - name: Test publication safety
+        run: python -m unittest discover -s tests -p test_instagram_memes.py -v
       - name: Configure durable receipts
         run: |
           git config user.name 'github-actions[bot]'

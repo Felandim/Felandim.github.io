@@ -1,0 +1,85 @@
+{
+  "block_id": "db0dd5f6309e127e637a",
+  "summary_media_id": "17869163970663488",
+  "summary_permalink": "https://www.instagram.com/p/Decl6o6FO48/",
+  "account_id": "17841429981371844",
+  "api_profile_id": "27834175349616492",
+  "username": "brasileiraoemrodadas",
+  "match_keys": [
+    "[30, \"Atlético-MG\", \"Santos\"]",
+    "[30, \"Bahia\", \"Mirassol\"]",
+    "[30, \"Bragantino\", \"Cruzeiro\"]",
+    "[30, \"Chapecoense\", \"Athletico-PR\"]",
+    "[30, \"Coritiba\", \"Botafogo\"]",
+    "[30, \"Flamengo\", \"Fluminense\"]",
+    "[30, \"Grêmio\", \"Internacional\"]",
+    "[30, \"Palmeiras\", \"Corinthians\"]",
+    "[30, \"São Paulo\", \"Vitória\"]",
+    "[30, \"Vasco\", \"Remo\"]"
+  ],
+  "reviewed": true,
+  "caption": "30ª rodada, bloco de 10 a 12/10/2026 😂\n\nTeve 4 a 1 no Dérbi, o Braga saiu do jejum com 4 a 2 e o Furacão fez 4 a 1 para subir ao 3º lugar.\n\nQual desses memes é a cara do seu time?\n\nFotos: Cesar Greco/Palmeiras/by Canon; Ari Ferreira/Red Bull Bragantino; João Pedro Zatta Grolli/ACF. Montagens humorísticas.\n\n#Brasileirão #BrasileiraoEmRodadas #MemesDeFutebol",
+  "images": [
+    {
+      "file": "01-derbi.jpg",
+      "match_key": "[30, \"Palmeiras\", \"Corinthians\"]",
+      "match": {
+        "away": "Corinthians",
+        "date": "11/10/2026",
+        "home": "Palmeiras",
+        "round": 30,
+        "score": "4 x 1",
+        "stadium": "Nubank Parque",
+        "time": "17:30",
+        "url": "https://ge.globo.com/sp/futebol/brasileirao-serie-a/jogo/11-10-2026/palmeiras-corinthians.ghtml"
+      },
+      "source": {
+        "page": "https://palmeiras.com.br/noticias/palmeiras-goleia-corinthians-e-mantem-invencibilidade-em-classicos-estaduais-na-temporada/",
+        "image_url": "https://www.palmeiras.com.br/wp-content/uploads/2026/10/11102026_cg_palmeiras_destaque_4418_27.jpg",
+        "credit": "Cesar Greco/Palmeiras/by Canon"
+      },
+      "sha256": "479d6911eac728a9c7c535dfd55e4fbe5177e395587f46e94c402528dcd2aa1b"
+    },
+    {
+      "file": "02-braga.jpg",
+      "match_key": "[30, \"Bragantino\", \"Cruzeiro\"]",
+      "match": {
+        "away": "Cruzeiro",
+        "date": "12/10/2026",
+        "home": "Bragantino",
+        "round": 30,
+        "score": "4 x 2",
+        "stadium": "Cícero de Souza Marques",
+        "time": "21:00",
+        "url": "https://ge.globo.com/sp/vale-do-paraiba-regiao/futebol/brasileirao-serie-a/jogo/12-10-2026/bragantino-cruzeiro.ghtml"
+      },
+      "source": {
+        "page": "https://ge.globo.com/sp/vale-do-paraiba-regiao/futebol/times/bragantino/noticia/2026/10/12/atuacoes-do-bragantino-ataque-volta-a-ser-efetivo-em-vitoria-maiuscula-sobre-o-cruzeiro-de-suas-notas.ghtml",
+        "credit": "Ari Ferreira/Red Bull Bragantino",
+        "image_url": "https://s2-ge.glbimg.com/cz6JyFr-eNeRvu2DVqDmoXJEYZQ=/1280x0/filters:format(jpeg)/https://i.s3.glbimg.com/v1/AUTH_bc8228b6673f488aa253bbcb03c80ec5/internal_photos/bs/2026/G/I/W3L3trTz63Thr8UtqymQ/55586095033-c072b2fab5-o.jpg"
+      },
+      "sha256": "859c091c1ce265f2d675f13994298053d88249cba4adb139067d4dff6ce3d76d"
+    },
+    {
+      "file": "03-athletico.jpg",
+      "match_key": "[30, \"Chapecoense\", \"Athletico-PR\"]",
+      "match": {
+        "away": "Athletico-PR",
+        "date": "12/10/2026",
+        "home": "Chapecoense",
+        "round": 30,
+        "score": "1 x 4",
+        "stadium": "Arena Condá",
+        "time": "19:30",
+        "url": "https://ge.globo.com/sc/futebol/brasileirao-serie-a/jogo/12-10-2026/chapecoense-atletico-pr.ghtml"
+      },
+      "source": {
+        "page": "https://ge.globo.com/sc/futebol/times/chapecoense/noticia/2026/10/12/atuacoes-da-chapecoense-bolasie-e-garcez-se-salvam-em-mais-uma-goleada-sofrida-de-suas-notas.ghtml",
+        "credit": "João Pedro Zatta Grolli/ACF",
+        "impact_source": "https://www.uol.com.br/esporte/futebol/ultimas-noticias/2026/10/12/chapecoense-x-athletico-pr---brasileirao-2026.ghtm",
+        "image_url": "https://s2-ge.glbimg.com/EyAi92secpihWdP3K2eHQLQVwnE=/0x0:986x977/984x0/smart/filters:strip_icc()/i.s3.glbimg.com/v1/AUTH_bc8228b6673f488aa253bbcb03c80ec5/internal_photos/bs/2026/I/G/CgpwSGS8SaoifAHf7CeQ/huegayowaaazkuk.jpg"
+      },
+      "sha256": "5c314fc06763b96411ce30616f78c46849f0160837c99dd6e10f2f6caf625a41"
+    }
+  ]
+}
