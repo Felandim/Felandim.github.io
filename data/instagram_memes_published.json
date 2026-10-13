@@ -1,11 +1,14 @@
 {
   "db0dd5f6309e127e637a": {
     "summary_media_id": "17869163970663488",
-    "state": "preparing",
+    "state": "creating_containers",
     "carousel_id": null,
     "permalink": null,
-    "updated_at": "2026-10-13T17:38:00-03:00",
+    "updated_at": "2026-10-13T23:53:26.347861+00:00",
     "summary_published_at": "2026-10-13T16:46:44.057932-03:00",
-    "note": "New summary after activation; creating new artwork for its exact match set, without reusing the 11 October carousel."
+    "note": "New summary after activation; creating new artwork for its exact match set, without reusing the 11 October carousel.",
+    "summary_permalink": "https://www.instagram.com/p/Decl6o6FO48/",
+    "caption_sha256": "d7984cee53913766cc3430b443796468c2e64e2ea3d6d4c9303fce9c6acae90a",
+    "source_commit": "8e104ce97477645b975d7b70d80b12b92c352e43"
   }
 }
