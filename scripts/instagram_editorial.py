@@ -41,6 +41,12 @@ def _join_pt(items: list[str]) -> str:
     return f"{', '.join(items[:-1])} e {items[-1]}"
 
 
+def _period_noun(matches: list[dict]) -> str:
+    """Usa 'bloco' quando o recorte reúne jogos de mais de uma data."""
+    dates = {str(match.get("date", "")).strip() for match in matches if str(match.get("date", "")).strip()}
+    return "bloco" if len(dates) > 1 else "dia"
+
+
 def derby_day_spotlight(matches: list[dict], minimum_derbies: int = 2) -> dict | None:
     """Destaca datas com vários clássicos concluídos, sem depender de imagens dos jogos."""
     derbies = []
@@ -54,11 +60,14 @@ def derby_day_spotlight(matches: list[dict], minimum_derbies: int = 2) -> dict |
         return None
     names = [item["name"] for item in derbies]
     results = [f"{item['home']} {item['score']} {item['away']}" for item in derbies]
+    period = _period_noun(matches)
+    label = "BLOCO DE CLÁSSICOS" if period == "bloco" else "DIA DE CLÁSSICOS"
+    caption_lead = "Bloco de clássicos" if period == "bloco" else "Dia de clássicos"
     return {
         "kind":"derby_day",
-        "label":"DIA DE CLÁSSICOS",
-        "text":f"{len(derbies)} clássicos no mesmo dia • {_join_pt(names)}",
-        "caption":f"Dia de clássicos: {'; '.join(results)}.",
+        "label":label,
+        "text":f"{len(derbies)} clássicos no mesmo {period} • {_join_pt(names)}",
+        "caption":f"{caption_lead}: {'; '.join(results)}.",
         "derbies":names,
         "results":results,
         "count":len(derbies),
@@ -137,14 +146,51 @@ def both_teams_scored_spotlight(matches: list[dict], minimum_matches: int = 4, m
     if share < minimum_share:
         return None
     percentage = round(share * 100)
+    period = _period_noun(matches)
     return {
         "kind":"both_teams_scored",
         "label":"LÁ E CÁ",
-        "text":f"{both_scored} de {len(scored)} jogos com gols dos dois times • {percentage}% do dia",
-        "caption":f"Lá e cá: {both_scored} das {len(scored)} partidas do dia tiveram gols dos dois times ({percentage}%).",
+        "text":f"{both_scored} de {len(scored)} jogos com gols dos dois times • {percentage}% do {period}",
+        "caption":f"Lá e cá: {both_scored} das {len(scored)} partidas do {period} tiveram gols dos dois times ({percentage}%).",
         "both_scored":both_scored,
         "matches":len(scored),
         "share":share,
+    }
+
+
+def clean_sheet_wave_spotlight(matches: list[dict], minimum_matches: int = 4, minimum_share: float = 0.75) -> dict | None:
+    """Destaca blocos em que ao menos uma defesa saiu zerada na maioria dos jogos."""
+    completed = []
+    teams = []
+    for match in matches:
+        score = instagram_daily._score(match.get("score", ""))
+        if not score:
+            continue
+        completed.append(score)
+        home_goals, away_goals = score
+        if away_goals == 0 and match.get("home"):
+            teams.append(match["home"])
+        if home_goals == 0 and match.get("away"):
+            teams.append(match["away"])
+    if len(completed) < minimum_matches:
+        return None
+    clean_sheet_matches = sum(home == 0 or away == 0 for home, away in completed)
+    share = clean_sheet_matches / len(completed)
+    if share < minimum_share:
+        return None
+    percentage = round(share * 100)
+    period = _period_noun(matches)
+    teams = list(dict.fromkeys(teams))
+    team_context = f" Saíram sem sofrer: {_join_pt(teams)}." if teams else ""
+    return {
+        "kind":"clean_sheet_wave",
+        "label":"REDE ZERADA",
+        "text":f"{clean_sheet_matches} de {len(completed)} jogos com ao menos uma defesa zerada • {percentage}% do {period}",
+        "caption":f"Rede zerada: {clean_sheet_matches} das {len(completed)} partidas do {period} tiveram ao menos um time sem sofrer gol ({percentage}%).{team_context}",
+        "clean_sheet_matches":clean_sheet_matches,
+        "matches":len(completed),
+        "share":share,
+        "teams":teams,
     }
 
 
@@ -157,7 +203,8 @@ def away_dominance_spotlight(matches: list[dict], minimum_matches: int = 4, mini
     if share < minimum_share:
         return None
     percentage = round(share * 100)
-    return {"kind":"away_dominance","label":"VISITANTES MANDARAM","text":f"{away_wins} vitórias fora em {len(scored)} jogos • {percentage}% do dia","caption":f"Visitantes mandaram: quem jogou fora venceu {away_wins} das {len(scored)} partidas do dia ({percentage}%).","away_wins":away_wins,"matches":len(scored),"share":share}
+    period = _period_noun(matches)
+    return {"kind":"away_dominance","label":"VISITANTES MANDARAM","text":f"{away_wins} vitórias fora em {len(scored)} jogos • {percentage}% do {period}","caption":f"Visitantes mandaram: quem jogou fora venceu {away_wins} das {len(scored)} partidas do {period} ({percentage}%).","away_wins":away_wins,"matches":len(scored),"share":share}
 
 
 def home_dominance_spotlight(matches: list[dict], minimum_matches: int = 4, minimum_share: float = 0.75) -> dict | None:
@@ -170,7 +217,8 @@ def home_dominance_spotlight(matches: list[dict], minimum_matches: int = 4, mini
     if share < minimum_share:
         return None
     percentage = round(share * 100)
-    return {"kind":"home_dominance","label":"MANDO PESOU","text":f"{home_wins} vitórias em casa em {len(scored)} jogos • {percentage}% do dia","caption":f"Mando pesou: os mandantes venceram {home_wins} das {len(scored)} partidas do dia ({percentage}%).","home_wins":home_wins,"matches":len(scored),"share":share}
+    period = _period_noun(matches)
+    return {"kind":"home_dominance","label":"MANDO PESOU","text":f"{home_wins} vitórias em casa em {len(scored)} jogos • {percentage}% do {period}","caption":f"Mando pesou: os mandantes venceram {home_wins} das {len(scored)} partidas do {period} ({percentage}%).","home_wins":home_wins,"matches":len(scored),"share":share}
 
 
 def draw_dominance_spotlight(matches: list[dict], minimum_matches: int = 4, minimum_share: float = 0.75) -> dict | None:
@@ -183,14 +231,18 @@ def draw_dominance_spotlight(matches: list[dict], minimum_matches: int = 4, mini
     if share < minimum_share:
         return None
     percentage = round(share * 100)
-    return {"kind":"draw_dominance","label":"EMPATE EM ALTA","text":f"{draws} empates em {len(scored)} jogos • {percentage}% do dia","caption":f"Empate em alta: {draws} das {len(scored)} partidas do dia terminaram iguais ({percentage}%).","draws":draws,"matches":len(scored),"share":share}
+    period = _period_noun(matches)
+    return {"kind":"draw_dominance","label":"EMPATE EM ALTA","text":f"{draws} empates em {len(scored)} jogos • {percentage}% do {period}","caption":f"Empate em alta: {draws} das {len(scored)} partidas do {period} terminaram iguais ({percentage}%).","draws":draws,"matches":len(scored),"share":share}
 
 
 def drawless_day_spotlight(matches: list[dict], minimum_matches: int = 4) -> dict | None:
     scored = [score for match in matches if (score := instagram_daily._score(match.get("score", "")))]
     if len(scored) < minimum_matches or any(home == away for home, away in scored):
         return None
-    return {"kind":"drawless_day","label":"DIA SEM EMPATES","text":f"{len(scored)} jogos, {len(scored)} vencedores • nenhum empate","caption":f"Dia sem empates: as {len(scored)} partidas disputadas terminaram com vencedor.","matches":len(scored)}
+    period = _period_noun(matches)
+    label = "BLOCO SEM EMPATES" if period == "bloco" else "DIA SEM EMPATES"
+    caption_lead = "Bloco sem empates" if period == "bloco" else "Dia sem empates"
+    return {"kind":"drawless_day","label":label,"text":f"{len(scored)} jogos, {len(scored)} vencedores • nenhum empate","caption":f"{caption_lead}: as {len(scored)} partidas disputadas terminaram com vencedor.","matches":len(scored)}
 
 
 def defensive_streak_spotlight(insights: dict, rounds: int = 3, minimum_points: int = 7) -> dict | None:
@@ -231,7 +283,7 @@ def editorial_spotlight(insights: dict, matches: list[dict]) -> dict:
     base = instagram_matchday.matchday_spotlight(insights, matches)
     if base.get("kind") in HIGH_PRIORITY_KINDS or base.get("kind") == "delayed_match":
         return base
-    return derby_day_spotlight(matches) or high_scoring_match_spotlight(matches) or scoring_surge_spotlight(insights) or scoring_drought_spotlight(insights) or both_teams_scored_spotlight(matches) or away_dominance_spotlight(matches) or home_dominance_spotlight(matches) or draw_dominance_spotlight(matches) or drawless_day_spotlight(matches) or defensive_streak_spotlight(insights) or title_race_spotlight(insights) or base
+    return derby_day_spotlight(matches) or high_scoring_match_spotlight(matches) or scoring_surge_spotlight(insights) or scoring_drought_spotlight(insights) or both_teams_scored_spotlight(matches) or clean_sheet_wave_spotlight(matches) or away_dominance_spotlight(matches) or home_dominance_spotlight(matches) or draw_dominance_spotlight(matches) or drawless_day_spotlight(matches) or defensive_streak_spotlight(insights) or title_race_spotlight(insights) or base
 
 
 def _spotlight_sentence(spotlight: dict) -> str:

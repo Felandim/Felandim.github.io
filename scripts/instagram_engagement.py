@@ -85,6 +85,8 @@ def engagement_question(spotlight: dict) -> str:
         return "A rodada destrava ou termina com cara de jogo amarrado?"
     if kind == "both_teams_scored":
         return "Na próxima rodada, qual duelo promete gols dos dois lados?"
+    if kind == "clean_sheet_wave":
+        return "Qual dessas defesas mais te impressionou?"
     if kind == "away_dominance":
         return "Na próxima rodada, os mandantes retomam a vantagem?"
     if kind == "home_dominance":

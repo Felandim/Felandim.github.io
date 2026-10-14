@@ -16,6 +16,11 @@ SPOTLIGHT_BOX = (60, 1140, 1020, 1275)
 SPOTLIGHT_TEXT_WIDTH = 870
 
 
+def _period_noun(matches: list[dict]) -> str:
+    dates = {str(match.get("date", "")).strip() for match in matches if str(match.get("date", "")).strip()}
+    return "bloco" if len(dates) > 1 else "dia"
+
+
 def publication_date(now: datetime | None = None) -> date:
     now = now or datetime.now(instagram_daily.TZ)
     return now.date() - timedelta(days=1)
@@ -286,12 +291,14 @@ def tight_matchday_spotlight(
     if share < minimum_share:
         return None
 
+    period = _period_noun(matches)
+
     return {
         "kind": "tight_matches",
         "label": "JOGOS NO LIMITE",
-        "text": f"{close_games} de {len(scored)} jogos do dia decididos por até 1 gol",
+        "text": f"{close_games} de {len(scored)} jogos do {period} decididos por até 1 gol",
         "caption": (
-            f"Jogos no limite: {close_games} de {len(scored)} partidas do dia "
+            f"Jogos no limite: {close_games} de {len(scored)} partidas do {period} "
             "terminaram empatadas ou foram decididas por apenas um gol."
         ),
         "close_games": close_games,

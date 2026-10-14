@@ -188,6 +188,19 @@ class InstagramEditorialTests(unittest.TestCase):
         self.assertEqual(question, "Na próxima rodada, qual duelo promete gols dos dois lados?")
         self.assertLessEqual(len(caption), 2200)
 
+    def test_clean_sheet_wave_is_selected_over_generic_fallbacks(self):
+        matches = [
+            {"round": 24, "home": "Santos", "away": "Botafogo", "score": "1 x 0"},
+            {"round": 24, "home": "Cruzeiro", "away": "Fluminense", "score": "2 x 0"},
+            {"round": 24, "home": "Grêmio", "away": "Atlético-MG", "score": "0 x 0"},
+            {"round": 24, "home": "Athletico-PR", "away": "Bragantino", "score": "2 x 1"},
+        ]
+
+        spotlight = instagram_editorial.editorial_spotlight(insights((50, 45, 42, 39)), matches)
+
+        self.assertEqual(spotlight["kind"], "clean_sheet_wave")
+        self.assertEqual(spotlight["clean_sheet_matches"], 3)
+
     def test_draw_dominance_requires_four_matches_and_seventy_five_percent(self):
         matches = [
             {"score": "1 x 1"},
