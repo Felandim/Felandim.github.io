@@ -40,6 +40,38 @@ class PublicationSafety(unittest.TestCase):
         self.assertEqual(save.call_args.kwargs["state"], "published")
         self.assertEqual(save.call_args.kwargs["carousel_id"], "existing")
 
+    def test_final_receipt_is_verified_without_being_rewritten(self):
+        api = Mock()
+        api.request.return_value = {
+            "media_type": "CAROUSEL_ALBUM",
+            "permalink": "https://www.instagram.com/p/existing/",
+            "children": {"data": [{"id": str(i), "media_type": "IMAGE"} for i in range(3)]},
+        }
+        manifest = {"block_id": "a" * 20, "caption": "Same caption"}
+        recent = [
+            {"id": "summary", "permalink": "https://www.instagram.com/p/summary/"},
+            {"id": "existing", "caption": "Same caption"},
+        ]
+        state = {
+            "state": "published",
+            "summary_media_id": "summary",
+            "summary_permalink": "https://www.instagram.com/p/summary/",
+            "caption_sha256": memes.hashlib.sha256(b"Same caption").hexdigest(),
+            "carousel_id": "existing",
+            "permalink": "https://www.instagram.com/p/existing/",
+            "child_media_ids": ["0", "1", "2"],
+            "slides": 3,
+            "published_at": "2026-10-13T23:53:54+00:00",
+        }
+
+        with patch.object(memes, "read_json", return_value={"a" * 20: state}), patch.object(memes, "checkpoint") as save:
+            memes.publish_one(api, manifest, Path("unused"), {"media_id": "summary"}, recent, "b" * 40)
+
+        save.assert_not_called()
+        api.request.assert_called_once_with(
+            "GET", "existing", fields="id,media_type,permalink,children.limit(10){id,media_type}"
+        )
+
     def test_carousel_requires_three_images_and_permalink(self):
         api = Mock()
         base = {"media_type": "CAROUSEL_ALBUM", "permalink": "https://www.instagram.com/p/ok/",

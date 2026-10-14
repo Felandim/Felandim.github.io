@@ -191,6 +191,17 @@ def publish_one(api, manifest, path, block, recent, sha):
         if not any(str(m["id"]) == str(candidate) for m in recent):
             raise PublishError("Recorded carousel is not in the authorized account.")
         receipt = verified_media(api, candidate)
+        expected = {
+            "state": "published",
+            "summary_media_id": block["media_id"],
+            "summary_permalink": summary["permalink"],
+            "caption_sha256": digest,
+            **receipt,
+        }
+        if state.get("published_at") and all(state.get(key) == value for key, value in expected.items()):
+            # The account was re-verified, but a final receipt must remain byte-stable.
+            print(json.dumps(receipt), flush=True)
+            return
         checkpoint(block_id, state="published", summary_media_id=block["media_id"],
                    summary_permalink=summary["permalink"], caption_sha256=digest, **receipt,
                    published_at=state.get("published_at") or datetime.now(timezone.utc).isoformat())
