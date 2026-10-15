@@ -193,10 +193,31 @@
 
   initScrollableTables();
 
-  function standingsRows(rows) {
+  function positionMovement(row, previousRows) {
+    if (!previousRows) {
+      return '<span class="br-position-movement is-unavailable" aria-label="Primeira rodada; sem comparação anterior">—</span>';
+    }
+
+    const previous = previousRows.find(item => item.team === row.team);
+    if (!previous) {
+      return '<span class="br-position-movement is-unavailable" aria-label="Sem comparação com a rodada anterior">—</span>';
+    }
+
+    const places = previous.position - row.position;
+    if (places > 0) {
+      return `<span class="br-position-movement is-up" aria-label="Subiu ${places} ${places === 1 ? "posição" : "posições"}">↑ ${places}</span>`;
+    }
+    if (places < 0) {
+      const dropped = Math.abs(places);
+      return `<span class="br-position-movement is-down" aria-label="Caiu ${dropped} ${dropped === 1 ? "posição" : "posições"}">↓ ${dropped}</span>`;
+    }
+    return '<span class="br-position-movement is-steady" aria-label="Manteve a posição">•</span>';
+  }
+
+  function standingsRows(rows, previousRows) {
     return rows.map(row => {
       const zone = row.position <= 4 ? "g4" : row.position >= 17 ? "z4" : "";
-      return `<tr class="${zone}"><td><span class="br-pos ${zone}">${row.position}</span></td><th scope="row"><a href="times/${slugify(row.team)}.html">${teamBadge(row.team, "table")}</a></th><td>${row.points}</td><td>${row.played}</td><td>${row.wins}</td><td>${row.draws}</td><td>${row.losses}</td><td>${row.gd > 0 ? "+" : ""}${row.gd}</td></tr>`;
+      return `<tr class="${zone}"><td><span class="br-position-stack"><span class="br-pos ${zone}">${row.position}</span>${positionMovement(row, previousRows)}</span></td><th scope="row"><a href="times/${slugify(row.team)}.html">${teamBadge(row.team, "table")}</a></th><td>${row.points}</td><td>${row.played}</td><td>${row.wins}</td><td>${row.draws}</td><td>${row.losses}</td><td>${row.gd > 0 ? "+" : ""}${row.gd}</td></tr>`;
     }).join("");
   }
 
@@ -415,7 +436,8 @@
       const update = () => {
         const round = Number(roundSelect.value);
         const snapshot = data.snapshots.find(item => item.round === round);
-        tableBody.innerHTML = standingsRows(snapshot.table);
+        const previous = data.snapshots.find(item => item.round === round - 1);
+        tableBody.innerHTML = standingsRows(snapshot.table, previous?.table);
         chart.innerHTML = multiChart(snapshot.table, data.snapshots, round);
         applyTeamFocus();
       };

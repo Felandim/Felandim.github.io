@@ -509,6 +509,15 @@ h3 { margin-bottom: 12px; font-size: 1.35rem; }
 .br-pos { display: grid; place-items: center; width: 28px; height: 28px; font-size: .72rem; font-weight: 900; }
 .br-pos.g4 { background: var(--br-hot); }
 .br-pos.z4 { color: #fff; background: var(--br-coral); }
+.br-position-stack { display: inline-grid; justify-items: center; gap: 4px; min-width: 34px; }
+.br-position-movement { display: inline-flex; align-items: center; justify-content: center; min-width: 28px; min-height: 18px; padding: 1px 4px; border-radius: 999px; font-size: .6rem; font-weight: 900; line-height: 1; }
+.br-position-movement.is-up { color: #1c5b40; background: #d8efe3; }
+.br-position-movement.is-down { color: #8c2f26; background: #f8deda; }
+.br-position-movement.is-steady { color: #56625b; background: #e7e9e3; }
+.br-position-movement.is-unavailable { color: #747d77; background: #ecece7; }
+.br-movement-key { display: flex; flex-wrap: wrap; gap: 7px 14px; align-items: center; margin: 0 0 12px; color: #68736c; font-size: .72rem; }
+.br-movement-key strong { color: var(--br-ink); }
+.br-movement-key span { white-space: nowrap; }
 .br-section-dark { color: #f6f4ec; background: var(--br-ink); }
 .br-section-dark .br-section-head { border-color: #526058; }
 .br-section-dark .br-section-head > a { color: #f6f4ec; }

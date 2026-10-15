@@ -275,11 +275,36 @@ def line_chart(history: list[dict[str, Any]], label: str) -> str:
     return f'<svg class="br-line-chart" viewBox="0 0 {width} {height}" role="img" aria-label="{esc(label, True)}"><line x1="{pad}" y1="{pad}" x2="{pad}" y2="{height-pad}"/><line x1="{pad}" y1="{pad}" x2="{width-pad}" y2="{pad}"/><line x1="{pad}" y1="{height-pad}" x2="{width-pad}" y2="{height-pad}"/><text x="4" y="{pad+5}">1º</text><text x="4" y="{height-pad+5}">20º</text><polyline points="{path_points}"/><circle cx="{last_x}" cy="{last_y}" r="7"/></svg>'
 
 
-def table_html(rows: list[dict[str, Any]], limit: int | None = None, team_prefix: str = "times/") -> str:
+def movement_badge_html(row: dict[str, Any], previous_by_team: dict[str, dict[str, Any]]) -> str:
+    previous = previous_by_team.get(row["team"])
+    if previous is None:
+        return '<span class="br-position-movement is-unavailable" aria-label="Sem comparação com a rodada anterior">—</span>'
+
+    places = previous["position"] - row["position"]
+    if places > 0:
+        label = "posição" if places == 1 else "posições"
+        return f'<span class="br-position-movement is-up" aria-label="Subiu {places} {label}">↑ {places}</span>'
+    if places < 0:
+        dropped = abs(places)
+        label = "posição" if dropped == 1 else "posições"
+        return f'<span class="br-position-movement is-down" aria-label="Caiu {dropped} {label}">↓ {dropped}</span>'
+    return '<span class="br-position-movement is-steady" aria-label="Manteve a posição">•</span>'
+
+
+def table_html(
+    rows: list[dict[str, Any]],
+    limit: int | None = None,
+    team_prefix: str = "times/",
+    previous_rows: list[dict[str, Any]] | None = None,
+) -> str:
     body = []
+    previous_by_team = {row["team"]: row for row in previous_rows} if previous_rows is not None else None
     for row in rows[:limit]:
         zone = " g4" if row["position"] <= 4 else " z4" if row["position"] >= 17 else ""
-        body.append(f'<tr class="{zone.strip()}"><td><span class="br-pos{zone}">{row["position"]}</span></td><th scope="row"><a href="{team_prefix}{slugify(row["team"])}.html">{team_badge(row["team"], "table")}</a></th><td>{row["points"]}</td><td>{row["played"]}</td><td>{row["wins"]}</td><td>{row["draws"]}</td><td>{row["losses"]}</td><td>{row["gd"]:+d}</td></tr>')
+        position = f'<span class="br-pos{zone}">{row["position"]}</span>'
+        if previous_by_team is not None:
+            position = f'<span class="br-position-stack">{position}{movement_badge_html(row, previous_by_team)}</span>'
+        body.append(f'<tr class="{zone.strip()}"><td>{position}</td><th scope="row"><a href="{team_prefix}{slugify(row["team"])}.html">{team_badge(row["team"], "table")}</a></th><td>{row["points"]}</td><td>{row["played"]}</td><td>{row["wins"]}</td><td>{row["draws"]}</td><td>{row["losses"]}</td><td>{row["gd"]:+d}</td></tr>')
     return '<div class="br-table-wrap"><table class="br-table" data-standings-table><thead><tr><th>Pos.</th><th>Time</th><th>Pts</th><th>J</th><th>V</th><th>E</th><th>D</th><th>SG</th></tr></thead><tbody>' + "".join(body) + '</tbody></table></div>'
 
 
@@ -393,8 +418,9 @@ def hub_content(insights: dict[str, Any]) -> str:
 
 def classification_content(insights: dict[str, Any]) -> str:
     current = insights["snapshots"][-1]
+    previous = insights["snapshots"][-2]["table"] if len(insights["snapshots"]) > 1 else []
     options = "".join(f'<option value="{n}"{(" selected" if n == insights["current_round"] else "")}>Rodada {n}</option>' for n in range(1, insights["current_round"] + 1))
-    return f'''<section class="br-page-hero"><div class="br-shell"><p class="br-kicker">Classificação histórica</p><h1>Onde cada time estava depois de cada rodada?</h1><p>Selecione uma rodada para reconstruir a tabela e compare as trajetórias.</p></div></section><section class="br-section"><div class="br-shell"><div class="br-control"><label for="round-select">Ver classificação após</label><select id="round-select" data-round-select>{options}</select></div><div class="br-analysis-grid"><div>{table_html(current['table'])}</div><div class="br-chart-panel"><p class="br-kicker">Evolução visual</p><h2>Corrida por posição</h2><div data-multi-chart aria-live="polite"></div><p class="br-note">Quanto mais alto, melhor. Critérios disponíveis: pontos, vitórias, saldo e gols marcados.</p></div></div></div></section>'''
+    return f'''<section class="br-page-hero"><div class="br-shell"><p class="br-kicker">Classificação histórica</p><h1>Onde cada time estava depois de cada rodada?</h1><p>Selecione uma rodada para reconstruir a tabela e compare as trajetórias.</p></div></section><section class="br-section"><div class="br-shell"><div class="br-control"><label for="round-select">Ver classificação após</label><select id="round-select" data-round-select>{options}</select></div><div class="br-analysis-grid"><div><p class="br-movement-key"><strong>Movimento desde a rodada anterior:</strong> <span>↑ subiu</span><span>↓ caiu</span><span>• manteve</span></p>{table_html(current['table'], previous_rows=previous)}</div><div class="br-chart-panel"><p class="br-kicker">Evolução visual</p><h2>Corrida por posição</h2><div data-multi-chart aria-live="polite"></div><p class="br-note">Quanto mais alto, melhor. Critérios disponíveis: pontos, vitórias, saldo e gols marcados.</p></div></div></div></section>'''
 
 
 def scorers_content(insights: dict[str, Any]) -> str:

@@ -115,10 +115,18 @@ def test_rankings_render_proportional_team_badges():
 def test_standings_render_badges_initially_and_after_round_change():
     classification = (ROOT / "brasileirao" / "classificacao-rodada-a-rodada.html").read_text(encoding="utf-8")
     script = (ROOT / "brasileirao.js").read_text(encoding="utf-8")
+    css = (ROOT / "style.css").read_text(encoding="utf-8")
     assert classification.count('class="br-team-badge"') == 20
     assert classification.count("br-team-with-badge-table") == 20
+    assert classification.count("br-position-movement") == 20
+    assert "Movimento desde a rodada anterior:" in classification
     assert 'const teamBadge = (team, variant = "inline") =>' in script
     assert '${teamBadge(row.team, "table")}' in script
+    assert "function positionMovement(row, previousRows)" in script
+    assert "previous?.table" in script
+    assert 'aria-label="Manteve a posição"' in script
+    assert ".br-position-movement.is-up" in css
+    assert ".br-movement-key" in css
 
 
 def test_team_badges_cover_hub_scorers_comparison_team_and_round_pages():
@@ -423,6 +431,9 @@ def test_round_selectors_restore_url_and_browser_history():
             )
             standings = page.locator("[data-round-select]")
             page.wait_for_function("document.querySelector('[data-round-select]').value === '10'")
+            movement = page.locator("[data-standings-table] .br-position-movement")
+            assert movement.count() == 20
+            assert page.locator("[data-standings-table] .br-position-movement.is-up, [data-standings-table] .br-position-movement.is-down").count() > 0
             standings.select_option("11")
             page.wait_for_url("**?rodada=11")
             page.go_back()
