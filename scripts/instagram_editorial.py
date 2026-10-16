@@ -89,6 +89,58 @@ def high_scoring_match_spotlight(matches: list[dict], minimum_goals: int = 5) ->
     return {"kind":"goal_fest","label":"CHUVA DE GOLS","text":f"{match['home']} {match['score']} {match['away']} • {total_goals} gols","caption":f"Chuva de gols: {match['home']} {match['score']} {match['away']} teve {total_goals} gols no placar.","home":match.get("home", ""),"away":match.get("away", ""),"score":match.get("score", ""),"goals":total_goals}
 
 
+def rout_wave_spotlight(
+    matches: list[dict],
+    minimum_matches: int = 4,
+    minimum_routs: int = 2,
+    minimum_margin: int = 3,
+    minimum_share: float = 0.40,
+) -> dict | None:
+    """Destaca blocos com várias goleadas, não apenas o maior placar isolado."""
+    completed = []
+    routs = []
+    for match in matches:
+        score = instagram_daily._score(match.get("score", ""))
+        if not score:
+            continue
+        completed.append(match)
+        home_goals, away_goals = score
+        margin = abs(home_goals - away_goals)
+        if margin < minimum_margin:
+            continue
+        winner = match.get("home", "") if home_goals > away_goals else match.get("away", "")
+        routs.append({
+            "winner": winner,
+            "home": match.get("home", ""),
+            "away": match.get("away", ""),
+            "score": match.get("score", ""),
+            "margin": margin,
+        })
+
+    if len(completed) < minimum_matches or len(routs) < minimum_routs:
+        return None
+    share = len(routs) / len(completed)
+    if share < minimum_share:
+        return None
+
+    percentage = round(share * 100)
+    period = _period_noun(completed)
+    results = [f"{item['home']} {item['score']} {item['away']}" for item in routs]
+    return {
+        "kind": "rout_wave",
+        "label": "GOLEADAS EM SÉRIE",
+        "text": f"{len(routs)} de {len(completed)} jogos decididos por {minimum_margin}+ gols • {percentage}% do {period}",
+        "caption": (
+            f"Goleadas em série: {'; '.join(results)}. Foram {len(routs)} das {len(completed)} partidas "
+            f"do {period} decididas por {minimum_margin} ou mais gols de diferença ({percentage}%)."
+        ),
+        "routs": routs,
+        "matches": len(completed),
+        "share": share,
+        "minimum_margin": minimum_margin,
+    }
+
+
 def scoring_surge_spotlight(insights: dict, minimum_matches: int = 5, history_rounds: int = 5, minimum_lift: float = 0.35, minimum_rate: float = 3.0) -> dict | None:
     rounds = insights.get("rounds", [])
     if len(rounds) < history_rounds + 1:
@@ -283,7 +335,7 @@ def editorial_spotlight(insights: dict, matches: list[dict]) -> dict:
     base = instagram_matchday.matchday_spotlight(insights, matches)
     if base.get("kind") in HIGH_PRIORITY_KINDS or base.get("kind") == "delayed_match":
         return base
-    return derby_day_spotlight(matches) or high_scoring_match_spotlight(matches) or scoring_surge_spotlight(insights) or scoring_drought_spotlight(insights) or both_teams_scored_spotlight(matches) or clean_sheet_wave_spotlight(matches) or away_dominance_spotlight(matches) or home_dominance_spotlight(matches) or draw_dominance_spotlight(matches) or drawless_day_spotlight(matches) or defensive_streak_spotlight(insights) or title_race_spotlight(insights) or base
+    return derby_day_spotlight(matches) or rout_wave_spotlight(matches) or high_scoring_match_spotlight(matches) or scoring_surge_spotlight(insights) or scoring_drought_spotlight(insights) or both_teams_scored_spotlight(matches) or clean_sheet_wave_spotlight(matches) or away_dominance_spotlight(matches) or home_dominance_spotlight(matches) or draw_dominance_spotlight(matches) or drawless_day_spotlight(matches) or defensive_streak_spotlight(insights) or title_race_spotlight(insights) or base
 
 
 def _spotlight_sentence(spotlight: dict) -> str:

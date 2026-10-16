@@ -79,6 +79,12 @@ def engagement_question(spotlight: dict) -> str:
     if kind == "goal_fest":
         goals = spotlight.get("goals")
         return f"Qual jogo da rodada ainda pode superar esses {goals} gols?" if goals else "Qual jogo da rodada ainda pode superar esse placar?"
+    if kind == "rout_wave":
+        winners = [str(item.get("winner", "")).strip() for item in spotlight.get("routs", [])]
+        winners = [winner for winner in winners if winner]
+        if len(winners) >= 2:
+            return f"Qual goleada foi mais marcante: {_join_question_options(winners)}?"
+        return "Qual dessas goleadas mais marcou a rodada?"
     if kind == "scoring_surge":
         return "Esse ritmo de gols se mantém até o fim da rodada?"
     if kind == "scoring_drought":
@@ -119,6 +125,13 @@ def engagement_question(spotlight: dict) -> str:
     if kind == "form":
         return "Quem consegue manter esse ritmo nas próximas rodadas?"
     return "A próxima rodada supera essa marca?"
+
+
+def _join_question_options(items: list[str]) -> str:
+    unique = list(dict.fromkeys(items))
+    if len(unique) < 2:
+        return "".join(unique)
+    return f"{', '.join(unique[:-1])} ou {unique[-1]}"
 
 
 def with_engagement_question(caption: str, spotlight: dict, limit: int = 2200) -> str:
