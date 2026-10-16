@@ -8,6 +8,7 @@ on:
       - 'data/instagram_publish_status.json'
       - '.github/workflows/**'
       - 'tests/test_security_hardening.py'
+      - 'tests/site-analytics.test.cjs'
   pull_request:
     paths:
       - 'brasileirao.js'
@@ -15,6 +16,7 @@ on:
       - 'data/instagram_publish_status.json'
       - '.github/workflows/**'
       - 'tests/test_security_hardening.py'
+      - 'tests/site-analytics.test.cjs'
 
 permissions:
   contents: read
@@ -31,4 +33,5 @@ jobs:
           node-version: 22
       - run: node --check brasileirao.js
       - run: node --check site.js
+      - run: node --test tests/site-analytics.test.cjs
       - run: python3 -m unittest tests/test_security_hardening.py

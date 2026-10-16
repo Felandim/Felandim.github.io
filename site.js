@@ -6,7 +6,9 @@ const escapeHtml = (value) => String(value ?? '').replace(/[&<>"']/g, (char) => 
   '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;',
 }[char]));
 
-if (location.hostname === 'felandim.github.io' && !document.querySelector('script[data-domain="felandim.github.io"]')) {
+// Mantém o identificador existente do painel ao incluir o domínio personalizado.
+const analyticsHosts = ['brasileiraoemrodadas.com.br', 'www.brasileiraoemrodadas.com.br', 'felandim.github.io'];
+if (analyticsHosts.includes(location.hostname) && !document.querySelector('script[data-domain="felandim.github.io"]')) {
   const analytics = document.createElement('script');
   analytics.defer = true;
   analytics.dataset.domain = 'felandim.github.io';

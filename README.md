@@ -35,4 +35,4 @@ As páginas de maior tráfego possuem espaços de anúncio ocultos, prontos para
 
 ## Compartilhamento e audiência
 
-O gerador cria imagens Open Graph de 1200 × 630 pixels para a página principal, classificação, artilharia, comparador, times e rodadas. O `site.js` carrega o Plausible Analytics apenas no domínio de produção, sem afetar a navegação local.
+O gerador cria imagens Open Graph de 1200 × 630 pixels para a página principal, classificação, artilharia, comparador, times e rodadas. O `site.js` carrega o Plausible Analytics em `brasileiraoemrodadas.com.br`, `www.brasileiraoemrodadas.com.br` e `felandim.github.io`, sem afetar a navegação local. O identificador de painel existente é `felandim.github.io`; a recepção dos dados depende de esse site estar cadastrado em uma conta ativa. Veja [o plano de medição](docs/analytics.md).
