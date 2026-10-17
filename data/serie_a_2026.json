@@ -3005,7 +3005,7 @@
       "date": "16/10/2026",
       "home": "Mirassol",
       "round": 31,
-      "score": "-",
+      "score": "2 x 0",
       "stadium": "Maião",
       "time": "20:00",
       "url": "https://ge.globo.com/sp/tem-esporte/futebol/brasileirao-serie-a/jogo/16-10-2026/mirassol-internacional.ghtml"
@@ -3261,16 +3261,6 @@
       "url": ""
     },
     {
-      "away": "Vitória",
-      "date": "29/10/2026",
-      "home": "Coritiba",
-      "round": 33,
-      "score": "-",
-      "stadium": "Couto Pereira",
-      "time": "19:30",
-      "url": ""
-    },
-    {
       "away": "Flamengo",
       "date": "29/10/2026",
       "home": "Vasco",
@@ -3298,6 +3288,16 @@
       "score": "-",
       "stadium": "Neo Química Arena",
       "time": "20:00",
+      "url": ""
+    },
+    {
+      "away": "Vitória",
+      "date": "31/10/2026",
+      "home": "Coritiba",
+      "round": 33,
+      "score": "-",
+      "stadium": "Couto Pereira",
+      "time": "16:00",
       "url": ""
     },
     {
