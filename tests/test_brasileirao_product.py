@@ -1,5 +1,6 @@
 import json
 import re
+import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -139,11 +140,7 @@ def test_team_badges_cover_hub_scorers_comparison_team_and_round_pages():
     latest_round = ROOT / "brasileirao" / "rodadas" / f'rodada-{insights["current_round"]}.html'
     round_source = latest_round.read_text(encoding="utf-8")
     script = (ROOT / "brasileirao.js").read_text(encoding="utf-8")
-    completed_in_latest_round = sum(
-        int(match["round"]) == insights["current_round"]
-        and re.match(r"^\d+\s*x\s*\d+", match.get("score", "")) is not None
-        for match in matches
-    )
+    matches_in_latest_round = sum(int(match["round"]) == insights["current_round"] for match in matches)
 
     assert hub.count("br-team-with-badge-chip") == 20
     assert scorers.count("br-team-with-badge-table") == len(insights["scorers"][-1]["ranking"])
@@ -153,11 +150,44 @@ def test_team_badges_cover_hub_scorers_comparison_team_and_round_pages():
     assert "br-team-with-badge-form" in team
     assert "br-team-with-badge-heading" in team
     assert team.count("br-team-with-badge-nav") == 2
-    assert completed_in_latest_round > 0
-    assert round_source.count("br-team-with-badge-result-home") == completed_in_latest_round
-    assert round_source.count("br-team-with-badge-result-away") == completed_in_latest_round
+    assert matches_in_latest_round > 0
+    assert round_source.count("br-team-with-badge-result-home") == matches_in_latest_round
+    assert round_source.count("br-team-with-badge-result-away") == matches_in_latest_round
     for variant in ("legend", "scorer", "compare", "summary", "sentence"):
         assert f'teamBadge(row.team, "{variant}")' in script or f'teamBadge(profileA.team, "{variant}")' in script or f'teamBadge(leader.team, "{variant}")' in script or f'teamBadge(trailer.team, "{variant}")' in script
+
+
+def test_partial_round_page_shows_results_and_full_upcoming_schedule():
+    insights = load("brasileirao_2026_insights.json")
+    source_dir = str(ROOT / "brasileirao_2026")
+    sys.path.insert(0, source_dir)
+    try:
+        from build import round_content
+    finally:
+        sys.path.remove(source_dir)
+
+    source_matches = load("serie_a_2026.json")["matches"][:2]
+    matches = [
+        {**source_matches[0], "score": "1 x 0", "date": "16/10/2026", "time": "19:00", "stadium": "Estádio A"},
+        {**source_matches[1], "score": "-", "date": "17/10/2026", "time": "18:30", "stadium": "Estádio B"},
+        {**source_matches[1], "score": "-", "date": "", "time": "", "stadium": ""},
+    ]
+    summary = insights["rounds"][-1]
+    table = insights["snapshots"][-1]["table"]
+    source = round_content(99, 99, summary, matches, table)
+
+    assert "Agenda e resultados" in source
+    assert source.count('data-fixture-status="completed"') == 1
+    assert source.count('data-fixture-status="scheduled"') == 2
+    assert '<time datetime="2026-10-17T18:30:00-03:00">Sáb, 17 out</time>' in source
+    assert "1 de 3 jogos concluídos" in source
+    assert "Movimentos até aqui" in source
+    assert "Classificação após os jogos concluídos" in source
+    assert "segue na liderança até aqui" in source
+    assert "18h30" in source
+    assert "Estádio B" in source
+    assert "Data a definir" in source
+    assert "Local a definir" in source
 
 
 def test_only_home_leader_card_uses_current_leader_color():

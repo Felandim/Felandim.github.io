@@ -765,6 +765,13 @@ h3 { margin-bottom: 12px; font-size: 1.35rem; }
 .br-results li > span:last-child { text-align: right; }
 .br-results li > span:last-child .br-team-with-badge { flex-direction: row-reverse; }
 .br-results strong { padding: 7px; color: #f6f4ec; background: var(--br-ink); text-align: center; }
+.br-fixture-progress { display: flex; flex-wrap: wrap; gap: 5px; margin: -10px 0 18px; color: var(--br-muted); font-size: .82rem; }
+.br-fixture-progress strong { color: var(--br-ink); }
+.br-fixture-center { display: grid; justify-items: center; gap: 3px; min-width: 0; text-align: center; }
+.br-fixture-center strong { width: 100%; box-sizing: border-box; }
+.br-fixture-center time, .br-fixture-date { color: var(--br-ink); font-size: .72rem; font-weight: 900; text-transform: uppercase; }
+.br-fixture-center small { color: var(--br-muted); font-size: .66rem; line-height: 1.25; }
+.br-fixture.is-scheduled .br-fixture-time { color: var(--br-ink); background: var(--br-lime); }
 .br-change-stack { border-top: 2px solid var(--br-ink); }
 .br-change-stack article { padding: 23px 0; border-bottom: 1px solid var(--br-line); }
 .br-change-stack strong { display: block; margin-top: 12px; font-size: 1.25rem; }
