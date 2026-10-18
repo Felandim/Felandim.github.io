@@ -172,7 +172,7 @@ def test_partial_round_page_shows_results_and_full_upcoming_schedule():
         {**source_matches[1], "score": "-", "date": "17/10/2026", "time": "18:30", "stadium": "Estádio B"},
         {**source_matches[1], "score": "-", "date": "", "time": "", "stadium": ""},
     ]
-    summary = insights["rounds"][-1]
+    summary = {**insights["rounds"][-1], "leader_changed": False}
     table = insights["snapshots"][-1]["table"]
     source = round_content(99, 99, summary, matches, table)
 
