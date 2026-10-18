@@ -297,6 +297,44 @@ def drawless_day_spotlight(matches: list[dict], minimum_matches: int = 4) -> dic
     return {"kind":"drawless_day","label":label,"text":f"{len(scored)} jogos, {len(scored)} vencedores • nenhum empate","caption":f"{caption_lead}: as {len(scored)} partidas disputadas terminaram com vencedor.","matches":len(scored)}
 
 
+def winning_streak_spotlight(insights: dict, matches: list[dict], minimum_wins: int = 3) -> dict | None:
+    """Destaca uma sequência de vitórias renovada por um vencedor do bloco publicado."""
+    winners = set()
+    for match in matches:
+        score = instagram_daily._score(match.get("score", ""))
+        if not score or score[0] == score[1]:
+            continue
+        winners.add(match.get("home") if score[0] > score[1] else match.get("away"))
+
+    candidates = []
+    for profile in insights.get("team_profiles", {}).values():
+        team = profile.get("team")
+        current = profile.get("current", {})
+        streak = int(profile.get("streaks", {}).get("current_wins") or 0)
+        if team not in winners or streak < minimum_wins:
+            continue
+        candidates.append({
+            "team": team,
+            "wins": streak,
+            "position": int(current.get("position") or 99),
+            "points": int(current.get("points") or 0),
+        })
+
+    if not candidates:
+        return None
+    best = max(candidates, key=lambda item: (item["wins"], -item["position"], item["team"]))
+    return {
+        "kind": "winning_streak",
+        "label": "VITÓRIAS EM SÉRIE",
+        "text": f"{best['team']} • {best['wins']} vitórias seguidas • {best['position']}º lugar",
+        "caption": (
+            f"Vitórias em série: {best['team']} venceu os últimos {best['wins']} jogos e ocupa "
+            f"o {best['position']}º lugar, com {best['points']} pontos."
+        ),
+        **best,
+    }
+
+
 def defensive_streak_spotlight(insights: dict, rounds: int = 3, minimum_points: int = 7) -> dict | None:
     snapshots = insights.get("snapshots", [])
     if len(snapshots) < rounds + 1:
@@ -335,7 +373,7 @@ def editorial_spotlight(insights: dict, matches: list[dict]) -> dict:
     base = instagram_matchday.matchday_spotlight(insights, matches)
     if base.get("kind") in HIGH_PRIORITY_KINDS or base.get("kind") == "delayed_match":
         return base
-    return derby_day_spotlight(matches) or rout_wave_spotlight(matches) or high_scoring_match_spotlight(matches) or scoring_surge_spotlight(insights) or scoring_drought_spotlight(insights) or both_teams_scored_spotlight(matches) or clean_sheet_wave_spotlight(matches) or away_dominance_spotlight(matches) or home_dominance_spotlight(matches) or draw_dominance_spotlight(matches) or drawless_day_spotlight(matches) or defensive_streak_spotlight(insights) or title_race_spotlight(insights) or base
+    return derby_day_spotlight(matches) or rout_wave_spotlight(matches) or high_scoring_match_spotlight(matches) or scoring_surge_spotlight(insights) or scoring_drought_spotlight(insights) or winning_streak_spotlight(insights, matches) or both_teams_scored_spotlight(matches) or clean_sheet_wave_spotlight(matches) or away_dominance_spotlight(matches) or home_dominance_spotlight(matches) or draw_dominance_spotlight(matches) or drawless_day_spotlight(matches) or defensive_streak_spotlight(insights) or title_race_spotlight(insights) or base
 
 
 def _spotlight_sentence(spotlight: dict) -> str:

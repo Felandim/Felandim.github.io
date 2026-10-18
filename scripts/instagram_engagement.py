@@ -101,6 +101,9 @@ def engagement_question(spotlight: dict) -> str:
         return "Qual time está mais perto de transformar equilíbrio em vitória?"
     if kind == "drawless_day":
         return "Na próxima rodada, qual confronto tem mais cara de empate?"
+    if kind == "winning_streak":
+        team = spotlight.get("team", "")
+        return f"Quem consegue parar o {team}?" if team else "Quem consegue parar essa sequência?"
     if kind == "defensive_streak":
         team = spotlight.get("team", "")
         return f"Quem consegue furar a defesa do {team}?" if team else "Quanto tempo essa sequência sem sofrer gols dura?"
