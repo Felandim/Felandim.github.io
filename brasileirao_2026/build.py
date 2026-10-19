@@ -487,6 +487,14 @@ def fixture_date(match: dict[str, Any]) -> tuple[str, str | None]:
     return label, iso
 
 
+def round_team_link(team: str, variant: str) -> str:
+    """Link a team in a fixture to its season profile without requiring JavaScript."""
+    return (
+        f'<a class="br-fixture-team-link" href="../times/{slugify(team)}.html" '
+        f'aria-label="Ver perfil do {esc(team, True)}">{team_badge(team, variant)}</a>'
+    )
+
+
 def round_content(number: int, current_round: int, summary: dict[str, Any], matches: list[dict[str, Any]], table: list[dict[str, Any]]) -> str:
     completed_count = sum(parse_score(match.get("score", "")) is not None for match in matches)
     has_pending = completed_count < len(matches)
@@ -505,7 +513,7 @@ def round_content(number: int, current_round: int, summary: dict[str, Any], matc
                 center = f'<span class="br-fixture-center"><strong class="br-fixture-time">{time_label}</strong>{date_html}<small>{stadium}</small></span>'
                 status = "scheduled"
             fixtures.append(
-                f'<li class="br-fixture is-{status}" data-fixture-status="{status}"><span>{team_badge(match["home"], "result-home")}</span>{center}<span>{team_badge(match["away"], "result-away")}</span></li>'
+                f'<li class="br-fixture is-{status}" data-fixture-status="{status}"><span>{round_team_link(match["home"], "result-home")}</span>{center}<span>{round_team_link(match["away"], "result-away")}</span></li>'
             )
         results = "".join(fixtures)
         remaining = len(matches) - completed_count
@@ -514,7 +522,7 @@ def round_content(number: int, current_round: int, summary: dict[str, Any], matc
         match_count = f"{completed_count} de {len(matches)} jogos concluídos"
     else:
         results = "".join(
-            f'<li><span>{team_badge(match["home"], "result-home")}</span><strong>{esc(match["score"])}</strong><span>{team_badge(match["away"], "result-away")}</span></li>'
+            f'<li><span>{round_team_link(match["home"], "result-home")}</span><strong>{esc(match["score"])}</strong><span>{round_team_link(match["away"], "result-away")}</span></li>'
             for match in matches
         )
         progress = ""

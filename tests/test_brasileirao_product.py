@@ -1,6 +1,7 @@
 import json
 import re
 import sys
+import unicodedata
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -188,6 +189,24 @@ def test_partial_round_page_shows_results_and_full_upcoming_schedule():
     assert "Estádio B" in source
     assert "Data a definir" in source
     assert "Local a definir" in source
+
+
+def test_round_fixtures_link_both_teams_to_accessible_profiles():
+    insights = load("brasileirao_2026_insights.json")
+    matches = load("serie_a_2026.json")["matches"]
+    current_round = insights["current_round"]
+    round_matches = [match for match in matches if int(match["round"]) == current_round]
+    source = (ROOT / "brasileirao" / "rodadas" / f"rodada-{current_round}.html").read_text(encoding="utf-8")
+    css = (ROOT / "style.css").read_text(encoding="utf-8")
+
+    assert source.count('class="br-fixture-team-link"') == len(round_matches) * 2
+    for match in round_matches:
+        for side in ("home", "away"):
+            team = match[side]
+            slug = re.sub(r"[^a-z0-9]+", "-", unicodedata.normalize("NFKD", team).encode("ascii", "ignore").decode().lower()).strip("-")
+            assert f'href="../times/{slug}.html" aria-label="Ver perfil do {team}"' in source
+    assert ".br-fixture-team-link:focus-visible" in css
+    assert "min-height: 44px" in css
 
 
 def test_only_home_leader_card_uses_current_leader_color():
