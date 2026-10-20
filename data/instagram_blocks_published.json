@@ -15,5 +15,22 @@
     ],
     "media_id": "17869163970663488",
     "published_at": "2026-10-13T16:46:44.057932-03:00"
+  },
+  "9a0ae7dc7a41e9003ca8": {
+    "outcome": "published",
+    "match_keys": [
+      "[31, \"Athletico-PR\", \"Palmeiras\"]",
+      "[31, \"Atlético-MG\", \"Coritiba\"]",
+      "[31, \"Bahia\", \"Flamengo\"]",
+      "[31, \"Botafogo\", \"Chapecoense\"]",
+      "[31, \"Corinthians\", \"Vitória\"]",
+      "[31, \"Fluminense\", \"Santos\"]",
+      "[31, \"Grêmio\", \"Cruzeiro\"]",
+      "[31, \"Mirassol\", \"Internacional\"]",
+      "[31, \"Remo\", \"Bragantino\"]",
+      "[31, \"São Paulo\", \"Vasco\"]"
+    ],
+    "media_id": "17934328095408001",
+    "published_at": "2026-10-20T14:48:59.001372-03:00"
   }
 }
