@@ -25,6 +25,18 @@ class InstagramEngagementTests(unittest.TestCase):
             "Corinthians entra no G4 na próxima rodada?",
         )
 
+    def test_g4_tiebreak_question_names_both_teams(self):
+        spotlight = {
+            "kind": "g4",
+            "tiebreaker": "wins",
+            "advantaged": "Cruzeiro",
+            "displaced": "Fluminense",
+        }
+        self.assertEqual(
+            instagram_engagement.engagement_question(spotlight),
+            "Cruzeiro sustenta a vaga à frente do Fluminense?",
+        )
+
     def test_delayed_match_question_uses_table_context(self):
         spotlight = {"kind": "delayed_match", "text": "Flamengo 2 x 0 Mirassol • 4ª rodada"}
         self.assertEqual(

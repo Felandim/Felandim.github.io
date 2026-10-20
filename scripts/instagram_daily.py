@@ -247,8 +247,59 @@ def boundary_pressure(insights: dict, maximum_gap: int = 3) -> dict | None:
     return {**pressure, "label": label, "text": text, "caption": caption}
 
 
+def boundary_tiebreak_spotlight(
+    table: list[dict],
+    boundary: str,
+    advantaged_teams: list[str],
+    displaced_teams: list[str],
+) -> dict | None:
+    """Explica trocas de G4/Z4 decididas nos critérios de desempate."""
+    if len(advantaged_teams) != 1 or len(displaced_teams) != 1:
+        return None
+    advantaged, displaced = advantaged_teams[0], displaced_teams[0]
+    rows = {row["team"]: row for row in table}
+    if advantaged not in rows or displaced not in rows:
+        return None
+    ahead, behind = rows[advantaged], rows[displaced]
+    if int(ahead["points"]) != int(behind["points"]):
+        return None
+
+    criteria = (
+        ("wins", "vitórias", lambda value: str(value)),
+        ("gd", "saldo de gols", lambda value: f"{int(value):+d}"),
+        ("gf", "gols marcados", lambda value: str(value)),
+    )
+    for field, label, formatter in criteria:
+        ahead_value, behind_value = int(ahead[field]), int(behind[field])
+        if ahead_value == behind_value:
+            continue
+        if ahead_value < behind_value:
+            return None
+        points = int(ahead["points"])
+        action = "entrou" if boundary == "G4" else "saiu do Z4"
+        swap = (
+            f"{advantaged} entrou, {displaced} saiu"
+            if boundary == "G4"
+            else f"{advantaged} saiu, {displaced} entrou"
+        )
+        comparison = f"{formatter(ahead_value)} x {formatter(behind_value)} {label}"
+        return {
+            "kind": boundary.lower(),
+            "label": f"{boundary} NO DESEMPATE",
+            "text": f"{swap} • {points} pts • {comparison}",
+            "caption": (
+                f"{boundary} no desempate: {advantaged} {action}. {advantaged} e {displaced} "
+                f"terminaram com os mesmos {points} pontos; {comparison}."
+            ),
+            "advantaged": advantaged,
+            "displaced": displaced,
+            "tiebreaker": field,
+        }
+    return None
+
+
 def round_spotlight(insights: dict, matches: list[dict] | None = None) -> dict:
-    _, latest = current_snapshot(insights)
+    snapshot, latest = current_snapshot(insights)
     if latest.get("leader_changed") and latest.get("leader"):
         return {
             "kind": "leader",
@@ -259,6 +310,9 @@ def round_spotlight(insights: dict, matches: list[dict] | None = None) -> dict:
 
     g4_in, g4_out = latest.get("g4_in", []), latest.get("g4_out", [])
     if g4_in or g4_out:
+        tiebreak = boundary_tiebreak_spotlight(snapshot["table"], "G4", g4_in, g4_out)
+        if tiebreak:
+            return tiebreak
         if g4_in and g4_out:
             text = f"{_join_teams(g4_in)} entrou • {_join_teams(g4_out)} saiu"
             caption = f"Mudou o G4: {_join_teams(g4_in)} entrou; {_join_teams(g4_out)} saiu."
@@ -270,6 +324,9 @@ def round_spotlight(insights: dict, matches: list[dict] | None = None) -> dict:
 
     z4_in, z4_out = latest.get("z4_in", []), latest.get("z4_out", [])
     if z4_in or z4_out:
+        tiebreak = boundary_tiebreak_spotlight(snapshot["table"], "Z4", z4_out, z4_in)
+        if tiebreak:
+            return tiebreak
         if z4_in and z4_out:
             text = f"{_join_teams(z4_out)} saiu • {_join_teams(z4_in)} entrou"
             caption = f"Mudou o Z4: {_join_teams(z4_out)} saiu; {_join_teams(z4_in)} entrou."

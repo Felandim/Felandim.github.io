@@ -208,6 +208,49 @@ class InstagramDailyTests(unittest.TestCase):
         self.assertIn("São Paulo saiu", spotlight["text"])
         self.assertIn("Mudou o G4", instagram_daily.build_caption(insights))
 
+    def test_round_spotlight_explains_g4_change_decided_by_wins(self):
+        insights = sample_insights(snapshots=6)
+        latest = insights["rounds"][-1]
+        latest["g4_in"], latest["g4_out"] = ["Corinthians"], ["São Paulo"]
+        table = insights["snapshots"][-1]["table"]
+        by_team = {row["team"]: row for row in table}
+        by_team["Corinthians"].update(points=48, wins=14, gd=5, gf=40)
+        by_team["São Paulo"].update(points=48, wins=13, gd=12, gf=45)
+
+        spotlight = instagram_daily.round_spotlight(insights)
+
+        self.assertEqual(spotlight["label"], "G4 NO DESEMPATE")
+        self.assertEqual(spotlight["tiebreaker"], "wins")
+        self.assertIn("14 x 13 vitórias", spotlight["text"])
+        self.assertIn("mesmos 48 pontos", spotlight["caption"])
+
+    def test_boundary_tiebreak_uses_goal_difference_after_equal_wins(self):
+        table = [
+            {"team": "Cruzeiro", "points": 51, "wins": 14, "gd": 8, "gf": 42},
+            {"team": "Fluminense", "points": 51, "wins": 14, "gd": 6, "gf": 50},
+        ]
+
+        spotlight = instagram_daily.boundary_tiebreak_spotlight(
+            table, "G4", ["Cruzeiro"], ["Fluminense"]
+        )
+
+        self.assertEqual(spotlight["tiebreaker"], "gd")
+        self.assertIn("+8 x +6 saldo de gols", spotlight["text"])
+
+    def test_round_spotlight_keeps_plain_change_when_points_differ(self):
+        insights = sample_insights(snapshots=6)
+        latest = insights["rounds"][-1]
+        latest["g4_in"], latest["g4_out"] = ["Corinthians"], ["São Paulo"]
+        table = insights["snapshots"][-1]["table"]
+        by_team = {row["team"]: row for row in table}
+        by_team["Corinthians"]["points"] = 49
+        by_team["São Paulo"]["points"] = 48
+
+        spotlight = instagram_daily.round_spotlight(insights)
+
+        self.assertEqual(spotlight["label"], "MUDANÇA NO G4")
+        self.assertNotIn("tiebreaker", spotlight)
+
     def test_round_spotlight_falls_back_to_biggest_win(self):
         insights = sample_insights()
         table = insights["snapshots"][-1]["table"]

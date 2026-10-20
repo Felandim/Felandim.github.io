@@ -52,8 +52,16 @@ def engagement_question(spotlight: dict) -> str:
         team = text.partition(" assumiu")[0].strip()
         return f"{team} sustenta a liderança na próxima rodada?" if team else "Quem sustenta a liderança na próxima rodada?"
     if kind == "g4":
+        advantaged = str(spotlight.get("advantaged", "")).strip()
+        displaced = str(spotlight.get("displaced", "")).strip()
+        if spotlight.get("tiebreaker") and advantaged and displaced:
+            return f"{advantaged} sustenta a vaga à frente do {displaced}?"
         return "Quem termina a próxima rodada dentro do G4?"
     if kind == "z4":
+        advantaged = str(spotlight.get("advantaged", "")).strip()
+        displaced = str(spotlight.get("displaced", "")).strip()
+        if spotlight.get("tiebreaker") and advantaged and displaced:
+            return f"{advantaged} mantém a vantagem sobre o {displaced}?"
         return "Quem consegue sair do Z4 na próxima rodada?"
     if kind == "upset":
         winner = text.partition(" bateu ")[0].strip()
