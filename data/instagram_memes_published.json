@@ -27,11 +27,17 @@
   "9a0ae7dc7a41e9003ca8": {
     "summary_media_id": "17934328095408001",
     "summary_published_at": "2026-10-20T14:48:59.001372-03:00",
-    "state": "creating_containers",
-    "updated_at": "2026-10-20T18:33:43.743355+00:00",
+    "state": "container_ready",
+    "updated_at": "2026-10-20T18:34:03.447766+00:00",
     "note": "Preparing three original memes for exact round 31 match set; publication requires live account audit and carousel verification.",
     "summary_permalink": "https://www.instagram.com/p/DeuaAgSCT2M/",
     "caption_sha256": "c41e553f44f849a0f17b1a29943e8fb02257344dde767fe0394d64204e91c274",
-    "source_commit": "9f10e77e357fbb43b869cd0125570120aeb77a71"
+    "source_commit": "9f10e77e357fbb43b869cd0125570120aeb77a71",
+    "container_id": "18115966414999380",
+    "child_container_ids": [
+      "18115966324999380",
+      "18115966363999380",
+      "18115966390999380"
+    ]
   }
 }
