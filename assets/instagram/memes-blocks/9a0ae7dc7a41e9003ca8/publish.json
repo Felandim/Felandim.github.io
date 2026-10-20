@@ -1,0 +1,85 @@
+{
+  "block_id": "9a0ae7dc7a41e9003ca8",
+  "summary_media_id": "17934328095408001",
+  "account_id": "17841429981371844",
+  "api_profile_id": "27834175349616492",
+  "username": "brasileiraoemrodadas",
+  "match_keys": [
+    "[31, \"Athletico-PR\", \"Palmeiras\"]",
+    "[31, \"Atlético-MG\", \"Coritiba\"]",
+    "[31, \"Bahia\", \"Flamengo\"]",
+    "[31, \"Botafogo\", \"Chapecoense\"]",
+    "[31, \"Corinthians\", \"Vitória\"]",
+    "[31, \"Fluminense\", \"Santos\"]",
+    "[31, \"Grêmio\", \"Cruzeiro\"]",
+    "[31, \"Mirassol\", \"Internacional\"]",
+    "[31, \"Remo\", \"Bragantino\"]",
+    "[31, \"São Paulo\", \"Vasco\"]"
+  ],
+  "reviewed": true,
+  "caption": "31ª rodada, bloco de 16 a 19/10/2026 😂\n\nDuas bolas e três pontos pro Palmeiras; o Flamengo acabou com a invencibilidade caseira do Bahia; e o 2 a 1 do Grêmio virou 2 a 4.\n\nQual desses memes resume seu fim de semana?\n\nFotos usadas nas montagens: Cesar Greco/Palmeiras/by Canon; Gilvan de Souza/CRF; Lucas Uebel/Grêmio FBPA, via Jornal do Comércio. Montagens humorísticas com IA.\n\n#Brasileirão #BrasileiraoEmRodadas #MemesDeFutebol",
+  "images": [
+    {
+      "file": "01-palmeiras.jpg",
+      "match_key": "[31, \"Athletico-PR\", \"Palmeiras\"]",
+      "match": {
+        "away": "Palmeiras",
+        "date": "17/10/2026",
+        "home": "Athletico-PR",
+        "round": 31,
+        "score": "0 x 2",
+        "stadium": "Arena da Baixada",
+        "time": "19:30",
+        "url": "https://ge.globo.com/pr/futebol/brasileirao-serie-a/jogo/17-10-2026/atletico-pr-palmeiras.ghtml"
+      },
+      "source": {
+        "page": "https://www.palmeiras.com.br/noticias/palmeiras-vence-athletico-pr-em-curitiba-e-assume-lideranca-do-brasileirao",
+        "image_url": "https://s7d1.scene7.com/is/image/SociedadeEsportivaPalmeiras/17102026_cg_palmeiras_1609_2",
+        "credit": "Cesar Greco/Palmeiras/by Canon",
+        "context": "https://www.uol.com.br/esporte/futebol/ultimas-noticias/2026/10/17/andreas-pereira-expulso-palmeiras-athletico.ghtm"
+      },
+      "sha256": "f00159ff73d806c3b2190dc788c51fc2308ac12736bb1596375f178805de91f3"
+    },
+    {
+      "file": "02-flamengo.jpg",
+      "match_key": "[31, \"Bahia\", \"Flamengo\"]",
+      "match": {
+        "away": "Flamengo",
+        "date": "18/10/2026",
+        "home": "Bahia",
+        "round": 31,
+        "score": "0 x 3",
+        "stadium": "Arena Fonte Nova",
+        "time": "18:30",
+        "url": "https://ge.globo.com/ba/futebol/brasileirao-serie-a/jogo/18-10-2026/bahia-flamengo.ghtml"
+      },
+      "source": {
+        "page": "https://www.flamengo.com.br/noticias/futebol/flamengo-vence-o-bahia-por-3-a-0-na-fonte-nova-e-segue-na-lideranca-do-brasileirao",
+        "image_url": "https://storage.googleapis.com/crf-strapi-media-prd/Whats_App_Image_2026_10_18_at_9_20_25_PM_a3ad38f3bc/Whats_App_Image_2026_10_18_at_9_20_25_PM_a3ad38f3bc.jpeg",
+        "credit": "Gilvan de Souza/CRF"
+      },
+      "sha256": "9957a69908d24e4dd717d50244b75a0147a3ceb525c0d7ed10e3c58ebf8bc976"
+    },
+    {
+      "file": "03-gremio.jpg",
+      "match_key": "[31, \"Grêmio\", \"Cruzeiro\"]",
+      "match": {
+        "away": "Cruzeiro",
+        "date": "18/10/2026",
+        "home": "Grêmio",
+        "round": 31,
+        "score": "2 x 4",
+        "stadium": "Arena do Grêmio",
+        "time": "16:00",
+        "url": "https://ge.globo.com/rs/futebol/brasileirao-serie-a/jogo/18-10-2026/gremio-cruzeiro.ghtml"
+      },
+      "source": {
+        "page": "https://www.jornaldocomercio.com/esportes/2026/10/1267306-de-virada-gremio-perde-para-o-cruzeiro-na-arena-e-afunda-no-z-4.html",
+        "image_url": "https://www.jornaldocomercio.com/_midias/jpg/2026/10/18/760x541/1_55597721691_a417caa032_o-12079375.jpg",
+        "credit": "Lucas Uebel/Grêmio FBPA, via Jornal do Comércio",
+        "context": "https://www.lance.com.br/temporeal/partida/brasileirao-serie-a-2026-18-10-2026-gremioxcruzeiro"
+      },
+      "sha256": "460aa21c73551ef70617aa2ce3f21a6f91231ff4b48a21845f53e2d350659df7"
+    }
+  ]
+}
