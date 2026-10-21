@@ -138,6 +138,38 @@
 
   initTeamFinders();
 
+  function initRoundJumps() {
+    document.querySelectorAll("[data-round-jump]").forEach(form => {
+      const input = form.querySelector("[data-round-jump-input]");
+      const status = document.getElementById(input?.getAttribute("aria-describedby"));
+      if (!input || !status) return;
+
+      form.hidden = false;
+      form.addEventListener("submit", event => {
+        event.preventDefault();
+        const round = Number(input.value);
+        const minimum = Number(input.min);
+        const maximum = Number(input.max);
+        if (!Number.isInteger(round) || round < minimum || round > maximum) {
+          input.setAttribute("aria-invalid", "true");
+          status.textContent = `Escolha uma rodada entre ${minimum} e ${maximum}.`;
+          input.focus();
+          return;
+        }
+
+        input.removeAttribute("aria-invalid");
+        status.textContent = `Abrindo a rodada ${round}…`;
+        location.assign(new URL(`${form.dataset.roundPrefix}rodada-${round}.html`, document.baseURI).href);
+      });
+      input.addEventListener("input", () => {
+        input.removeAttribute("aria-invalid");
+        status.textContent = "";
+      });
+    });
+  }
+
+  initRoundJumps();
+
   function initScrollableTables() {
     document.querySelectorAll(".br-table-wrap").forEach((wrapper, index) => {
       const table = wrapper.querySelector("table");

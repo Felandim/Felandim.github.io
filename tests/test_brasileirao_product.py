@@ -319,6 +319,57 @@ def test_team_finder_filters_accent_insensitively_in_browser():
         browser.close()
 
 
+def test_round_archive_jump_is_accessible_and_preserves_static_links():
+    insights = load("brasileirao_2026_insights.json")
+    current_round = insights["current_round"]
+    home = (ROOT / "index.html").read_text(encoding="utf-8")
+    hub = (ROOT / "brasileirao/index.html").read_text(encoding="utf-8")
+    script = (ROOT / "brasileirao.js").read_text(encoding="utf-8")
+    css = (ROOT / "style.css").read_text(encoding="utf-8")
+
+    for source, suffix, prefix in (
+        (home, "home", "brasileirao/rodadas/"),
+        (hub, "hub", "rodadas/"),
+    ):
+        assert 'data-round-jump' in source
+        assert 'hidden novalidate' in source
+        assert f'data-round-prefix="{prefix}"' in source
+        assert f'id="round-jump-{suffix}"' in source
+        assert f'max="{current_round}"' in source
+        assert f'aria-describedby="round-jump-status-{suffix}"' in source
+        assert source.count('class="br-round-links"') == 1
+        assert source.count('Rodada ') >= current_round
+
+    assert 'form.hidden = false' in script
+    assert 'input.setAttribute("aria-invalid", "true")' in script
+    assert 'Escolha uma rodada entre ${minimum} e ${maximum}.' in script
+    assert 'location.assign(new URL(' in script
+    assert '.br-round-jump input:focus-visible' in css
+    assert '.br-round-jump input[aria-invalid="true"]' in css
+
+
+def test_round_archive_jump_validates_and_opens_round_in_browser():
+    from playwright.sync_api import sync_playwright
+
+    with sync_playwright() as playwright:
+        browser = playwright.chromium.launch()
+        page = browser.new_page()
+        page.goto((ROOT / "brasileirao/index.html").as_uri(), wait_until="domcontentloaded")
+        jump = page.locator("#round-jump-hub")
+        assert jump.is_visible()
+
+        jump.fill("999")
+        page.locator("[data-round-jump] button").click()
+        assert jump.get_attribute("aria-invalid") == "true"
+        assert "Escolha uma rodada entre" in page.locator("#round-jump-status-hub").text_content()
+
+        jump.fill("2")
+        page.locator("[data-round-jump] button").click()
+        page.wait_for_url("**/rodadas/rodada-2.html")
+        assert page.url.endswith("/rodadas/rodada-2.html")
+        browser.close()
+
+
 def test_scorer_finder_is_accessible_progressive_and_keeps_static_fallback():
     page = (ROOT / "brasileirao" / "artilharia-rodada-a-rodada.html").read_text(encoding="utf-8")
     script = (ROOT / "brasileirao.js").read_text(encoding="utf-8")

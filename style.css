@@ -533,6 +533,15 @@ h3 { margin-bottom: 12px; font-size: 1.35rem; }
 .br-team-chip::after { content: "↗"; margin-left: auto; color: #8c978f; }
 .br-team-chip:hover { color: var(--br-ink); background: var(--br-hot); }
 .br-round-index { background: var(--br-soft); }
+.br-round-jump { max-width: 620px; margin: 0 0 28px; padding: 20px; background: #fff; border: 1px solid #bfc3b9; }
+.br-round-jump label { display: block; margin-bottom: 8px; font-size: .8rem; font-weight: 900; }
+.br-round-jump-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; }
+.br-round-jump input, .br-round-jump button { min-height: 48px; padding: 10px 14px; border: 1px solid var(--br-ink); }
+.br-round-jump input { min-width: 0; border-right: 0; }
+.br-round-jump button { color: #f6f4ec; background: var(--br-ink); font-weight: 850; cursor: pointer; }
+.br-round-jump input:focus-visible, .br-round-jump button:focus-visible { position: relative; z-index: 1; outline: 3px solid #984333; outline-offset: 2px; }
+.br-round-jump input[aria-invalid="true"] { border-color: #a62b1f; box-shadow: inset 0 0 0 1px #a62b1f; }
+.br-round-jump-status { min-height: 1.35em; margin: 7px 0 0; color: #6b3128; font-size: .75rem; font-weight: 750; }
 .br-round-links { display: grid; grid-template-columns: repeat(6, 1fr); border-top: 1px solid #bfc3b9; border-left: 1px solid #bfc3b9; }
 .br-round-links a { min-height: 116px; display: flex; flex-direction: column; justify-content: space-between; padding: 18px; border-right: 1px solid #bfc3b9; border-bottom: 1px solid #bfc3b9; font-size: .76rem; font-weight: 820; text-decoration: none; }
 .br-round-links a:hover { background: var(--br-hot); }
@@ -815,6 +824,8 @@ h3 { margin-bottom: 12px; font-size: 1.35rem; }
   .br-change-grid h3 { margin-top: 64px; }
   .br-team-cloud { grid-template-columns: 1fr 1fr; }
   .br-round-links { grid-template-columns: repeat(3, 1fr); }
+  .br-round-jump-row { grid-template-columns: 1fr; gap: 8px; }
+  .br-round-jump input { border-right: 1px solid var(--br-ink); }
   .br-page-hero, .br-team-hero, .br-round-hero { padding-block: 72px 62px; }
   .br-page-hero h1, .br-team-hero h1, .br-round-hero h1 { font-size: clamp(3.2rem, 16vw, 5.4rem); }
   .br-control { align-items: flex-start; flex-direction: column; }
