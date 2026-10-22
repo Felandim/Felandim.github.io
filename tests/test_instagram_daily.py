@@ -151,7 +151,7 @@ class InstagramDailyTests(unittest.TestCase):
         table[0]["points"], table[1]["points"] = 55, 50
         table[3]["points"], table[4]["points"] = 44, 42
         table[15]["points"], table[16]["points"] = 20, 20
-        self.assertEqual(instagram_daily.table_hook(insights), "Só 0 pontos separa permanência e Z4")
+        self.assertEqual(instagram_daily.table_hook(insights), "16º e 17º estão empatados em pontos")
 
     def test_boundary_pressure_personalizes_g4_chase(self):
         insights = sample_insights()

@@ -87,6 +87,9 @@ def engagement_question(spotlight: dict) -> str:
     if kind == "goal_fest":
         goals = spotlight.get("goals")
         return f"Qual jogo da rodada ainda pode superar esses {goals} gols?" if goals else "Qual jogo da rodada ainda pode superar esse placar?"
+    if kind == "multi_goal_scorer":
+        player = str(spotlight.get("player", "")).strip()
+        return f"{player} repete a dose na próxima rodada?" if player else "Quem repete esse feito na próxima rodada?"
     if kind == "rout_wave":
         winners = [str(item.get("winner", "")).strip() for item in spotlight.get("routs", [])]
         winners = [winner for winner in winners if winner]
@@ -210,9 +213,10 @@ def main() -> None:
 
     insights = instagram_daily.load_insights(args.insights)
     all_matches = instagram_daily.load_matches(args.matches)
+    scorer_data = instagram_daily.load_scorers()
     matches = instagram_matchday.completed_matches_for_date(all_matches, instagram_matchday.publication_date())
-    spotlight = instagram_editorial.editorial_spotlight(insights, matches)
-    caption = with_engagement_question(instagram_editorial.build_caption(insights, matches), spotlight)
+    spotlight = instagram_editorial.editorial_spotlight(insights, matches, scorer_data)
+    caption = with_engagement_question(instagram_editorial.build_caption(insights, matches, scorer_data), spotlight)
 
     media_id = publish_when_ready(
         instagram_daily, args.image_url, caption,

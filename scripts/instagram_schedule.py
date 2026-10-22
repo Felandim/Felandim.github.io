@@ -84,10 +84,13 @@ def due_blocks(matches: list[dict], now: datetime | None = None, state: dict | N
     return due
 
 
-def block_spotlight(insights: dict, block: dict) -> dict:
+def block_spotlight(insights: dict, block: dict, scorer_data: dict | None = None) -> dict:
     import instagram_editorial
     matches = block["matches"]
+    scorer = instagram_editorial.multi_goal_scorer_spotlight(matches, scorer_data)
     if len(matches) == 1:
+        if scorer:
+            return scorer
         # Pontos deste jogo e posição atual, sem atribuir movimentos de outros jogos a ele.
         match = matches[0]
         home, away = (int(n) for n in re.split(r"\s*x\s*", match["score"].strip()))
@@ -104,7 +107,7 @@ def block_spotlight(insights: dict, block: dict) -> dict:
         return {"kind": "isolated_match", "label": "IMPACTO NA TABELA",
                 "text": f"{score} • {block['round']}ª rodada",
                 "caption": f"{score}, pela {block['round']}ª rodada. " + " ".join(impact)}
-    spotlight = dict(instagram_editorial.editorial_spotlight(insights, matches))
+    spotlight = dict(instagram_editorial.editorial_spotlight(insights, matches, scorer_data))
     for field in ("label", "text", "caption"):
         if field in spotlight:
             spotlight[field] = (spotlight[field].replace("do dia", "do bloco")
@@ -118,13 +121,14 @@ def prepare_content(insights: dict, block: dict, output: Path) -> str:
     import instagram_editorial
     import instagram_engagement
     import instagram_matchday
-    spotlight = block_spotlight(insights, block)
-    instagram_editorial.render_card(insights, block["matches"], output)
+    scorer_data = instagram_daily.load_scorers()
+    spotlight = block_spotlight(insights, block, scorer_data)
+    instagram_editorial.render_card(insights, block["matches"], output, scorer_data=scorer_data)
     with Image.open(output) as source:
         image = source.convert("RGB")
     instagram_matchday.draw_spotlight(image, spotlight)
     image.save(output, "PNG", optimize=True)
-    base = instagram_editorial.build_caption(insights, block["matches"])
+    base = instagram_editorial.build_caption(insights, block["matches"], scorer_data)
     lines = base.splitlines()
     lines[0] = instagram_editorial._spotlight_sentence(spotlight)
     start = datetime.fromisoformat(block["start"]).strftime("%d/%m")

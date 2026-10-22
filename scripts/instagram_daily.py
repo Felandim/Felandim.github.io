@@ -17,6 +17,7 @@ from PIL import Image, ImageDraw, ImageFont
 ROOT = Path(__file__).resolve().parents[1]
 INSIGHTS_FILE = ROOT / "data" / "brasileirao_2026_insights.json"
 MATCHES_FILE = ROOT / "data" / "serie_a_2026.json"
+SCORERS_FILE = ROOT / "data" / "serie_a_2026_scorers.json"
 DEFAULT_OUTPUT = ROOT / "assets" / "instagram" / "daily.png"
 TZ = ZoneInfo("America/Sao_Paulo")
 SITE_URL = "brasileiraoemrodadas.com.br"
@@ -46,6 +47,12 @@ def load_insights(path: Path = INSIGHTS_FILE) -> dict:
 
 def load_matches(path: Path = MATCHES_FILE) -> list[dict]:
     return json.loads(path.read_text(encoding="utf-8"))["matches"]
+
+
+def load_scorers(path: Path = SCORERS_FILE) -> dict:
+    if not path.exists():
+        return {"matches": {}}
+    return json.loads(path.read_text(encoding="utf-8"))
 
 
 def current_snapshot(insights: dict) -> tuple[dict, dict]:
@@ -163,6 +170,12 @@ def table_hook(insights: dict) -> str:
         (table[15]["points"] - table[16]["points"], 2, "z4"),
     ]
     gap, _, battle = min(battles, key=lambda item: (item[0], item[1]))
+    if gap == 0:
+        if battle == "title":
+            return "Líder e vice estão empatados em pontos"
+        if battle == "g4":
+            return "4º e 5º estão empatados em pontos"
+        return "16º e 17º estão empatados em pontos"
     unit = "ponto" if gap == 1 else "pontos"
     if battle == "title":
         return f"Liderança separada por {gap} {unit}"

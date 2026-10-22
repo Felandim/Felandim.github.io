@@ -89,6 +89,60 @@ def high_scoring_match_spotlight(matches: list[dict], minimum_goals: int = 5) ->
     return {"kind":"goal_fest","label":"CHUVA DE GOLS","text":f"{match['home']} {match['score']} {match['away']} • {total_goals} gols","caption":f"Chuva de gols: {match['home']} {match['score']} {match['away']} teve {total_goals} gols no placar.","home":match.get("home", ""),"away":match.get("away", ""),"score":match.get("score", ""),"goals":total_goals}
 
 
+def multi_goal_scorer_spotlight(
+    matches: list[dict],
+    scorer_data: dict | None,
+    minimum_goals: int = 2,
+) -> dict | None:
+    """Destaca um jogador que marcou duas ou mais vezes no mesmo jogo do bloco."""
+    scorer_matches = (scorer_data or {}).get("matches", {})
+    candidates = []
+    for match in matches:
+        match_scorers = scorer_matches.get(match.get("url", ""), {})
+        score = instagram_daily._score(match.get("score", ""))
+        if not score:
+            continue
+        for side_index, side in enumerate(("home", "away")):
+            team = match.get(side, "")
+            team_goals = score[side_index]
+            for scorer in match_scorers.get(side, []):
+                goals = int(scorer.get("goals") or 1)
+                if scorer.get("own_goal") or goals < minimum_goals:
+                    continue
+                candidates.append({
+                    "player": scorer.get("name", ""),
+                    "team": team,
+                    "goals": goals,
+                    "team_goals": team_goals,
+                    "home": match.get("home", ""),
+                    "away": match.get("away", ""),
+                    "score": match.get("score", ""),
+                })
+    if not candidates:
+        return None
+
+    best = min(
+        candidates,
+        key=lambda item: (
+            -item["goals"],
+            -(item["goals"] / max(item["team_goals"], 1)),
+            item["player"],
+        ),
+    )
+    hat_trick = best["goals"] >= 3
+    lead = "Hat-trick" if hat_trick else "Dois dele"
+    return {
+        "kind": "multi_goal_scorer",
+        "label": "HAT-TRICK" if hat_trick else "DOIS DELE",
+        "text": f"{best['player']} • {best['goals']} gols pelo {best['team']}",
+        "caption": (
+            f"{lead}: {best['player']} marcou {best['goals']} vezes em "
+            f"{best['home']} {best['score']} {best['away']}."
+        ),
+        **best,
+    }
+
+
 def rout_wave_spotlight(
     matches: list[dict],
     minimum_matches: int = 4,
@@ -369,11 +423,11 @@ def title_race_spotlight(insights: dict, maximum_gap: int = 3, minimum_teams: in
     return {"kind":"title_cluster","label":"TÍTULO EMBOLADO","text":f"{len(contenders)} times separados por só {gap_text} no topo","caption":f"Briga pelo título: {len(contenders)} times estão separados por apenas {gap_text}; {', '.join(teams)} formam o pelotão da frente.","count":len(contenders),"spread":spread,"teams":teams}
 
 
-def editorial_spotlight(insights: dict, matches: list[dict]) -> dict:
+def editorial_spotlight(insights: dict, matches: list[dict], scorer_data: dict | None = None) -> dict:
     base = instagram_matchday.matchday_spotlight(insights, matches)
     if base.get("kind") in HIGH_PRIORITY_KINDS or base.get("kind") == "delayed_match":
         return base
-    return derby_day_spotlight(matches) or rout_wave_spotlight(matches) or high_scoring_match_spotlight(matches) or scoring_surge_spotlight(insights) or scoring_drought_spotlight(insights) or winning_streak_spotlight(insights, matches) or both_teams_scored_spotlight(matches) or clean_sheet_wave_spotlight(matches) or away_dominance_spotlight(matches) or home_dominance_spotlight(matches) or draw_dominance_spotlight(matches) or drawless_day_spotlight(matches) or defensive_streak_spotlight(insights) or title_race_spotlight(insights) or base
+    return derby_day_spotlight(matches) or multi_goal_scorer_spotlight(matches, scorer_data) or rout_wave_spotlight(matches) or high_scoring_match_spotlight(matches) or scoring_surge_spotlight(insights) or scoring_drought_spotlight(insights) or winning_streak_spotlight(insights, matches) or both_teams_scored_spotlight(matches) or clean_sheet_wave_spotlight(matches) or away_dominance_spotlight(matches) or home_dominance_spotlight(matches) or draw_dominance_spotlight(matches) or drawless_day_spotlight(matches) or defensive_streak_spotlight(insights) or title_race_spotlight(insights) or base
 
 
 def _spotlight_sentence(spotlight: dict) -> str:
@@ -399,19 +453,19 @@ def _standings_context(table: list[dict]) -> list[str]:
     ]
 
 
-def build_caption(insights: dict, matches: list[dict]) -> str:
+def build_caption(insights: dict, matches: list[dict], scorer_data: dict | None = None) -> str:
     snapshot, latest = instagram_daily.current_snapshot(insights)
     table = snapshot["table"]
-    spotlight = editorial_spotlight(insights, matches)
+    spotlight = editorial_spotlight(insights, matches, scorer_data)
     story = _spotlight_sentence(spotlight)
     partial = " (parcial)" if latest.get("matches", 10) < 10 else ""
     lines = [story, f"Brasileirão {insights['season']} — rodada {latest['round']}{partial}.", "", f"Líder: {table[0]['team']} — {table[0]['points']} pts.", f"G4: {', '.join(row['team'] for row in table[:4])}.", f"Z4: {', '.join(row['team'] for row in table[-4:])}.", *_standings_context(table), "", f"Mais números e evolução rodada a rodada: {instagram_daily.SITE_URL}", "", "#Brasileirao #Brasileirao2026 #FutebolBrasileiro #SerieA"]
     return "\n".join(line for line in lines if line is not None)[:2200]
 
 
-def render_card(insights: dict, matches: list[dict], output: Path = instagram_daily.DEFAULT_OUTPUT, now: datetime | None = None) -> Path:
+def render_card(insights: dict, matches: list[dict], output: Path = instagram_daily.DEFAULT_OUTPUT, now: datetime | None = None, scorer_data: dict | None = None) -> Path:
     output = instagram_matchday.render_card(insights, matches, output, now=now)
-    spotlight = editorial_spotlight(insights, matches)
+    spotlight = editorial_spotlight(insights, matches, scorer_data)
     image = Image.open(output).convert("RGB")
     instagram_matchday.draw_spotlight(image, spotlight)
     image.save(output, "PNG", optimize=True)
@@ -427,9 +481,10 @@ def main() -> None:
     args = parser.parse_args()
     insights = instagram_daily.load_insights(args.insights)
     all_matches = instagram_daily.load_matches(args.matches)
+    scorer_data = instagram_daily.load_scorers()
     matches = instagram_matchday.completed_matches_for_date(all_matches, instagram_matchday.publication_date())
-    if args.command == "render": print(render_card(insights, matches, args.output))
-    else: print(build_caption(insights, matches))
+    if args.command == "render": print(render_card(insights, matches, args.output, scorer_data=scorer_data))
+    else: print(build_caption(insights, matches, scorer_data))
 
 
 if __name__ == "__main__":
