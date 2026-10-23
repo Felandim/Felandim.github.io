@@ -361,6 +361,97 @@
 
   const teamFocusStorageKey = "brasileirao-team-focus";
 
+  function initRoundTeamFocus() {
+    const control = document.querySelector("[data-round-team-focus]");
+    const fixturesList = document.querySelector("[data-round-fixtures]");
+    const select = control?.querySelector("[data-round-team-focus-select]");
+    const clear = control?.querySelector("[data-round-team-focus-clear]");
+    const status = control?.querySelector("[data-round-team-focus-status]");
+    if (!control || !fixturesList || !select || !clear || !status) return;
+
+    const fixtures = [...fixturesList.querySelectorAll(".br-fixture")];
+    const availableSlugs = new Set(fixtures.flatMap(fixture => [fixture.dataset.teamHome, fixture.dataset.teamAway]));
+    const teams = Object.keys(teamLogoIds)
+      .filter(team => availableSlugs.has(slugify(team)))
+      .sort((a, b) => a.localeCompare(b, "pt-BR"));
+    select.insertAdjacentHTML("beforeend", teams.map(team => `<option value="${slugify(team)}">${safe(team)}</option>`).join(""));
+
+    const validSlugs = new Set(teams.map(slugify));
+    const requested = new URL(location.href).searchParams.get("time");
+    let stored = "";
+    try {
+      stored = localStorage.getItem(teamFocusStorageKey) || "";
+    } catch {}
+    select.value = validSlugs.has(requested) ? requested : validSlugs.has(stored) ? stored : "";
+
+    const apply = ({ persist = false, scroll = false } = {}) => {
+      const selected = select.value;
+      const teamName = select.options[select.selectedIndex]?.textContent || "";
+      let focusedFixture = null;
+
+      fixtures.forEach(fixture => {
+        fixture.querySelector(".br-focused-game-label")?.remove();
+        const matches = Boolean(selected && [fixture.dataset.teamHome, fixture.dataset.teamAway].includes(selected));
+        fixture.classList.toggle("is-team-focused", matches);
+        fixture.querySelectorAll(".br-fixture-team-link").forEach(link => {
+          const isSelectedTeam = matches && link.getAttribute("href")?.endsWith(`/${selected}.html`);
+          if (isSelectedTeam) link.setAttribute("aria-current", "true");
+          else link.removeAttribute("aria-current");
+        });
+        if (matches) {
+          focusedFixture = fixture;
+          const label = document.createElement("span");
+          label.className = "br-focused-game-label";
+          label.textContent = "Jogo do meu time";
+          fixture.prepend(label);
+        }
+      });
+
+      document.querySelectorAll("[data-standings-table] tbody tr").forEach(row => {
+        const link = row.querySelector("th a");
+        const matches = Boolean(selected && link?.getAttribute("href")?.endsWith(`/${selected}.html`));
+        row.classList.toggle("is-focused", matches);
+      });
+
+      clear.hidden = !selected;
+      fixturesList.classList.toggle("has-team-focus", Boolean(selected));
+      if (focusedFixture) {
+        const opponents = [...focusedFixture.querySelectorAll(".br-fixture-team-link")].map(link => link.textContent.trim());
+        status.textContent = `${teamName}: ${opponents.join(" × ")} destacado.`;
+        if (scroll) {
+          focusedFixture.scrollIntoView({
+            block: "center",
+            behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth",
+          });
+        }
+      } else {
+        status.textContent = selected ? `${teamName} não joga nesta rodada.` : "";
+      }
+
+      if (persist) {
+        const url = new URL(location.href);
+        if (selected) url.searchParams.set("time", selected);
+        else url.searchParams.delete("time");
+        history.replaceState(history.state, "", url);
+        try {
+          if (selected) localStorage.setItem(teamFocusStorageKey, selected);
+          else localStorage.removeItem(teamFocusStorageKey);
+        } catch {}
+      }
+    };
+
+    control.hidden = false;
+    select.addEventListener("change", () => apply({ persist: true, scroll: true }));
+    clear.addEventListener("click", () => {
+      select.value = "";
+      apply({ persist: true });
+      select.focus();
+    });
+    apply();
+  }
+
+  initRoundTeamFocus();
+
   function initStandingsTeamFocus(table, roundSelect) {
     const control = roundSelect.closest(".br-control");
     if (!control || control.querySelector("[data-team-focus]")) return () => {};

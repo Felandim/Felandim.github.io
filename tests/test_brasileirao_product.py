@@ -209,6 +209,79 @@ def test_round_fixtures_link_both_teams_to_accessible_profiles():
     assert "min-height: 44px" in css
 
 
+def test_round_pages_offer_persistent_shareable_team_focus():
+    insights = load("brasileirao_2026_insights.json")
+    current_round = insights["current_round"]
+    source = (ROOT / "brasileirao" / "rodadas" / f"rodada-{current_round}.html").read_text(encoding="utf-8")
+    script = (ROOT / "brasileirao.js").read_text(encoding="utf-8")
+    css = (ROOT / "style.css").read_text(encoding="utf-8")
+
+    assert 'data-round-team-focus hidden' in source
+    assert 'data-round-team-focus-select' in source
+    assert 'data-round-team-focus-status aria-live="polite"' in source
+    assert 'data-round-fixtures' in source
+    assert 'data-team-home=' in source
+    assert 'data-team-away=' in source
+    assert '<script src="../../brasileirao.js" defer></script>' in source
+    assert "function initRoundTeamFocus()" in script
+    assert 'url.searchParams.set("time", selected)' in script
+    assert 'localStorage.setItem(teamFocusStorageKey, selected)' in script
+    assert 'focusedFixture.scrollIntoView' in script
+    assert ".br-results li.is-team-focused" in css
+    assert '.br-fixture-team-link[aria-current="true"]' in css
+
+
+def test_round_team_focus_highlights_fixture_and_table_in_browser():
+    from functools import partial
+    from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
+    from threading import Thread
+    from playwright.sync_api import sync_playwright
+
+    class QuietHandler(SimpleHTTPRequestHandler):
+        def log_message(self, format, *args):
+            pass
+
+    insights = load("brasileirao_2026_insights.json")
+    current_round = insights["current_round"]
+    server = ThreadingHTTPServer(("127.0.0.1", 0), partial(QuietHandler, directory=str(ROOT)))
+    thread = Thread(target=server.serve_forever, daemon=True)
+    thread.start()
+    base_url = f"http://127.0.0.1:{server.server_port}"
+
+    try:
+        with sync_playwright() as playwright:
+            browser = playwright.chromium.launch()
+            page = browser.new_page()
+            page.goto(
+                f"{base_url}/brasileirao/rodadas/rodada-{current_round}.html?time=flamengo",
+                wait_until="domcontentloaded",
+            )
+            select = page.locator("[data-round-team-focus-select]")
+            select.wait_for(state="visible")
+            assert select.input_value() == "flamengo"
+            assert page.locator(".br-fixture.is-team-focused").count() == 1
+            assert page.locator(".br-fixture-team-link[aria-current='true']").count() == 1
+            assert page.locator(".br-focused-game-label").text_content() == "Jogo do meu time"
+            assert "Flamengo:" in page.locator("[data-round-team-focus-status]").text_content()
+            assert page.locator("[data-standings-table] tbody tr.is-focused").count() == 1
+
+            select.select_option("palmeiras")
+            page.wait_for_function("location.search.includes('time=palmeiras')")
+            assert page.evaluate("localStorage.getItem('brasileirao-team-focus')") == "palmeiras"
+            assert "Palmeiras:" in page.locator("[data-round-team-focus-status]").text_content()
+
+            page.locator("[data-round-team-focus-clear]").click()
+            assert select.input_value() == ""
+            assert page.locator(".br-fixture.is-team-focused").count() == 0
+            assert page.evaluate("localStorage.getItem('brasileirao-team-focus')") is None
+            assert "time=" not in page.url
+            browser.close()
+    finally:
+        server.shutdown()
+        server.server_close()
+        thread.join(timeout=5)
+
+
 def test_only_home_leader_card_uses_current_leader_color():
     home = (ROOT / "index.html").read_text(encoding="utf-8")
     hub = (ROOT / "brasileirao/index.html").read_text(encoding="utf-8")

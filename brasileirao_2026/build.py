@@ -523,7 +523,10 @@ def round_content(number: int, current_round: int, summary: dict[str, Any], matc
                 center = f'<span class="br-fixture-center"><strong class="br-fixture-time">{time_label}</strong>{date_html}<small>{stadium}</small></span>'
                 status = "scheduled"
             fixtures.append(
-                f'<li class="br-fixture is-{status}" data-fixture-status="{status}"><span>{round_team_link(match["home"], "result-home")}</span>{center}<span>{round_team_link(match["away"], "result-away")}</span></li>'
+                f'<li class="br-fixture is-{status}" data-fixture-status="{status}" '
+                f'data-team-home="{slugify(match["home"])}" data-team-away="{slugify(match["away"])}">'
+                f'<span>{round_team_link(match["home"], "result-home")}</span>{center}'
+                f'<span>{round_team_link(match["away"], "result-away")}</span></li>'
             )
         results = "".join(fixtures)
         remaining = len(matches) - completed_count
@@ -532,7 +535,11 @@ def round_content(number: int, current_round: int, summary: dict[str, Any], matc
         match_count = f"{completed_count} de {len(matches)} jogos concluídos"
     else:
         results = "".join(
-            f'<li><span>{round_team_link(match["home"], "result-home")}</span><strong>{esc(match["score"])}</strong><span>{round_team_link(match["away"], "result-away")}</span></li>'
+            f'<li class="br-fixture is-completed" data-fixture-status="completed" '
+            f'data-team-home="{slugify(match["home"])}" data-team-away="{slugify(match["away"])}">'
+            f'<span>{round_team_link(match["home"], "result-home")}</span>'
+            f'<strong>{esc(match["score"])}</strong>'
+            f'<span>{round_team_link(match["away"], "result-away")}</span></li>'
             for match in matches
         )
         progress = ""
@@ -547,7 +554,7 @@ def round_content(number: int, current_round: int, summary: dict[str, Any], matc
     movements_heading = "Movimentos até aqui" if has_pending else "Movimentos da rodada"
     table_kicker = "Classificação após os jogos concluídos" if has_pending else f"Depois da rodada {number}"
     navigation = round_archive_navigation(number, current_round)
-    return f'''<section class="br-round-hero"><div class="br-shell"><p class="br-kicker">Arquivo do Brasileirão {SEASON}</p><span class="br-round-number">{number:02d}</span><h1>O que mudou na rodada {number}</h1><p>{lead_text}</p></div></section><section class="br-ticker"><div class="br-shell"><span>Rodada {number}</span><strong>{summary['goals']} gols</strong><strong>{match_count}</strong><strong>{team_badge(summary['leader'], 'ticker')} líder</strong></div></section>{navigation}<section class="br-section"><div class="br-shell br-round-grid"><div><h2>{fixtures_heading}</h2>{progress}<ul class="br-results">{results}</ul></div><div><h2>{movements_heading}</h2><div class="br-change-stack"><article><span>Maior subida</span><strong>{rise}</strong><p>{summary['biggest_rise']['places']} posições</p></article><article><span>Maior queda</span><strong>{fall}</strong><p>{summary['biggest_fall']['places']} posições</p></article><article><span>Zona de rebaixamento</span><strong>Entraram: {team_badge_list(summary['z4_in'], 'sentence')}</strong><p>Saíram: {team_badge_list(summary['z4_out'], 'sentence')}</p></article></div></div></div></section><section class="br-section br-section-soft"><div class="br-shell"><div class="br-section-head"><div><p class="br-kicker">{table_kicker}</p><h2>Classificação</h2></div><a href="../classificacao-rodada-a-rodada.html">Comparar rodadas →</a></div>{table_html(table, team_prefix='../times/')}</div></section>'''
+    return f'''<section class="br-round-hero"><div class="br-shell"><p class="br-kicker">Arquivo do Brasileirão {SEASON}</p><span class="br-round-number">{number:02d}</span><h1>O que mudou na rodada {number}</h1><p>{lead_text}</p></div></section><section class="br-ticker"><div class="br-shell"><span>Rodada {number}</span><strong>{summary['goals']} gols</strong><strong>{match_count}</strong><strong>{team_badge(summary['leader'], 'ticker')} líder</strong></div></section>{navigation}<section class="br-section"><div class="br-shell br-round-grid"><div><h2>{fixtures_heading}</h2>{progress}<div class="br-round-team-focus" data-round-team-focus hidden><label for="round-team-focus-{number}">Encontre seu time</label><div><select id="round-team-focus-{number}" data-round-team-focus-select aria-describedby="round-team-focus-status-{number}"><option value="">Todos os jogos</option></select><button type="button" data-round-team-focus-clear hidden>Limpar</button></div><p id="round-team-focus-status-{number}" data-round-team-focus-status aria-live="polite"></p></div><ul class="br-results" data-round-fixtures>{results}</ul></div><div><h2>{movements_heading}</h2><div class="br-change-stack"><article><span>Maior subida</span><strong>{rise}</strong><p>{summary['biggest_rise']['places']} posições</p></article><article><span>Maior queda</span><strong>{fall}</strong><p>{summary['biggest_fall']['places']} posições</p></article><article><span>Zona de rebaixamento</span><strong>Entraram: {team_badge_list(summary['z4_in'], 'sentence')}</strong><p>Saíram: {team_badge_list(summary['z4_out'], 'sentence')}</p></article></div></div></div></section><section class="br-section br-section-soft"><div class="br-shell"><div class="br-section-head"><div><p class="br-kicker">{table_kicker}</p><h2>Classificação</h2></div><a href="../classificacao-rodada-a-rodada.html">Comparar rodadas →</a></div>{table_html(table, team_prefix='../times/')}</div></section>'''
 
 
 def write(path: Path, content: str) -> None:
@@ -599,7 +606,7 @@ def main() -> None:
     for summary, snapshot in zip(insights["rounds"], insights["snapshots"]):
         number = summary["round"]
         round_matches = [m for m in matches if int(m["round"]) == number]
-        write(OUTPUT / "rodadas" / f"rodada-{number}.html", page(f'O que mudou na rodada {number} do Brasileirão 2026', f'Resultados, líder, maiores subidas, quedas e mudanças no Z4 após a rodada {number} do Brasileirão 2026.', f"{SITE_URL}/brasileirao/rodadas/rodada-{number}.html", round_content(number, insights["current_round"], summary, round_matches, snapshot["table"]), depth="../../", current="rodadas", social_image=f"{SITE_URL}/assets/og/rodadas/rodada-{number}.png", social_image_alt=f'Resumo da rodada {number} do Brasileirão 2026'))
+        write(OUTPUT / "rodadas" / f"rodada-{number}.html", page(f'O que mudou na rodada {number} do Brasileirão 2026', f'Resultados, líder, maiores subidas, quedas e mudanças no Z4 após a rodada {number} do Brasileirão 2026.', f"{SITE_URL}/brasileirao/rodadas/rodada-{number}.html", round_content(number, insights["current_round"], summary, round_matches, snapshot["table"]), depth="../../", current="rodadas", script=True, social_image=f"{SITE_URL}/assets/og/rodadas/rodada-{number}.png", social_image_alt=f'Resumo da rodada {number} do Brasileirão 2026'))
 
     build_sitemap(insights)
     print(f"Produto gerado: {len(insights['team_profiles'])} times, {insights['current_round']} rodadas e {insights['scorer_coverage']['matches_with_scorers']} jogos com artilheiros.")
