@@ -3488,7 +3488,7 @@
       "score": "-",
       "stadium": "Alfredo Jaconi",
       "time": "20:30",
-      "url": ""
+      "url": "https://ge.globo.com/rs/futebol/brasileirao-serie-b/jogo/26-10-2026/juventude-nautico.ghtml"
     },
     {
       "away": "Goiás",
@@ -3621,16 +3621,6 @@
       "url": ""
     },
     {
-      "away": "Criciúma",
-      "date": "06/11/2026",
-      "home": "Vila Nova",
-      "round": 37,
-      "score": "-",
-      "stadium": "OBA",
-      "time": "20:30",
-      "url": ""
-    },
-    {
       "away": "Juventude",
       "date": "06/11/2026",
       "home": "Cuiabá",
@@ -3658,6 +3648,16 @@
       "score": "-",
       "stadium": "Jorge Ismael de Biasi",
       "time": "16:10",
+      "url": ""
+    },
+    {
+      "away": "Criciúma",
+      "date": "07/11/2026",
+      "home": "Vila Nova",
+      "round": 37,
+      "score": "-",
+      "stadium": "OBA",
+      "time": "20:00",
       "url": ""
     },
     {
