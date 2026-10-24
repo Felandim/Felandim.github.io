@@ -143,6 +143,58 @@ def multi_goal_scorer_spotlight(
     }
 
 
+def collective_attack_spotlight(
+    matches: list[dict],
+    scorer_data: dict | None,
+    minimum_scorers: int = 3,
+) -> dict | None:
+    """Destaca uma equipe que distribuiu seus gols entre vários jogadores no mesmo jogo."""
+    scorer_matches = (scorer_data or {}).get("matches", {})
+    candidates = []
+    for match in matches:
+        score = instagram_daily._score(match.get("score", ""))
+        if not score:
+            continue
+        match_scorers = scorer_matches.get(match.get("url", ""), {})
+        for side_index, side in enumerate(("home", "away")):
+            team_goals = score[side_index]
+            scorers = []
+            for scorer in match_scorers.get(side, []):
+                name = str(scorer.get("name") or "").strip()
+                if scorer.get("own_goal") or not name or name in scorers:
+                    continue
+                scorers.append(name)
+            if len(scorers) < minimum_scorers:
+                continue
+            candidates.append({
+                "team": match.get(side, ""),
+                "team_goals": team_goals,
+                "scorers": scorers,
+                "scorer_count": len(scorers),
+                "home": match.get("home", ""),
+                "away": match.get("away", ""),
+                "score": match.get("score", ""),
+            })
+    if not candidates:
+        return None
+
+    best = min(
+        candidates,
+        key=lambda item: (-item["scorer_count"], -item["team_goals"], item["team"]),
+    )
+    scorer_word = "autores" if best["scorer_count"] != 1 else "autor"
+    return {
+        "kind": "collective_attack",
+        "label": "ATAQUE COLETIVO",
+        "text": f"{best['team']} • {best['team_goals']} gols, {best['scorer_count']} {scorer_word}",
+        "caption": (
+            f"Ataque coletivo: {_join_pt(best['scorers'])} marcaram pelo {best['team']} em "
+            f"{best['home']} {best['score']} {best['away']}."
+        ),
+        **best,
+    }
+
+
 def rout_wave_spotlight(
     matches: list[dict],
     minimum_matches: int = 4,
@@ -427,7 +479,7 @@ def editorial_spotlight(insights: dict, matches: list[dict], scorer_data: dict |
     base = instagram_matchday.matchday_spotlight(insights, matches)
     if base.get("kind") in HIGH_PRIORITY_KINDS or base.get("kind") == "delayed_match":
         return base
-    return derby_day_spotlight(matches) or multi_goal_scorer_spotlight(matches, scorer_data) or rout_wave_spotlight(matches) or high_scoring_match_spotlight(matches) or scoring_surge_spotlight(insights) or scoring_drought_spotlight(insights) or winning_streak_spotlight(insights, matches) or both_teams_scored_spotlight(matches) or clean_sheet_wave_spotlight(matches) or away_dominance_spotlight(matches) or home_dominance_spotlight(matches) or draw_dominance_spotlight(matches) or drawless_day_spotlight(matches) or defensive_streak_spotlight(insights) or title_race_spotlight(insights) or base
+    return derby_day_spotlight(matches) or multi_goal_scorer_spotlight(matches, scorer_data) or collective_attack_spotlight(matches, scorer_data) or rout_wave_spotlight(matches) or high_scoring_match_spotlight(matches) or scoring_surge_spotlight(insights) or scoring_drought_spotlight(insights) or winning_streak_spotlight(insights, matches) or both_teams_scored_spotlight(matches) or clean_sheet_wave_spotlight(matches) or away_dominance_spotlight(matches) or home_dominance_spotlight(matches) or draw_dominance_spotlight(matches) or drawless_day_spotlight(matches) or defensive_streak_spotlight(insights) or title_race_spotlight(insights) or base
 
 
 def _spotlight_sentence(spotlight: dict) -> str:

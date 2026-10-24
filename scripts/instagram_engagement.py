@@ -90,6 +90,12 @@ def engagement_question(spotlight: dict) -> str:
     if kind == "multi_goal_scorer":
         player = str(spotlight.get("player", "")).strip()
         return f"{player} repete a dose na próxima rodada?" if player else "Quem repete esse feito na próxima rodada?"
+    if kind == "collective_attack":
+        team = str(spotlight.get("team", "")).strip()
+        names = [str(name).strip() for name in spotlight.get("scorers", []) if str(name).strip()]
+        if team and names:
+            return f"Qual desses nomes pode decidir de novo pelo {team}: {_join_question_options(names)}?"
+        return "Qual ataque pode repetir essa força coletiva na próxima rodada?"
     if kind == "rout_wave":
         winners = [str(item.get("winner", "")).strip() for item in spotlight.get("routs", [])]
         winners = [winner for winner in winners if winner]
