@@ -324,7 +324,7 @@ def test_partial_round_filters_results_and_upcoming_games_in_browser():
     with TemporaryDirectory() as temp_dir:
         temp = Path(temp_dir)
         (temp / "round.html").write_text(
-            f'<!doctype html><html lang="pt-BR"><body><main>{content}</main><script src="brasileirao.js" defer></script></body></html>',
+            f'<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"></head><body><main>{content}</main><script src="brasileirao.js" defer></script></body></html>',
             encoding="utf-8",
         )
         copyfile(ROOT / "brasileirao.js", temp / "brasileirao.js")
