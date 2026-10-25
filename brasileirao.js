@@ -361,6 +361,62 @@
 
   const teamFocusStorageKey = "brasileirao-team-focus";
 
+  function applyRoundFixtureFilters(fixturesList) {
+    const statusFilter = fixturesList.dataset.fixtureStatusFilter || "all";
+    const teamFilter = fixturesList.dataset.teamFocus || "";
+    const fixtures = [...fixturesList.querySelectorAll(".br-fixture")];
+    let visible = 0;
+    fixtures.forEach(fixture => {
+      const matchesStatus = statusFilter === "all" || fixture.dataset.fixtureStatus === statusFilter;
+      const matchesTeam = !teamFilter || [fixture.dataset.teamHome, fixture.dataset.teamAway].includes(teamFilter);
+      fixture.hidden = !(matchesStatus && matchesTeam);
+      if (!fixture.hidden) visible += 1;
+    });
+    const empty = fixturesList.parentElement?.querySelector("[data-fixture-empty]");
+    if (empty) empty.hidden = visible !== 0;
+    const filterStatus = fixturesList.parentElement?.querySelector("[data-fixture-filter-status]");
+    if (filterStatus) {
+      const label = statusFilter === "completed" ? "resultados" : statusFilter === "scheduled" ? "próximos jogos" : "jogos";
+      filterStatus.textContent = `${visible} ${visible === 1 ? "jogo exibido" : "jogos exibidos"} em ${label}.`;
+    }
+    return visible;
+  }
+
+  function initRoundFixtureFilter() {
+    const control = document.querySelector("[data-fixture-filter]");
+    const fixturesList = document.querySelector("[data-round-fixtures]");
+    const status = control?.querySelector("[data-fixture-filter-status]");
+    const buttons = [...(control?.querySelectorAll("[data-fixture-filter-value]") || [])];
+    if (!control || !fixturesList || !status || !buttons.length) return;
+
+    const urlValue = new URL(location.href).searchParams.get("jogos");
+    const queryToFilter = { resultados: "completed", proximos: "scheduled" };
+    let selected = queryToFilter[urlValue] || "all";
+
+    const apply = ({ persist = false } = {}) => {
+      fixturesList.dataset.fixtureStatusFilter = selected;
+      buttons.forEach(button => button.setAttribute("aria-pressed", String(button.dataset.fixtureFilterValue === selected)));
+      applyRoundFixtureFilters(fixturesList);
+      if (persist) {
+        const url = new URL(location.href);
+        if (selected === "completed") url.searchParams.set("jogos", "resultados");
+        else if (selected === "scheduled") url.searchParams.set("jogos", "proximos");
+        else url.searchParams.delete("jogos");
+        history.replaceState(history.state, "", url);
+      }
+      fixturesList.dispatchEvent(new CustomEvent("fixturefilterchange"));
+    };
+
+    buttons.forEach(button => button.addEventListener("click", () => {
+      selected = button.dataset.fixtureFilterValue;
+      apply({ persist: true });
+    }));
+    control.hidden = false;
+    apply();
+  }
+
+  initRoundFixtureFilter();
+
   function initRoundTeamFocus() {
     const control = document.querySelector("[data-round-team-focus]");
     const fixturesList = document.querySelector("[data-round-fixtures]");
@@ -389,6 +445,8 @@
       const teamName = select.options[select.selectedIndex]?.textContent || "";
       let focusedFixture = null;
 
+      fixturesList.dataset.teamFocus = selected;
+
       fixtures.forEach(fixture => {
         fixture.querySelector(".br-focused-game-label")?.remove();
         const matches = Boolean(selected && [fixture.dataset.teamHome, fixture.dataset.teamAway].includes(selected));
@@ -406,6 +464,7 @@
           fixture.prepend(label);
         }
       });
+      applyRoundFixtureFilters(fixturesList);
 
       document.querySelectorAll("[data-standings-table] tbody tr").forEach(row => {
         const link = row.querySelector("th a");
@@ -415,7 +474,7 @@
 
       clear.hidden = !selected;
       fixturesList.classList.toggle("has-team-focus", Boolean(selected));
-      if (focusedFixture) {
+      if (focusedFixture && !focusedFixture.hidden) {
         const opponents = [...focusedFixture.querySelectorAll(".br-fixture-team-link")].map(link => link.textContent.trim());
         status.textContent = `${teamName}: ${opponents.join(" × ")} destacado.`;
         if (scroll) {
@@ -425,7 +484,9 @@
           });
         }
       } else {
-        status.textContent = selected ? `${teamName} não joga nesta rodada.` : "";
+        status.textContent = selected
+          ? focusedFixture ? `${teamName}: o jogo não corresponde ao filtro atual.` : `${teamName} não joga nesta rodada.`
+          : "";
       }
 
       if (persist) {
@@ -447,6 +508,7 @@
       apply({ persist: true });
       select.focus();
     });
+    fixturesList.addEventListener("fixturefilterchange", () => apply());
     apply();
   }
 

@@ -531,6 +531,15 @@ def round_content(number: int, current_round: int, summary: dict[str, Any], matc
         results = "".join(fixtures)
         remaining = len(matches) - completed_count
         progress = f'<p class="br-fixture-progress"><strong>{format_count(completed_count, "jogo concluído", "jogos concluídos")}</strong> de {len(matches)} <span>· {remaining} por jogar</span></p>'
+        fixture_filter = (
+            '<div class="br-fixture-filter" data-fixture-filter hidden>'
+            '<span>Mostrar jogos</span><div role="group" aria-label="Filtrar jogos por status">'
+            f'<button type="button" data-fixture-filter-value="all" aria-pressed="true">Todos <b>{len(matches)}</b></button>'
+            f'<button type="button" data-fixture-filter-value="completed" aria-pressed="false">Resultados <b>{completed_count}</b></button>'
+            f'<button type="button" data-fixture-filter-value="scheduled" aria-pressed="false">Próximos <b>{remaining}</b></button>'
+            '</div><p data-fixture-filter-status aria-live="polite"></p></div>'
+        )
+        fixture_empty = '<p class="br-fixture-empty" data-fixture-empty role="status" hidden>Nenhum jogo corresponde aos filtros escolhidos.</p>'
         fixtures_heading = "Agenda e resultados"
         match_count = f"{completed_count} de {len(matches)} jogos concluídos"
     else:
@@ -543,6 +552,8 @@ def round_content(number: int, current_round: int, summary: dict[str, Any], matc
             for match in matches
         )
         progress = ""
+        fixture_filter = ""
+        fixture_empty = ""
         fixtures_heading = "Resultados"
         match_count = f'{summary["matches"]} jogos'
     rise = team_badge_list(summary["biggest_rise"]["teams"], "sentence", "Sem mudança")
@@ -554,7 +565,7 @@ def round_content(number: int, current_round: int, summary: dict[str, Any], matc
     movements_heading = "Movimentos até aqui" if has_pending else "Movimentos da rodada"
     table_kicker = "Classificação após os jogos concluídos" if has_pending else f"Depois da rodada {number}"
     navigation = round_archive_navigation(number, current_round)
-    return f'''<section class="br-round-hero"><div class="br-shell"><p class="br-kicker">Arquivo do Brasileirão {SEASON}</p><span class="br-round-number">{number:02d}</span><h1>O que mudou na rodada {number}</h1><p>{lead_text}</p></div></section><section class="br-ticker"><div class="br-shell"><span>Rodada {number}</span><strong>{summary['goals']} gols</strong><strong>{match_count}</strong><strong>{team_badge(summary['leader'], 'ticker')} líder</strong></div></section>{navigation}<section class="br-section"><div class="br-shell br-round-grid"><div><h2>{fixtures_heading}</h2>{progress}<div class="br-round-team-focus" data-round-team-focus hidden><label for="round-team-focus-{number}">Encontre seu time</label><div><select id="round-team-focus-{number}" data-round-team-focus-select aria-describedby="round-team-focus-status-{number}"><option value="">Todos os jogos</option></select><button type="button" data-round-team-focus-clear hidden>Limpar</button></div><p id="round-team-focus-status-{number}" data-round-team-focus-status aria-live="polite"></p></div><ul class="br-results" data-round-fixtures>{results}</ul></div><div><h2>{movements_heading}</h2><div class="br-change-stack"><article><span>Maior subida</span><strong>{rise}</strong><p>{summary['biggest_rise']['places']} posições</p></article><article><span>Maior queda</span><strong>{fall}</strong><p>{summary['biggest_fall']['places']} posições</p></article><article><span>Zona de rebaixamento</span><strong>Entraram: {team_badge_list(summary['z4_in'], 'sentence')}</strong><p>Saíram: {team_badge_list(summary['z4_out'], 'sentence')}</p></article></div></div></div></section><section class="br-section br-section-soft"><div class="br-shell"><div class="br-section-head"><div><p class="br-kicker">{table_kicker}</p><h2>Classificação</h2></div><a href="../classificacao-rodada-a-rodada.html">Comparar rodadas →</a></div>{table_html(table, team_prefix='../times/')}</div></section>'''
+    return f'''<section class="br-round-hero"><div class="br-shell"><p class="br-kicker">Arquivo do Brasileirão {SEASON}</p><span class="br-round-number">{number:02d}</span><h1>O que mudou na rodada {number}</h1><p>{lead_text}</p></div></section><section class="br-ticker"><div class="br-shell"><span>Rodada {number}</span><strong>{summary['goals']} gols</strong><strong>{match_count}</strong><strong>{team_badge(summary['leader'], 'ticker')} líder</strong></div></section>{navigation}<section class="br-section"><div class="br-shell br-round-grid"><div><h2>{fixtures_heading}</h2>{progress}{fixture_filter}<div class="br-round-team-focus" data-round-team-focus hidden><label for="round-team-focus-{number}">Encontre seu time</label><div><select id="round-team-focus-{number}" data-round-team-focus-select aria-describedby="round-team-focus-status-{number}"><option value="">Todos os jogos</option></select><button type="button" data-round-team-focus-clear hidden>Limpar</button></div><p id="round-team-focus-status-{number}" data-round-team-focus-status aria-live="polite"></p></div><ul class="br-results" data-round-fixtures>{results}</ul>{fixture_empty}</div><div><h2>{movements_heading}</h2><div class="br-change-stack"><article><span>Maior subida</span><strong>{rise}</strong><p>{summary['biggest_rise']['places']} posições</p></article><article><span>Maior queda</span><strong>{fall}</strong><p>{summary['biggest_fall']['places']} posições</p></article><article><span>Zona de rebaixamento</span><strong>Entraram: {team_badge_list(summary['z4_in'], 'sentence')}</strong><p>Saíram: {team_badge_list(summary['z4_out'], 'sentence')}</p></article></div></div></div></section><section class="br-section br-section-soft"><div class="br-shell"><div class="br-section-head"><div><p class="br-kicker">{table_kicker}</p><h2>Classificação</h2></div><a href="../classificacao-rodada-a-rodada.html">Comparar rodadas →</a></div>{table_html(table, team_prefix='../times/')}</div></section>'''
 
 
 def write(path: Path, content: str) -> None:

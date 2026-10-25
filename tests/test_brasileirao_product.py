@@ -182,6 +182,10 @@ def test_partial_round_page_shows_results_and_full_upcoming_schedule():
     assert source.count('data-fixture-status="scheduled"') == 2
     assert '<time datetime="2026-10-17T18:30:00-03:00">Sáb, 17 out</time>' in source
     assert "1 de 3 jogos concluídos" in source
+    assert 'data-fixture-filter hidden' in source
+    assert 'data-fixture-filter-value="completed"' in source
+    assert 'data-fixture-filter-value="scheduled"' in source
+    assert 'data-fixture-empty role="status" hidden' in source
     assert "Movimentos até aqui" in source
     assert "Classificação após os jogos concluídos" in source
     assert "segue na liderança até aqui" in source
@@ -280,6 +284,87 @@ def test_round_team_focus_highlights_fixture_and_table_in_browser():
         server.shutdown()
         server.server_close()
         thread.join(timeout=5)
+
+
+def test_partial_round_filters_results_and_upcoming_games_in_browser():
+    from functools import partial
+    from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
+    from shutil import copyfile
+    from tempfile import TemporaryDirectory
+    from threading import Thread
+    from playwright.sync_api import sync_playwright
+
+    class QuietHandler(SimpleHTTPRequestHandler):
+        def log_message(self, format, *args):
+            pass
+
+    insights = load("brasileirao_2026_insights.json")
+    source_dir = str(ROOT / "brasileirao_2026")
+    sys.path.insert(0, source_dir)
+    try:
+        from build import round_content
+    finally:
+        sys.path.remove(source_dir)
+
+    source_matches = load("serie_a_2026.json")["matches"][:3]
+    matches = [
+        {**source_matches[0], "score": "1 x 0", "date": "24/10/2026", "time": "16:30", "stadium": "Estádio A"},
+        {**source_matches[1], "score": "-", "date": "26/10/2026", "time": "19:30", "stadium": "Estádio B"},
+        {**source_matches[2], "score": "-", "date": "26/10/2026", "time": "20:00", "stadium": "Estádio C"},
+    ]
+    summary = {**insights["rounds"][-1], "round": 99, "matches": 1, "goals": 1, "leader_changed": False}
+    table = insights["snapshots"][-1]["table"]
+    content = round_content(99, 99, summary, matches, table)
+    selected_team = matches[1]["home"]
+    selected_slug = re.sub(
+        r"[^a-z0-9]+", "-",
+        unicodedata.normalize("NFKD", selected_team).encode("ascii", "ignore").decode().lower(),
+    ).strip("-")
+
+    with TemporaryDirectory() as temp_dir:
+        temp = Path(temp_dir)
+        (temp / "round.html").write_text(
+            f'<!doctype html><html lang="pt-BR"><body><main>{content}</main><script src="brasileirao.js" defer></script></body></html>',
+            encoding="utf-8",
+        )
+        copyfile(ROOT / "brasileirao.js", temp / "brasileirao.js")
+        server = ThreadingHTTPServer(("127.0.0.1", 0), partial(QuietHandler, directory=temp_dir))
+        thread = Thread(target=server.serve_forever, daemon=True)
+        thread.start()
+        base_url = f"http://127.0.0.1:{server.server_port}"
+
+        try:
+            with sync_playwright() as playwright:
+                browser = playwright.chromium.launch()
+                page = browser.new_page()
+                page.goto(f"{base_url}/round.html?jogos=proximos", wait_until="domcontentloaded")
+                upcoming = page.locator('[data-fixture-filter-value="scheduled"]')
+                upcoming.wait_for(state="visible")
+                assert upcoming.get_attribute("aria-pressed") == "true"
+                assert page.locator(".br-fixture:visible").count() == 2
+                assert page.locator(".br-fixture.is-completed:visible").count() == 0
+                assert "2 jogos exibidos em próximos jogos." in page.locator("[data-fixture-filter-status]").text_content()
+
+                page.locator('[data-fixture-filter-value="completed"]').click()
+                assert page.locator(".br-fixture:visible").count() == 1
+                assert page.locator(".br-fixture.is-scheduled:visible").count() == 0
+                assert "jogos=resultados" in page.url
+
+                page.locator("[data-round-team-focus-select]").select_option(selected_slug)
+                assert page.locator(".br-fixture:visible").count() == 0
+                assert page.locator("[data-fixture-empty]").is_visible()
+                assert "não corresponde ao filtro atual" in page.locator("[data-round-team-focus-status]").text_content()
+
+                page.locator('[data-fixture-filter-value="all"]').click()
+                assert page.locator(".br-fixture:visible").count() == 1
+                assert "jogos=" not in page.url
+                assert f"time={selected_slug}" in page.url
+                assert f"{selected_team}:" in page.locator("[data-round-team-focus-status]").text_content()
+                browser.close()
+        finally:
+            server.shutdown()
+            server.server_close()
+            thread.join(timeout=5)
 
 
 def test_only_home_leader_card_uses_current_leader_color():

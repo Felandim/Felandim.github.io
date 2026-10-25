@@ -779,6 +779,17 @@ h3 { margin-bottom: 12px; font-size: 1.35rem; }
 .br-fixture-team-link:focus-visible { outline: 3px solid #984333; outline-offset: 2px; }
 .br-fixture-progress { display: flex; flex-wrap: wrap; gap: 5px; margin: -10px 0 18px; color: var(--br-muted); font-size: .82rem; }
 .br-fixture-progress strong { color: var(--br-ink); }
+.br-fixture-filter { margin: 0 0 14px; padding: 14px; background: #fff; border: 1px solid var(--br-line); }
+.br-fixture-filter[hidden],
+.br-fixture-empty[hidden] { display: none; }
+.br-fixture-filter > span { display: block; margin-bottom: 8px; color: #59645d; font-size: .68rem; font-weight: 900; letter-spacing: .11em; text-transform: uppercase; }
+.br-fixture-filter > div { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+.br-fixture-filter button { min-height: 44px; padding: 9px 10px; color: var(--br-ink); background: var(--br-soft); border: 1px solid #aeb5ad; font: inherit; font-size: .76rem; font-weight: 850; cursor: pointer; }
+.br-fixture-filter button b { display: inline-grid; min-width: 1.65em; min-height: 1.65em; place-items: center; margin-left: 4px; color: #59645d; background: #fff; border-radius: 999px; font-size: .68rem; }
+.br-fixture-filter button[aria-pressed="true"] { color: var(--br-ink); background: var(--br-hot); border-color: var(--br-ink); box-shadow: inset 0 -3px 0 var(--br-ink); }
+.br-fixture-filter button:focus-visible { outline: 3px solid #984333; outline-offset: 2px; }
+.br-fixture-filter p { min-height: 1.2em; margin: 7px 0 0; color: #5d6962; font-size: .72rem; font-weight: 750; }
+.br-fixture-empty { margin: 14px 0 0; padding: 18px; color: #5d6962; background: var(--br-soft); border: 1px dashed #909a93; font-size: .82rem; font-weight: 800; text-align: center; }
 .br-fixture-center { display: grid; justify-items: center; gap: 3px; min-width: 0; text-align: center; }
 .br-fixture-center strong { width: 100%; box-sizing: border-box; }
 .br-fixture-center time, .br-fixture-date { color: var(--br-ink); font-size: .72rem; font-weight: 900; text-transform: uppercase; }
@@ -852,6 +863,7 @@ h3 { margin-bottom: 12px; font-size: 1.35rem; }
   .br-results li { grid-template-columns: 1fr 70px 1fr; font-size: .78rem; }
   .br-round-team-focus > div { grid-template-columns: 1fr; gap: 8px; }
   .br-round-team-focus button { min-height: 44px; }
+  .br-fixture-filter > div { grid-template-columns: 1fr; }
   .br-round-number { top: 50px; opacity: .65; }
 }
 
