@@ -102,6 +102,9 @@ def engagement_question(spotlight: dict) -> str:
         if len(winners) >= 2:
             return f"Qual goleada foi mais marcante: {_join_question_options(winners)}?"
         return "Qual dessas goleadas mais marcou a rodada?"
+    if kind == "bounce_back":
+        team = str(spotlight.get("team", "")).strip()
+        return f"{team} confirma a reação na próxima rodada?" if team else "Quem confirma a reação na próxima rodada?"
     if kind == "scoring_surge":
         return "Esse ritmo de gols se mantém até o fim da rodada?"
     if kind == "scoring_drought":

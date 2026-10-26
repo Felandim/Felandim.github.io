@@ -89,11 +89,14 @@ def block_spotlight(insights: dict, block: dict, scorer_data: dict | None = None
     matches = block["matches"]
     scorer = instagram_editorial.multi_goal_scorer_spotlight(matches, scorer_data)
     collective = instagram_editorial.collective_attack_spotlight(matches, scorer_data)
+    bounce_back = instagram_editorial.bounce_back_spotlight(insights, matches)
     if len(matches) == 1:
         if scorer:
             return scorer
         if collective:
             return collective
+        if bounce_back:
+            return bounce_back
         # Pontos deste jogo e posição atual, sem atribuir movimentos de outros jogos a ele.
         match = matches[0]
         home, away = (int(n) for n in re.split(r"\s*x\s*", match["score"].strip()))

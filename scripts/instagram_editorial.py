@@ -247,6 +247,90 @@ def rout_wave_spotlight(
     }
 
 
+def bounce_back_spotlight(
+    insights: dict,
+    matches: list[dict],
+    minimum_previous_margin: int = 2,
+    minimum_current_margin: int = 2,
+) -> dict | None:
+    """Destaca uma resposta forte após derrota clara no jogo anterior."""
+    profiles = {
+        profile.get("team"): profile
+        for profile in insights.get("team_profiles", {}).values()
+        if profile.get("team")
+    }
+    candidates = []
+
+    for match in matches:
+        score = instagram_daily._score(match.get("score", ""))
+        if not score or score[0] == score[1]:
+            continue
+        current_margin = abs(score[0] - score[1])
+        if current_margin < minimum_current_margin:
+            continue
+
+        home_win = score[0] > score[1]
+        winner_side = "home" if home_win else "away"
+        winner = match.get(winner_side, "")
+        opponent = match.get("away" if home_win else "home", "")
+        current_round = int(match.get("round") or 0)
+        profile = profiles.get(winner, {})
+        previous_games = [
+            game for game in profile.get("last_five", [])
+            if int(game.get("round") or 0) < current_round
+        ]
+        if not previous_games:
+            continue
+        previous = max(previous_games, key=lambda game: int(game.get("round") or 0))
+        previous_score = instagram_daily._score(previous.get("score", ""))
+        if previous.get("result") != "D" or not previous_score:
+            continue
+
+        previous_margin = abs(previous_score[0] - previous_score[1])
+        if previous_margin < minimum_previous_margin:
+            continue
+
+        if previous.get("venue") == "Casa":
+            previous_team_goals, previous_opponent_goals = previous_score
+        else:
+            previous_opponent_goals, previous_team_goals = previous_score
+        current_team_goals = score[0] if home_win else score[1]
+        current_opponent_goals = score[1] if home_win else score[0]
+        candidates.append({
+            "team": winner,
+            "opponent": opponent,
+            "previous_opponent": previous.get("opponent", ""),
+            "previous_score": f"{previous_team_goals} x {previous_opponent_goals}",
+            "current_score": f"{current_team_goals} x {current_opponent_goals}",
+            "previous_margin": previous_margin,
+            "current_margin": current_margin,
+            "position": int(profile.get("current", {}).get("position") or 99),
+        })
+
+    if not candidates:
+        return None
+
+    best = max(
+        candidates,
+        key=lambda item: (
+            item["previous_margin"] + item["current_margin"],
+            item["current_margin"],
+            -item["position"],
+            item["team"],
+        ),
+    )
+    return {
+        "kind": "bounce_back",
+        "label": "RESPOSTA IMEDIATA",
+        "text": f"{best['team']} • de {best['previous_score']} para {best['current_score']}",
+        "caption": (
+            f"Resposta imediata — {best['team']}: depois de perder por {best['previous_score']} "
+            f"para {best['previous_opponent']}, venceu {best['opponent']} por {best['current_score']}."
+        ),
+        **best,
+    }
+
+
 def scoring_surge_spotlight(insights: dict, minimum_matches: int = 5, history_rounds: int = 5, minimum_lift: float = 0.35, minimum_rate: float = 3.0) -> dict | None:
     rounds = insights.get("rounds", [])
     if len(rounds) < history_rounds + 1:
@@ -479,7 +563,7 @@ def editorial_spotlight(insights: dict, matches: list[dict], scorer_data: dict |
     base = instagram_matchday.matchday_spotlight(insights, matches)
     if base.get("kind") in HIGH_PRIORITY_KINDS or base.get("kind") == "delayed_match":
         return base
-    return derby_day_spotlight(matches) or multi_goal_scorer_spotlight(matches, scorer_data) or collective_attack_spotlight(matches, scorer_data) or rout_wave_spotlight(matches) or high_scoring_match_spotlight(matches) or scoring_surge_spotlight(insights) or scoring_drought_spotlight(insights) or winning_streak_spotlight(insights, matches) or both_teams_scored_spotlight(matches) or clean_sheet_wave_spotlight(matches) or away_dominance_spotlight(matches) or home_dominance_spotlight(matches) or draw_dominance_spotlight(matches) or drawless_day_spotlight(matches) or defensive_streak_spotlight(insights) or title_race_spotlight(insights) or base
+    return derby_day_spotlight(matches) or multi_goal_scorer_spotlight(matches, scorer_data) or collective_attack_spotlight(matches, scorer_data) or rout_wave_spotlight(matches) or high_scoring_match_spotlight(matches) or bounce_back_spotlight(insights, matches) or scoring_surge_spotlight(insights) or scoring_drought_spotlight(insights) or winning_streak_spotlight(insights, matches) or both_teams_scored_spotlight(matches) or clean_sheet_wave_spotlight(matches) or away_dominance_spotlight(matches) or home_dominance_spotlight(matches) or draw_dominance_spotlight(matches) or drawless_day_spotlight(matches) or defensive_streak_spotlight(insights) or title_race_spotlight(insights) or base
 
 
 def _spotlight_sentence(spotlight: dict) -> str:
