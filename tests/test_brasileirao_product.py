@@ -628,6 +628,15 @@ def test_wide_tables_offer_accessible_scroll_controls():
     assert ".br-analysis-grid > *" in css
 
 
+def test_mobile_standings_keep_position_and_team_visible_while_scrolling():
+    css = (ROOT / "style.css").read_text(encoding="utf-8")
+
+    assert '.br-table[data-standings-table] :is(th, td):first-child' in css
+    assert '.br-table[data-standings-table] :is(th, td):nth-child(2)' in css
+    assert "position: sticky" in css
+    assert "--br-standings-position-width" in css
+
+
 def test_standings_team_focus_is_accessible_persistent_and_shareable():
     source = (ROOT / "brasileirao.js").read_text(encoding="utf-8")
     css = (ROOT / "style.css").read_text(encoding="utf-8")
@@ -776,6 +785,15 @@ def test_round_selectors_restore_url_and_browser_history():
             scroll_tools.wait_for(state="visible")
             scroll_previous = scroll_tools.locator("[data-table-scroll-previous]")
             scroll_next = scroll_tools.locator("[data-table-scroll-next]")
+            first_row = mobile_page.locator("[data-standings-table] tbody tr").first
+            position_cell = first_row.locator("td").first
+            team_cell = first_row.locator('th[scope="row"]')
+            points_cell = first_row.locator("td").nth(1)
+            position_before = position_cell.bounding_box()
+            team_before = team_cell.bounding_box()
+            points_before = points_cell.bounding_box()
+            assert mobile_page.evaluate("el => getComputedStyle(el).position", position_cell.element_handle()) == "sticky"
+            assert mobile_page.evaluate("el => getComputedStyle(el).position", team_cell.element_handle()) == "sticky"
             assert scroll_previous.is_disabled()
             assert scroll_next.is_enabled()
             scroll_next.click()
@@ -786,6 +804,12 @@ def test_round_selectors_restore_url_and_browser_history():
                 "!document.querySelector('[data-table-scroll-previous]').disabled"
             )
             assert scroll_previous.is_enabled()
+            position_after = position_cell.bounding_box()
+            team_after = team_cell.bounding_box()
+            points_after = points_cell.bounding_box()
+            assert abs(position_after["x"] - position_before["x"]) < 1
+            assert abs(team_after["x"] - team_before["x"]) < 1
+            assert points_after["x"] < points_before["x"] - 50
 
             error_page = browser.new_page()
             error_page.route(
