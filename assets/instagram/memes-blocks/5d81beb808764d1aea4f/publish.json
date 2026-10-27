@@ -1,0 +1,87 @@
+{
+  "block_id": "5d81beb808764d1aea4f",
+  "summary_media_id": "18119316913782976",
+  "match_keys": [
+    "[32, \"Chapecoense\", \"Fluminense\"]",
+    "[32, \"Coritiba\", \"Grêmio\"]",
+    "[32, \"Cruzeiro\", \"Remo\"]",
+    "[32, \"Flamengo\", \"Atlético-MG\"]",
+    "[32, \"Internacional\", \"Botafogo\"]",
+    "[32, \"Mirassol\", \"São Paulo\"]",
+    "[32, \"Palmeiras\", \"Bragantino\"]",
+    "[32, \"Santos\", \"Bahia\"]",
+    "[32, \"Vasco\", \"Corinthians\"]",
+    "[32, \"Vitória\", \"Athletico-PR\"]"
+  ],
+  "account_id": "17841429981371844",
+  "api_profile_id": "27834175349616492",
+  "username": "brasileiraoemrodadas",
+  "reviewed": true,
+  "images": [
+    {
+      "file": "01-flamengo.jpg",
+      "match_key": "[32, \"Flamengo\", \"Atlético-MG\"]",
+      "match": {
+        "away": "Atlético-MG",
+        "date": "26/10/2026",
+        "home": "Flamengo",
+        "round": 32,
+        "score": "3 x 2",
+        "stadium": "Maracanã",
+        "time": "20:00",
+        "url": "https://ge.globo.com/rj/futebol/brasileirao-serie-a/jogo/26-10-2026/flamengo-atletico-mg.ghtml"
+      },
+      "sha256": "5e6404419bffb7592ed3293bd28e68ffe4f71a5e17c7fadad185426bbeb00460",
+      "template_url": "https://raw.githubusercontent.com/cipherdragon/memebank/2a7c42493d12a181fba486494b023addd4d37b8f/Drake-Hotline-Bling.jpg",
+      "template_page": "https://github.com/cipherdragon/memebank/blob/2a7c42493d12a181fba486494b023addd4d37b8f/Drake-Hotline-Bling.jpg",
+      "context_sources": [
+        "https://www.flamengo.com.br/noticias/futebol/com-emocao-ate-o-fim-flamengo-vira-sobre-o-atletico-mg-e-volta-a-lideranca-do-brasileirao"
+      ],
+      "editing": "Pillow; original template pixels resized/cropped with Nimbus Sans (Helvetica-compatible) text; no generative imagery"
+    },
+    {
+      "file": "02-corinthians.jpg",
+      "match_key": "[32, \"Vasco\", \"Corinthians\"]",
+      "match": {
+        "away": "Corinthians",
+        "date": "24/10/2026",
+        "home": "Vasco",
+        "round": 32,
+        "score": "3 x 2",
+        "stadium": "São Januário",
+        "time": "18:30",
+        "url": "https://ge.globo.com/rj/futebol/brasileirao-serie-a/jogo/24-10-2026/vasco-corinthians.ghtml"
+      },
+      "sha256": "9e5844c71967591fcbf1ad9401d5ce51e6cfa10512f02037029cad0967d87088",
+      "template_url": "https://raw.githubusercontent.com/cipherdragon/memebank/2a7c42493d12a181fba486494b023addd4d37b8f/Hide-the-Pain-Harold.jpg",
+      "template_page": "https://github.com/cipherdragon/memebank/blob/2a7c42493d12a181fba486494b023addd4d37b8f/Hide-the-Pain-Harold.jpg",
+      "context_sources": [
+        "https://www.uol.com.br/esporte/futebol/ultimas-noticias/2026/10/24/vasco-vira-em-2-min-frustra-seedorf-e-afunda-corinthians-em-jogo-dramatico.amp.htm"
+      ],
+      "editing": "Pillow; original template pixels resized/cropped with Nimbus Sans (Helvetica-compatible) text; no generative imagery"
+    },
+    {
+      "file": "03-inter.jpg",
+      "match_key": "[32, \"Internacional\", \"Botafogo\"]",
+      "match": {
+        "away": "Botafogo",
+        "date": "24/10/2026",
+        "home": "Internacional",
+        "round": 32,
+        "score": "3 x 0",
+        "stadium": "Beira-Rio",
+        "time": "16:30",
+        "url": "https://ge.globo.com/rs/futebol/brasileirao-serie-a/jogo/24-10-2026/internacional-botafogo.ghtml"
+      },
+      "sha256": "4f41388769382f7270cd182692c3d8ed3088cb14a52f169a42991643517c4ceb",
+      "template_url": "https://raw.githubusercontent.com/cipherdragon/memebank/2a7c42493d12a181fba486494b023addd4d37b8f/Disaster-Girl.jpg",
+      "template_page": "https://github.com/cipherdragon/memebank/blob/2a7c42493d12a181fba486494b023addd4d37b8f/Disaster-Girl.jpg",
+      "context_sources": [
+        "https://internacional.com.br/noticias/masculino/inter-goleia-o-botafogo-com-show-da-torcida"
+      ],
+      "editing": "Pillow; original template pixels resized/cropped with Nimbus Sans (Helvetica-compatible) text; no generative imagery"
+    }
+  ],
+  "caption": "A 32ª rodada acabou e a terapia ficou pra depois. 😂\n\nFlamengo 3 x 2 Atlético-MG, Vasco 3 x 2 Corinthians e Inter 3 x 0 Botafogo. Teve pênalti no fim, virada da virada e fuga do Z4.\n\nQual torcida merece um dia de folga depois desse bloco?\n\nTemplates clássicos: Drake Hotline Bling, Hide the Pain Harold e Disaster Girl (acervo cipherdragon/memebank). Montagem com imagens existentes, sem geração por IA.\n\n#Brasileirão #FutebolBrasileiro #MemesDeFutebol",
+  "review_notes": "Verified original templates visually; three simple legible compositions; scores and events checked against Flamengo, Internacional and UOL match reports. No AI-generated characters or images. Match photos researched in official reports but not used; no invented photo credits."
+}
