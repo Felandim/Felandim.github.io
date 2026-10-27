@@ -798,7 +798,7 @@ def test_round_selectors_restore_url_and_browser_history():
             assert scroll_next.is_enabled()
             scroll_next.click()
             mobile_page.wait_for_function(
-                "document.querySelector('.br-table-wrap').scrollLeft > 0"
+                "document.querySelector('.br-table-wrap').scrollLeft > 50"
             )
             mobile_page.wait_for_function(
                 "!document.querySelector('[data-table-scroll-previous]').disabled"
