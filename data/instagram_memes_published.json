@@ -50,17 +50,18 @@
     "published_at": "2026-10-20T18:34:10.903375+00:00"
   },
   "5d81beb808764d1aea4f": {
-    "state": "publish_requested",
+    "state": "published_pending_verification",
     "summary_media_id": "18119316913782976",
     "summary_permalink": "https://www.instagram.com/p/DfAg6yhm-ra/",
     "caption_sha256": "f2b023b78db84a29198644aa886b951c510479ed1e9941477f0a107f5ed12148",
     "source_commit": "b25c9577a9a0dd84544496c52601973fa27f5a0d",
-    "updated_at": "2026-10-27T18:50:06.194082+00:00",
+    "updated_at": "2026-10-27T18:50:13.463051+00:00",
     "container_id": "18117712510999380",
     "child_container_ids": [
       "18117712396999380",
       "18117712438999380",
       "18117712462999380"
-    ]
+    ],
+    "carousel_id": "18007592963791386"
   }
 }
