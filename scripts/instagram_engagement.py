@@ -105,6 +105,9 @@ def engagement_question(spotlight: dict) -> str:
     if kind == "bounce_back":
         team = str(spotlight.get("team", "")).strip()
         return f"{team} confirma a reação na próxima rodada?" if team else "Quem confirma a reação na próxima rodada?"
+    if kind == "winless_run_ended":
+        team = str(spotlight.get("team", "")).strip()
+        return f"Essa vitória vira a chave do {team}?" if team else "Essa vitória marca uma virada de fase?"
     if kind == "scoring_surge":
         return "Esse ritmo de gols se mantém até o fim da rodada?"
     if kind == "scoring_drought":
