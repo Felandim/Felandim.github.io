@@ -678,7 +678,28 @@ h3 { margin-bottom: 12px; font-size: 1.35rem; }
 .br-compare-select { display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: center; background: var(--br-hot); }
 .br-compare-select select { min-width: 0; background: transparent; }
 .br-team-select-badge { width: 2rem; height: 2rem; margin-left: 14px; object-fit: contain; }
-.br-compare-controls > span { padding-bottom: 9px; color: var(--br-coral); font-size: 2.4rem; font-weight: 950; }
+.br-compare-swap {
+  min-width: 76px;
+  min-height: 48px;
+  display: grid;
+  place-items: center;
+  align-content: center;
+  gap: 1px;
+  padding: 5px 10px;
+  color: var(--br-ink);
+  background: var(--br-coral);
+  border: 2px solid var(--br-coral);
+  font: inherit;
+  font-weight: 900;
+  cursor: pointer;
+}
+.br-compare-swap[hidden] { display: none; }
+.br-compare-swap span { font-size: 1.45rem; line-height: .8; }
+.br-compare-swap small { font-size: .58rem; letter-spacing: .08em; text-transform: uppercase; }
+.br-compare-swap:hover { color: #f6f4ec; background: transparent; }
+.br-compare-swap:focus-visible { outline: 3px solid var(--br-hot); outline-offset: 3px; }
+.br-compare-swap:disabled { opacity: .45; cursor: not-allowed; }
+.br-compare-control-status { min-height: 20px; margin: 0 0 4px; color: #59645d; font-size: .74rem; font-weight: 750; }
 .br-compare-error { min-height: 28px; margin: 0 0 10px; color: #b7382a; font-size: .82rem; font-weight: 800; }
 .br-compare-summary { display: grid; grid-template-columns: 1fr .9fr 1fr; margin-bottom: 28px; border: 1px solid var(--br-line); background: #fff; }
 .br-compare-summary article, .br-compare-summary > div { min-height: 250px; display: flex; flex-direction: column; justify-content: center; padding: 30px; }
@@ -843,7 +864,7 @@ h3 { margin-bottom: 12px; font-size: 1.35rem; }
   .br-record-ranking li { grid-template-columns: 28px 1fr auto; }
   .br-record-ranking li small { display: none; }
   .br-compare-controls { grid-template-columns: 1fr; }
-  .br-compare-controls > span { padding: 0; text-align: center; }
+  .br-compare-swap { width: 100%; min-height: 44px; grid-template-columns: auto auto; justify-content: center; gap: 8px; }
   .br-compare-summary article, .br-compare-summary article:last-child { min-height: 190px; text-align: left; }
   .br-change-grid article { min-height: 220px; border-right: 0; border-bottom: 1px solid #48544d; }
   .br-change-grid h3 { margin-top: 64px; }

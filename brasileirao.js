@@ -728,6 +728,8 @@
     const teamBSelect = comparisonRoot.querySelector("[data-team-b]");
     const teamABadge = comparisonRoot.querySelector("[data-team-a-badge]");
     const teamBBadge = comparisonRoot.querySelector("[data-team-b-badge]");
+    const swap = comparisonRoot.querySelector("[data-swap-comparison]");
+    const controlStatus = comparisonRoot.querySelector("[data-compare-control-status]");
     const summary = comparisonRoot.querySelector("[data-compare-summary]");
     const chart = comparisonRoot.querySelector("[data-compare-chart]");
     const stats = comparisonRoot.querySelector("[data-compare-stats]");
@@ -764,6 +766,7 @@
         const profileB = data.team_profiles[slugB];
         teamABadge.src = teamLogoUrl(profileA.team);
         teamBBadge.src = teamLogoUrl(profileB.team);
+        if (swap) swap.disabled = slugA === slugB;
         if (slugA === slugB) {
           error.textContent = "Escolha dois times diferentes.";
           summary.innerHTML = "";
@@ -791,8 +794,28 @@
         status.textContent = "";
       };
 
-      teamASelect.addEventListener("change", render);
-      teamBSelect.addEventListener("change", render);
+      teamASelect.addEventListener("change", () => {
+        if (controlStatus) controlStatus.textContent = "";
+        render();
+      });
+      teamBSelect.addEventListener("change", () => {
+        if (controlStatus) controlStatus.textContent = "";
+        render();
+      });
+      if (swap) {
+        swap.hidden = false;
+        swap.addEventListener("click", () => {
+          const previousA = teamASelect.value;
+          teamASelect.value = teamBSelect.value;
+          teamBSelect.value = previousA;
+          render();
+          if (controlStatus) {
+            const first = teamASelect.options[teamASelect.selectedIndex].text;
+            const second = teamBSelect.options[teamBSelect.selectedIndex].text;
+            controlStatus.textContent = `Ordem invertida: ${first} agora é o primeiro time e ${second}, o segundo.`;
+          }
+        });
+      }
       render();
 
       comparisonRoot.querySelector("[data-copy-comparison]")?.addEventListener("click", async () => {

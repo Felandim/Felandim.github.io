@@ -158,6 +158,70 @@ def test_team_badges_cover_hub_scorers_comparison_team_and_round_pages():
         assert f'teamBadge(row.team, "{variant}")' in script or f'teamBadge(profileA.team, "{variant}")' in script or f'teamBadge(leader.team, "{variant}")' in script or f'teamBadge(trailer.team, "{variant}")' in script
 
 
+def test_comparison_offers_accessible_team_order_swap():
+    comparison = (ROOT / "brasileirao" / "comparador-times.html").read_text(encoding="utf-8")
+    script = (ROOT / "brasileirao.js").read_text(encoding="utf-8")
+    css = (ROOT / "style.css").read_text(encoding="utf-8")
+
+    assert 'data-swap-comparison hidden' in comparison
+    assert 'aria-label="Inverter o primeiro e o segundo time"' in comparison
+    assert 'data-compare-control-status aria-live="polite"' in comparison
+    assert 'swap.addEventListener("click"' in script
+    assert 'teamASelect.value = teamBSelect.value' in script
+    assert 'teamBSelect.value = previousA' in script
+    assert 'controlStatus.textContent = `Ordem invertida:' in script
+    assert ".br-compare-swap[hidden]" in css
+    assert ".br-compare-swap:focus-visible" in css
+    assert ".br-compare-swap:disabled" in css
+
+
+def test_comparison_swaps_teams_and_preserves_order_in_url_in_browser():
+    from functools import partial
+    from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
+    from threading import Thread
+    from playwright.sync_api import sync_playwright
+
+    class QuietHandler(SimpleHTTPRequestHandler):
+        def log_message(self, format, *args):
+            pass
+
+    server = ThreadingHTTPServer(("127.0.0.1", 0), partial(QuietHandler, directory=str(ROOT)))
+    thread = Thread(target=server.serve_forever, daemon=True)
+    thread.start()
+    base_url = f"http://127.0.0.1:{server.server_port}"
+
+    try:
+        with sync_playwright() as playwright:
+            browser = playwright.chromium.launch()
+            page = browser.new_page(viewport={"width": 390, "height": 844})
+            page.goto(
+                f"{base_url}/brasileirao/comparador-times.html?a=flamengo&b=palmeiras",
+                wait_until="domcontentloaded",
+            )
+            swap = page.locator("[data-swap-comparison]")
+            swap.wait_for(state="visible")
+            assert page.locator("[data-team-a]").input_value() == "flamengo"
+            assert page.locator("[data-team-b]").input_value() == "palmeiras"
+
+            swap.click()
+            page.wait_for_function("location.search.includes('a=palmeiras') && location.search.includes('b=flamengo')")
+            assert page.locator("[data-team-a]").input_value() == "palmeiras"
+            assert page.locator("[data-team-b]").input_value() == "flamengo"
+            assert "Palmeiras agora é o primeiro time" in page.locator("[data-compare-control-status]").text_content()
+            assert "teamlogo/10283.png" in page.locator("[data-team-a-badge]").get_attribute("src")
+            assert "teamlogo/9770.png" in page.locator("[data-team-b-badge]").get_attribute("src")
+
+            page.reload(wait_until="domcontentloaded")
+            page.locator("[data-swap-comparison]").wait_for(state="visible")
+            assert page.locator("[data-team-a]").input_value() == "palmeiras"
+            assert page.locator("[data-team-b]").input_value() == "flamengo"
+            browser.close()
+    finally:
+        server.shutdown()
+        server.server_close()
+        thread.join(timeout=5)
+
+
 def test_partial_round_page_shows_results_and_full_upcoming_schedule():
     insights = load("brasileirao_2026_insights.json")
     source_dir = str(ROOT / "brasileirao_2026")
