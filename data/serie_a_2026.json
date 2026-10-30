@@ -2092,12 +2092,12 @@
     },
     {
       "away": "Vasco",
-      "date": "",
+      "date": "14/11/2026",
       "home": "Chapecoense",
       "round": 21,
       "score": "-",
       "stadium": "Arena Condá",
-      "time": "",
+      "time": "20:30",
       "url": ""
     },
     {
@@ -3318,7 +3318,7 @@
       "score": "-",
       "stadium": "Arena Condá",
       "time": "19:30",
-      "url": ""
+      "url": "https://ge.globo.com/sc/futebol/brasileirao-serie-a/jogo/03-11-2026/chapecoense-mirassol.ghtml"
     },
     {
       "away": "Coritiba",
@@ -3328,7 +3328,7 @@
       "score": "-",
       "stadium": "Beira-Rio",
       "time": "21:30",
-      "url": ""
+      "url": "https://ge.globo.com/rs/futebol/brasileirao-serie-a/jogo/03-11-2026/internacional-coritiba.ghtml"
     },
     {
       "away": "Grêmio",
@@ -3338,7 +3338,7 @@
       "score": "-",
       "stadium": "Maracanã",
       "time": "19:30",
-      "url": ""
+      "url": "https://ge.globo.com/rj/futebol/brasileirao-serie-a/jogo/04-11-2026/flamengo-gremio.ghtml"
     },
     {
       "away": "Vasco",
@@ -3358,7 +3358,7 @@
       "score": "-",
       "stadium": "Nilton Santos (Engenhão)",
       "time": "21:30",
-      "url": ""
+      "url": "https://ge.globo.com/rj/futebol/brasileirao-serie-a/jogo/04-11-2026/botafogo-atletico-mg.ghtml"
     },
     {
       "away": "Corinthians",
@@ -3368,7 +3368,7 @@
       "score": "-",
       "stadium": "Vila Belmiro",
       "time": "21:30",
-      "url": ""
+      "url": "https://ge.globo.com/sp/futebol/brasileirao-serie-a/jogo/04-11-2026/sao-paulo-corinthians.ghtml"
     },
     {
       "away": "Remo",
@@ -3378,7 +3378,7 @@
       "score": "-",
       "stadium": "Nubank Parque",
       "time": "19:30",
-      "url": ""
+      "url": "https://ge.globo.com/sp/futebol/brasileirao-serie-a/jogo/05-11-2026/palmeiras-remo.ghtml"
     },
     {
       "away": "Bahia",
@@ -3388,7 +3388,7 @@
       "score": "-",
       "stadium": "Mineirão",
       "time": "21:30",
-      "url": ""
+      "url": "https://ge.globo.com/mg/futebol/brasileirao-serie-a/jogo/05-11-2026/cruzeiro-bahia.ghtml"
     },
     {
       "away": "Fluminense",
