@@ -53,7 +53,9 @@ def test_generated_product_pages_exist_and_have_main_navigation_labels():
 
 def test_home_prioritizes_brasileirao_and_keeps_portfolio_navigable():
     source = (ROOT / "index.html").read_text(encoding="utf-8")
-    assert "A tabela tem memória" in source
+    assert "A tabela tem memória" not in source
+    assert 'id="home-standings-title">Classificação</h1>' in source
+    assert source.index("data-standings-table") < source.index("br-home-highlights")
     assert "Classificação" in source
     assert "Artilharia" in source
     assert 'href="projetos.html"' in source
@@ -102,10 +104,10 @@ def test_rankings_render_proportional_team_badges():
     home = (ROOT / "index.html").read_text(encoding="utf-8")
     assert rankings.count('class="br-team-badge"') == 36
     assert home.count("br-team-with-badge-chip") == 20
-    assert home.count("br-team-with-badge-table") == 6
+    assert home.count("br-team-with-badge-table") == 20
     assert home.count("br-team-with-badge-preview") == 4
     assert home.count("br-team-with-badge-headline") == 2
-    for variant in ("cover", "ticker", "leader-card", "scorer"):
+    for variant in ("ticker", "leader-card", "scorer"):
         assert home.count(f"br-team-with-badge-{variant}") == 1
     assert 'aria-hidden="true" width="48" height="48" loading="lazy" decoding="async"' in rankings
     assert rankings.count('alt=""') >= 36
