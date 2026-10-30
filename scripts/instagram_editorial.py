@@ -602,6 +602,56 @@ def winning_streak_spotlight(insights: dict, matches: list[dict], minimum_wins: 
     }
 
 
+def unbeaten_run_spotlight(insights: dict, matches: list[dict], minimum_matches: int = 5) -> dict | None:
+    """Destaca uma série invicta renovada por um time que não perdeu no bloco."""
+    unbeaten_teams = set()
+    for match in matches:
+        score = instagram_daily._score(match.get("score", ""))
+        if not score:
+            continue
+        if score[0] >= score[1]:
+            unbeaten_teams.add(match.get("home"))
+        if score[1] >= score[0]:
+            unbeaten_teams.add(match.get("away"))
+
+    candidates = []
+    for profile in insights.get("team_profiles", {}).values():
+        team = profile.get("team")
+        current = profile.get("current", {})
+        streaks = profile.get("streaks", {})
+        unbeaten = int(streaks.get("current_unbeaten") or 0)
+        wins = int(streaks.get("current_wins") or 0)
+        # Uma série composta só por vitórias já tem um destaque mais específico.
+        if team not in unbeaten_teams or unbeaten < minimum_matches or unbeaten == wins:
+            continue
+        candidates.append({
+            "team": team,
+            "unbeaten_matches": unbeaten,
+            "position": int(current.get("position") or 99),
+            "points": int(current.get("points") or 0),
+        })
+
+    if not candidates:
+        return None
+    best = max(
+        candidates,
+        key=lambda item: (item["unbeaten_matches"], -item["position"], item["team"]),
+    )
+    return {
+        "kind": "unbeaten_run",
+        "label": "SÉRIE INVICTA",
+        "text": (
+            f"{best['team']} • {best['unbeaten_matches']} jogos sem perder • "
+            f"{best['position']}º lugar"
+        ),
+        "caption": (
+            f"Série invicta: {best['team']} chegou a {best['unbeaten_matches']} jogos sem perder "
+            f"e ocupa o {best['position']}º lugar, com {best['points']} pontos."
+        ),
+        **best,
+    }
+
+
 def defensive_streak_spotlight(insights: dict, rounds: int = 3, minimum_points: int = 7) -> dict | None:
     snapshots = insights.get("snapshots", [])
     if len(snapshots) < rounds + 1:
@@ -640,7 +690,7 @@ def editorial_spotlight(insights: dict, matches: list[dict], scorer_data: dict |
     base = instagram_matchday.matchday_spotlight(insights, matches)
     if base.get("kind") in HIGH_PRIORITY_KINDS or base.get("kind") == "delayed_match":
         return base
-    return derby_day_spotlight(matches) or multi_goal_scorer_spotlight(matches, scorer_data) or collective_attack_spotlight(matches, scorer_data) or rout_wave_spotlight(matches) or high_scoring_match_spotlight(matches) or bounce_back_spotlight(insights, matches) or winless_run_ended_spotlight(insights, matches) or scoring_surge_spotlight(insights) or scoring_drought_spotlight(insights) or winning_streak_spotlight(insights, matches) or both_teams_scored_spotlight(matches) or clean_sheet_wave_spotlight(matches) or away_dominance_spotlight(matches) or home_dominance_spotlight(matches) or draw_dominance_spotlight(matches) or drawless_day_spotlight(matches) or defensive_streak_spotlight(insights) or title_race_spotlight(insights) or base
+    return derby_day_spotlight(matches) or multi_goal_scorer_spotlight(matches, scorer_data) or collective_attack_spotlight(matches, scorer_data) or rout_wave_spotlight(matches) or high_scoring_match_spotlight(matches) or bounce_back_spotlight(insights, matches) or winless_run_ended_spotlight(insights, matches) or unbeaten_run_spotlight(insights, matches) or scoring_surge_spotlight(insights) or scoring_drought_spotlight(insights) or winning_streak_spotlight(insights, matches) or both_teams_scored_spotlight(matches) or clean_sheet_wave_spotlight(matches) or away_dominance_spotlight(matches) or home_dominance_spotlight(matches) or draw_dominance_spotlight(matches) or drawless_day_spotlight(matches) or defensive_streak_spotlight(insights) or title_race_spotlight(insights) or base
 
 
 def _spotlight_sentence(spotlight: dict) -> str:

@@ -6,7 +6,7 @@ from datetime import date, datetime
 from pathlib import Path
 from zoneinfo import ZoneInfo
 
-from PIL import Image, ImageDraw
+from PIL import Image, ImageColor, ImageDraw
 
 ROOT = Path(__file__).resolve().parents[1]
 SCRIPTS = ROOT / "scripts"
@@ -208,6 +208,21 @@ class InstagramMatchdayTests(unittest.TestCase):
         draw = ImageDraw.Draw(image)
         lines, _ = instagram_matchday.spotlight_text_layout(draw, "Palmeiras assumiu a ponta")
         self.assertEqual(lines, ["Palmeiras assumiu a ponta"])
+
+    def test_redraw_erases_text_that_overflowed_previous_panel(self):
+        image = Image.new("RGB", (1080, 1350), instagram_matchday.instagram_daily.BG)
+        draw = ImageDraw.Draw(image)
+        draw.rectangle((1025, 1200, 1079, 1235), fill="#ffffff")
+
+        instagram_matchday.draw_spotlight(image, {
+            "label": "SÉRIE INVICTA",
+            "text": "Palmeiras • 10 jogos sem perder • 2º lugar",
+        })
+
+        self.assertEqual(
+            image.getpixel((1050, 1220)),
+            ImageColor.getrgb(instagram_matchday.instagram_daily.BG),
+        )
 
     def test_render_overlays_responsive_spotlight(self):
         matches = [{

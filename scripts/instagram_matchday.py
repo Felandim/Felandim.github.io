@@ -472,6 +472,9 @@ def spotlight_text_layout(
 def draw_spotlight(image: Image.Image, spotlight: dict) -> None:
     """Redesenha o destaque com quebra e redução de fonte quando necessário."""
     draw = ImageDraw.Draw(image)
+    # Apaga também pixels fora do painel: um texto anterior pode ter ultrapassado
+    # a caixa antes de o layout responsivo ser aplicado por esta camada.
+    draw.rectangle((0, SPOTLIGHT_BOX[1] - 2, image.width, SPOTLIGHT_BOX[3] + 5), fill=instagram_daily.BG)
     draw.rounded_rectangle(SPOTLIGHT_BOX, radius=24, fill=instagram_daily.PANEL)
     instagram_daily._draw_text(
         draw, (90, 1158), spotlight["label"], instagram_daily._font(25), instagram_daily.ACCENT

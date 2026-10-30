@@ -108,6 +108,9 @@ def engagement_question(spotlight: dict) -> str:
     if kind == "winless_run_ended":
         team = str(spotlight.get("team", "")).strip()
         return f"Essa vitória vira a chave do {team}?" if team else "Essa vitória marca uma virada de fase?"
+    if kind == "unbeaten_run":
+        team = str(spotlight.get("team", "")).strip()
+        return f"Quem encerra a invencibilidade do {team}?" if team else "Quem encerra essa série invicta?"
     if kind == "scoring_surge":
         return "Esse ritmo de gols se mantém até o fim da rodada?"
     if kind == "scoring_drought":
