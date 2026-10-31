@@ -120,8 +120,9 @@ def test_standings_render_badges_initially_and_after_round_change():
     classification = (ROOT / "brasileirao" / "classificacao-rodada-a-rodada.html").read_text(encoding="utf-8")
     script = (ROOT / "brasileirao.js").read_text(encoding="utf-8")
     css = (ROOT / "style.css").read_text(encoding="utf-8")
-    assert classification.count('class="br-team-badge"') == 20
+    assert classification.count('class="br-team-badge"') == 30
     assert classification.count("br-team-with-badge-table") == 20
+    assert classification.count("br-team-with-badge-schedule") == 10
     assert classification.count("br-position-movement") == 20
     assert "Movimento desde a rodada anterior:" in classification
     assert 'const teamBadge = (team, variant = "inline") =>' in script
@@ -131,6 +132,87 @@ def test_standings_render_badges_initially_and_after_round_change():
     assert 'aria-label="Manteve a posição"' in script
     assert ".br-position-movement.is-up" in css
     assert ".br-movement-key" in css
+
+
+def test_classification_shows_server_rendered_upcoming_schedule():
+    matches = load("serie_a_2026.json")["matches"]
+    pending = [match for match in matches if not re.match(r"^\d+\s*x\s*\d+", match["score"])]
+    classification = (ROOT / "brasileirao" / "classificacao-rodada-a-rodada.html").read_text(encoding="utf-8")
+    css = (ROOT / "style.css").read_text(encoding="utf-8")
+
+    assert pending
+    assert 'aria-labelledby="upcoming-title"' in classification
+    assert '<h2 id="upcoming-title">Próximos jogos</h2>' in classification
+    assert classification.count('class="br-upcoming-fixture"') == min(5, len(pending))
+    assert 'class="br-classification-aside"' in classification
+    assert 'data-multi-chart aria-live="polite"' in classification
+    assert 'href="rodadas/rodada-33.html"' in classification
+    assert 'href="rodadas/rodada-34.html"' not in classification
+    assert 'class="br-upcoming-card"' in classification
+    assert ".br-upcoming-fixture a:focus-visible" in css
+    assert "@media (max-width: 720px)" in css
+
+
+def test_classification_schedule_is_beside_table_and_stacks_on_mobile_in_browser():
+    from functools import partial
+    from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
+    from threading import Thread
+    from playwright.sync_api import sync_playwright
+
+    class QuietHandler(SimpleHTTPRequestHandler):
+        def log_message(self, format, *args):
+            pass
+
+    server = ThreadingHTTPServer(("127.0.0.1", 0), partial(QuietHandler, directory=str(ROOT)))
+    thread = Thread(target=server.serve_forever, daemon=True)
+    thread.start()
+    url = f"http://127.0.0.1:{server.server_port}/brasileirao/classificacao-rodada-a-rodada.html"
+
+    try:
+        with sync_playwright() as playwright:
+            browser = playwright.chromium.launch()
+            page = browser.new_page(viewport={"width": 1280, "height": 900})
+            page.goto(url, wait_until="domcontentloaded")
+            table = page.locator(".br-classification-grid > div").bounding_box()
+            aside = page.locator(".br-classification-aside").bounding_box()
+            first_match = page.locator(".br-upcoming-fixture a").first
+            assert table and aside
+            assert aside["x"] > table["x"]
+            assert first_match.is_visible()
+            assert first_match.get_attribute("href").startswith("rodadas/rodada-")
+
+            page.set_viewport_size({"width": 390, "height": 844})
+            table = page.locator(".br-classification-grid > div").bounding_box()
+            aside = page.locator(".br-classification-aside").bounding_box()
+            assert table and aside
+            assert aside["y"] >= table["y"] + table["height"]
+            browser.close()
+    finally:
+        server.shutdown()
+        server.server_close()
+        thread.join(timeout=5)
+
+
+def test_next_matches_orders_dates_and_excludes_completed_games():
+    source_dir = str(ROOT / "brasileirao_2026")
+    sys.path.insert(0, source_dir)
+    try:
+        from build import next_matches
+    finally:
+        sys.path.remove(source_dir)
+
+    matches = [
+        {"round": 2, "date": "03/11/2026", "time": "19:00", "home": "A", "away": "B", "score": "-"},
+        {"round": 1, "date": "02/11/2026", "time": "21:30", "home": "C", "away": "D", "score": "-"},
+        {"round": 1, "date": "02/11/2026", "time": "18:00", "home": "E", "away": "F", "score": "-"},
+        {"round": 1, "date": "01/11/2026", "time": "18:00", "home": "G", "away": "H", "score": "2 x 0"},
+        {"round": 3, "date": "", "time": "", "home": "I", "away": "J", "score": "-"},
+    ]
+
+    upcoming = next_matches(matches, limit=4)
+    assert [(match["home"], match["away"]) for match in upcoming] == [
+        ("E", "F"), ("C", "D"), ("A", "B"), ("I", "J")
+    ]
 
 
 def test_team_badges_cover_hub_scorers_comparison_team_and_round_pages():

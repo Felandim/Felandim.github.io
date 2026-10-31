@@ -438,11 +438,59 @@ def hub_content(insights: dict[str, Any]) -> str:
     return f'''<section class="br-page-hero"><div class="br-shell"><p class="br-kicker">Brasileirão {SEASON}</p><h1>Todos os caminhos do campeonato.</h1><p>Classificação, artilharia, times e o que mudou em cada rodada.</p></div></section><section class="br-section"><div class="br-shell br-feature-links"><a href="classificacao-rodada-a-rodada.html"><span>01</span><h2>Classificação rodada a rodada</h2><p>Veja a posição de cada time em qualquer ponto da competição.</p></a><a href="artilharia-rodada-a-rodada.html"><span>02</span><h2>Artilharia rodada a rodada</h2><p>Acompanhe ultrapassagens e a evolução cumulativa dos gols.</p></a><a href="comparador-times.html"><span>03</span><h2>Comparador de times</h2><p>Coloque duas campanhas frente a frente e compartilhe o duelo.</p></a><a href="rankings-recordes.html"><span>04</span><h2>Rankings e recordes</h2><p>Descubra os melhores ataques, defesas e sequências do campeonato.</p></a></div><div class="br-section-head" id="times"><div><p class="br-kicker">Times</p><h2>20 páginas, 20 histórias</h2></div></div>{team_picker}<div class="br-section-head br-top-gap" id="rodadas"><div><p class="br-kicker">Rodadas</p><h2>O que mudou em cada capítulo</h2></div></div>{rounds}</div></section>'''
 
 
-def classification_content(insights: dict[str, Any]) -> str:
+def next_matches(matches: list[dict[str, Any]], limit: int = 5) -> list[dict[str, Any]]:
+    """Retorna os próximos jogos conhecidos, deixando datas indefinidas por último."""
+    def sort_key(match: dict[str, Any]) -> tuple[datetime, int, str, str]:
+        raw_date = str(match.get("date") or "").strip()
+        raw_time = str(match.get("time") or "00:00").strip()
+        try:
+            scheduled = datetime.strptime(f"{raw_date} {raw_time}", "%d/%m/%Y %H:%M")
+        except ValueError:
+            scheduled = datetime.max
+        return scheduled, int(match.get("round") or 999), match.get("home", ""), match.get("away", "")
+
+    pending = [match for match in matches if parse_score(match.get("score", "")) is None]
+    return sorted(pending, key=sort_key)[:limit]
+
+
+def upcoming_schedule_html(matches: list[dict[str, Any]], current_round: int, limit: int = 5) -> str:
+    upcoming = next_matches(matches, limit)
+    if not upcoming:
+        return '<p class="br-upcoming-empty">Não há partidas futuras com data disponível.</p>'
+
+    items = []
+    for match in upcoming:
+        date_label, date_iso = fixture_date(match)
+        time_label = esc(match.get("time") or "A definir").replace(":", "h")
+        when = (
+            f'<time datetime="{date_iso}"><span>{date_label}</span><strong>{time_label}</strong></time>'
+            if date_iso else f'<span class="br-upcoming-date"><span>{date_label}</span><strong>{time_label}</strong></span>'
+        )
+        round_number = int(match.get("round") or 0)
+        label = f'Ver rodada {round_number}: {match["home"]} x {match["away"]}'
+        content = (
+            f'{when}<span class="br-upcoming-teams">'
+            f'<span>{team_badge(match["home"], "schedule")}</span><b aria-hidden="true">×</b>'
+            f'<span>{team_badge(match["away"], "schedule")}</span></span>'
+            f'<small>Rodada {round_number}</small>'
+        )
+        card = (
+            f'<a href="rodadas/rodada-{round_number}.html" aria-label="{esc(label, True)}">{content}</a>'
+            if round_number <= current_round
+            else f'<div class="br-upcoming-card">{content}</div>'
+        )
+        items.append(
+            f'<li class="br-upcoming-fixture">{card}</li>'
+        )
+    return f'<ol class="br-upcoming-list">{"".join(items)}</ol>'
+
+
+def classification_content(insights: dict[str, Any], matches: list[dict[str, Any]]) -> str:
     current = insights["snapshots"][-1]
     previous = insights["snapshots"][-2]["table"] if len(insights["snapshots"]) > 1 else []
     options = "".join(f'<option value="{n}"{(" selected" if n == insights["current_round"] else "")}>Rodada {n}</option>' for n in range(1, insights["current_round"] + 1))
-    return f'''<section class="br-page-hero"><div class="br-shell"><p class="br-kicker">Classificação histórica</p><h1>Onde cada time estava depois de cada rodada?</h1><p>Selecione uma rodada para reconstruir a tabela e compare as trajetórias.</p></div></section><section class="br-section"><div class="br-shell"><div class="br-control"><label for="round-select">Ver classificação após</label><select id="round-select" data-round-select>{options}</select></div><div class="br-analysis-grid"><div><p class="br-movement-key"><strong>Movimento desde a rodada anterior:</strong> <span>↑ subiu</span><span>↓ caiu</span><span>• manteve</span></p>{table_html(current['table'], previous_rows=previous)}</div><div class="br-chart-panel"><p class="br-kicker">Evolução visual</p><h2>Corrida por posição</h2><div data-multi-chart aria-live="polite"></div><p class="br-note">Quanto mais alto, melhor. Critérios disponíveis: pontos, vitórias, saldo e gols marcados.</p></div></div></div></section>'''
+    schedule = upcoming_schedule_html(matches, insights["current_round"])
+    return f'''<section class="br-page-hero"><div class="br-shell"><p class="br-kicker">Classificação histórica</p><h1>Onde cada time estava depois de cada rodada?</h1><p>Selecione uma rodada para reconstruir a tabela e compare as trajetórias.</p></div></section><section class="br-section"><div class="br-shell"><div class="br-control"><label for="round-select">Ver classificação após</label><select id="round-select" data-round-select>{options}</select></div><div class="br-analysis-grid br-classification-grid"><div><p class="br-movement-key"><strong>Movimento desde a rodada anterior:</strong> <span>↑ subiu</span><span>↓ caiu</span><span>• manteve</span></p>{table_html(current['table'], previous_rows=previous)}</div><aside class="br-classification-aside" aria-label="Agenda e evolução"><section class="br-upcoming" aria-labelledby="upcoming-title"><div class="br-upcoming-heading"><div><p class="br-kicker">Agenda atual</p><h2 id="upcoming-title">Próximos jogos</h2></div><span>{len(next_matches(matches))} partidas</span></div>{schedule}</section><div class="br-chart-panel"><p class="br-kicker">Evolução visual</p><h2>Corrida por posição</h2><div data-multi-chart aria-live="polite"></div><p class="br-note">Quanto mais alto, melhor. Critérios disponíveis: pontos, vitórias, saldo e gols marcados.</p></div></aside></div></div></section>'''
 
 
 def scorers_content(insights: dict[str, Any]) -> str:
@@ -614,7 +662,7 @@ def main() -> None:
     home = page("Rodada a Rodada | Brasileirão 2026 em números", "Veja a evolução da classificação, artilharia, times e rodadas do Brasileirão 2026.", f"{SITE_URL}/", home_content(insights), depth="", body_class="br-page br-home", body_style=leader_style, script=True)
     write(ROOT / "index.html", home)
     write(OUTPUT / "index.html", page("Brasileirão 2026 rodada a rodada", "Explore classificação, artilharia, times e todas as rodadas do Brasileirão 2026.", f"{SITE_URL}/brasileirao/", hub_content(insights), script=True))
-    write(OUTPUT / "classificacao-rodada-a-rodada.html", page("Classificação do Brasileirão 2026 rodada a rodada", "Reconstrua a classificação do Brasileirão 2026 após qualquer rodada e compare a evolução dos times.", f"{SITE_URL}/brasileirao/classificacao-rodada-a-rodada.html", classification_content(insights), current="classificacao", script=True, social_image=f"{SITE_URL}/assets/og/classificacao.png", social_image_alt="Classificação histórica do Brasileirão 2026 rodada a rodada"))
+    write(OUTPUT / "classificacao-rodada-a-rodada.html", page("Classificação do Brasileirão 2026 rodada a rodada", "Reconstrua a classificação do Brasileirão 2026 após qualquer rodada e compare a evolução dos times.", f"{SITE_URL}/brasileirao/classificacao-rodada-a-rodada.html", classification_content(insights, matches), current="classificacao", script=True, social_image=f"{SITE_URL}/assets/og/classificacao.png", social_image_alt="Classificação histórica do Brasileirão 2026 rodada a rodada"))
     write(OUTPUT / "artilharia-rodada-a-rodada.html", page("Artilharia do Brasileirão 2026 rodada a rodada", "Veja quem liderava a artilharia do Brasileirão 2026 após cada rodada e acompanhe a corrida gol a gol.", f"{SITE_URL}/brasileirao/artilharia-rodada-a-rodada.html", scorers_content(insights), current="artilharia", script=True, social_image=f"{SITE_URL}/assets/og/artilharia.png", social_image_alt="Artilharia do Brasileirão 2026 rodada a rodada"))
     write(OUTPUT / "comparador-times.html", page("Comparador de times do Brasileirão 2026 | Rodada a Rodada", "Compare dois times do Brasileirão 2026 por posição, pontos, vitórias, saldo e aproveitamento em cada rodada.", f"{SITE_URL}/brasileirao/comparador-times.html", comparison_content(insights), current="comparador", script=True, social_image=f"{SITE_URL}/assets/og/comparador.png", social_image_alt="Comparador de campanhas dos times do Brasileirão 2026"))
     write(OUTPUT / "rankings-recordes.html", page("Rankings e recordes do Brasileirão 2026 | Rodada a Rodada", "Veja os melhores ataques, defesas, mandantes, visitantes e as maiores sequências do Brasileirão 2026.", f"{SITE_URL}/brasileirao/rankings-recordes.html", rankings_content(insights), current="rankings", social_image=f"{SITE_URL}/assets/og/rankings-recordes.png", social_image_alt="Rankings e recordes do Brasileirão 2026"))
