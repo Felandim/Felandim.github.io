@@ -3575,7 +3575,7 @@
       "date": "02/11/2026",
       "home": "Fortaleza",
       "round": 36,
-      "score": "-",
+      "score": "0 x 0",
       "stadium": "Castelão (CE)",
       "time": "16:00",
       "url": "https://ge.globo.com/ce/futebol/brasileirao-serie-b/jogo/02-11-2026/fortaleza-atletico-go.ghtml"
@@ -3585,7 +3585,7 @@
       "date": "02/11/2026",
       "home": "Athletic Club",
       "round": 36,
-      "score": "-",
+      "score": "1 x 1",
       "stadium": "Arena Sicredi",
       "time": "18:00",
       "url": "https://ge.globo.com/mg/zona-da-mata-centro-oeste/futebol/brasileirao-serie-b/jogo/02-11-2026/athletic-club-ceara.ghtml"
@@ -3602,7 +3602,7 @@
     },
     {
       "away": "Londrina",
-      "date": "06/11/2026",
+      "date": "05/11/2026",
       "home": "Botafogo-SP",
       "round": 37,
       "score": "-",
@@ -3618,7 +3618,7 @@
       "score": "-",
       "stadium": "Germano Krüger",
       "time": "19:30",
-      "url": ""
+      "url": "https://ge.globo.com/pr/futebol/brasileirao-serie-b/jogo/06-11-2026/operario-pr-sport.ghtml"
     },
     {
       "away": "Juventude",
