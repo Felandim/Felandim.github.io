@@ -3585,7 +3585,7 @@
       "date": "02/11/2026",
       "home": "Athletic Club",
       "round": 36,
-      "score": "1 x 1",
+      "score": "2 x 1",
       "stadium": "Arena Sicredi",
       "time": "18:00",
       "url": "https://ge.globo.com/mg/zona-da-mata-centro-oeste/futebol/brasileirao-serie-b/jogo/02-11-2026/athletic-club-ceara.ghtml"
@@ -3595,7 +3595,7 @@
       "date": "02/11/2026",
       "home": "Goiás",
       "round": 36,
-      "score": "-",
+      "score": "2 x 1",
       "stadium": "Hailé Pinheiro (Serrinha)",
       "time": "20:30",
       "url": "https://ge.globo.com/go/futebol/brasileirao-serie-b/jogo/02-11-2026/goias-crb.ghtml"
@@ -3621,16 +3621,6 @@
       "url": "https://ge.globo.com/pr/futebol/brasileirao-serie-b/jogo/06-11-2026/operario-pr-sport.ghtml"
     },
     {
-      "away": "Juventude",
-      "date": "06/11/2026",
-      "home": "Cuiabá",
-      "round": 37,
-      "score": "-",
-      "stadium": "Arena Pantanal",
-      "time": "21:30",
-      "url": ""
-    },
-    {
       "away": "São Bernardo",
       "date": "07/11/2026",
       "home": "Avaí",
@@ -3648,6 +3638,16 @@
       "score": "-",
       "stadium": "Jorge Ismael de Biasi",
       "time": "16:10",
+      "url": ""
+    },
+    {
+      "away": "Juventude",
+      "date": "07/11/2026",
+      "home": "Cuiabá",
+      "round": 37,
+      "score": "-",
+      "stadium": "Arena Pantanal",
+      "time": "20:00",
       "url": ""
     },
     {
