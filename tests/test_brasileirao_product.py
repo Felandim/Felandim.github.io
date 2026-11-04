@@ -136,7 +136,15 @@ def test_standings_render_badges_initially_and_after_round_change():
 
 def test_classification_shows_server_rendered_upcoming_schedule():
     matches = load("serie_a_2026.json")["matches"]
+    current_round = load("brasileirao_2026_insights.json")["current_round"]
     pending = [match for match in matches if not re.match(r"^\d+\s*x\s*\d+", match["score"])]
+    source_dir = str(ROOT / "brasileirao_2026")
+    sys.path.insert(0, source_dir)
+    try:
+        from build import next_matches
+    finally:
+        sys.path.remove(source_dir)
+    upcoming = next_matches(matches, limit=5)
     classification = (ROOT / "brasileirao" / "classificacao-rodada-a-rodada.html").read_text(encoding="utf-8")
     css = (ROOT / "style.css").read_text(encoding="utf-8")
 
@@ -146,9 +154,15 @@ def test_classification_shows_server_rendered_upcoming_schedule():
     assert classification.count('class="br-upcoming-fixture"') == min(5, len(pending))
     assert 'class="br-classification-aside"' in classification
     assert 'data-multi-chart aria-live="polite"' in classification
-    assert 'href="rodadas/rodada-33.html"' in classification
-    assert 'href="rodadas/rodada-34.html"' not in classification
-    assert 'class="br-upcoming-card"' in classification
+    scheduled_rounds = {int(match["round"]) for match in upcoming}
+    for round_number in scheduled_rounds:
+        link = f'href="rodadas/rodada-{round_number}.html"'
+        if round_number <= current_round:
+            assert link in classification
+        else:
+            assert link not in classification
+    if any(round_number > current_round for round_number in scheduled_rounds):
+        assert 'class="br-upcoming-card"' in classification
     assert ".br-upcoming-fixture a:focus-visible" in css
     assert "@media (max-width: 720px)" in css
 
