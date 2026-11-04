@@ -89,6 +89,57 @@ def high_scoring_match_spotlight(matches: list[dict], minimum_goals: int = 5) ->
     return {"kind":"goal_fest","label":"CHUVA DE GOLS","text":f"{match['home']} {match['score']} {match['away']} • {total_goals} gols","caption":f"Chuva de gols: {match['home']} {match['score']} {match['away']} teve {total_goals} gols no placar.","home":match.get("home", ""),"away":match.get("away", ""),"score":match.get("score", ""),"goals":total_goals}
 
 
+def title_rivals_win_spotlight(
+    insights: dict,
+    matches: list[dict],
+    maximum_gap: int = 6,
+) -> dict | None:
+    """Destaca blocos em que líder e vice vencem e mantêm a corrida pelo título acesa."""
+    snapshot, _ = instagram_daily.current_snapshot(insights)
+    table = snapshot.get("table", [])
+    if len(table) < 2:
+        return None
+
+    leader, runner_up = table[:2]
+    leader_name, runner_up_name = leader["team"], runner_up["team"]
+    gap = int(leader["points"]) - int(runner_up["points"])
+    if gap < 0 or gap > maximum_gap:
+        return None
+
+    wins = {}
+    for match in matches:
+        score = instagram_daily._score(match.get("score", ""))
+        if not score or score[0] == score[1]:
+            continue
+        winner = match["home"] if score[0] > score[1] else match["away"]
+        if winner in {leader_name, runner_up_name}:
+            wins[winner] = match
+    if set(wins) != {leader_name, runner_up_name}:
+        return None
+
+    results = [
+        f"{wins[team]['home']} {wins[team]['score']} {wins[team]['away']}"
+        for team in (leader_name, runner_up_name)
+    ]
+    if gap == 0:
+        gap_text = "seguem empatados em pontos"
+        caption_gap = "A disputa segue empatada em pontos."
+    else:
+        unit = "ponto" if gap == 1 else "pontos"
+        gap_text = f"{gap} {unit} {'separa' if gap == 1 else 'separam'} os dois"
+        caption_gap = f"A diferença entre eles segue em {gap} {unit}."
+    return {
+        "kind": "title_rivals_win",
+        "label": "CORRIDA ACESA",
+        "text": f"{leader_name} e {runner_up_name} venceram • {gap_text}",
+        "caption": f"Corrida acesa: líder e vice venceram no bloco — {'; '.join(results)}. {caption_gap}",
+        "leader": leader_name,
+        "runner_up": runner_up_name,
+        "gap": gap,
+        "results": results,
+    }
+
+
 def multi_goal_scorer_spotlight(
     matches: list[dict],
     scorer_data: dict | None,
@@ -690,7 +741,7 @@ def editorial_spotlight(insights: dict, matches: list[dict], scorer_data: dict |
     base = instagram_matchday.matchday_spotlight(insights, matches)
     if base.get("kind") in HIGH_PRIORITY_KINDS or base.get("kind") == "delayed_match":
         return base
-    return derby_day_spotlight(matches) or multi_goal_scorer_spotlight(matches, scorer_data) or collective_attack_spotlight(matches, scorer_data) or rout_wave_spotlight(matches) or high_scoring_match_spotlight(matches) or bounce_back_spotlight(insights, matches) or winless_run_ended_spotlight(insights, matches) or unbeaten_run_spotlight(insights, matches) or scoring_surge_spotlight(insights) or scoring_drought_spotlight(insights) or winning_streak_spotlight(insights, matches) or both_teams_scored_spotlight(matches) or clean_sheet_wave_spotlight(matches) or away_dominance_spotlight(matches) or home_dominance_spotlight(matches) or draw_dominance_spotlight(matches) or drawless_day_spotlight(matches) or defensive_streak_spotlight(insights) or title_race_spotlight(insights) or base
+    return derby_day_spotlight(matches) or multi_goal_scorer_spotlight(matches, scorer_data) or collective_attack_spotlight(matches, scorer_data) or rout_wave_spotlight(matches) or high_scoring_match_spotlight(matches) or title_rivals_win_spotlight(insights, matches) or bounce_back_spotlight(insights, matches) or winless_run_ended_spotlight(insights, matches) or unbeaten_run_spotlight(insights, matches) or scoring_surge_spotlight(insights) or scoring_drought_spotlight(insights) or winning_streak_spotlight(insights, matches) or both_teams_scored_spotlight(matches) or clean_sheet_wave_spotlight(matches) or away_dominance_spotlight(matches) or home_dominance_spotlight(matches) or draw_dominance_spotlight(matches) or drawless_day_spotlight(matches) or defensive_streak_spotlight(insights) or title_race_spotlight(insights) or base
 
 
 def _spotlight_sentence(spotlight: dict) -> str:

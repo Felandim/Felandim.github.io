@@ -87,6 +87,12 @@ def engagement_question(spotlight: dict) -> str:
     if kind == "goal_fest":
         goals = spotlight.get("goals")
         return f"Qual jogo da rodada ainda pode superar esses {goals} gols?" if goals else "Qual jogo da rodada ainda pode superar esse placar?"
+    if kind == "title_rivals_win":
+        leader = str(spotlight.get("leader", "")).strip()
+        runner_up = str(spotlight.get("runner_up", "")).strip()
+        if leader and runner_up:
+            return f"Quem chega mais forte à próxima rodada: {leader} ou {runner_up}?"
+        return "Quem chega mais forte à próxima rodada?"
     if kind == "multi_goal_scorer":
         player = str(spotlight.get("player", "")).strip()
         return f"{player} repete a dose na próxima rodada?" if player else "Quem repete esse feito na próxima rodada?"
