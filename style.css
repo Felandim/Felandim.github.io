@@ -1242,13 +1242,26 @@ h3 { margin-bottom: 12px; font-size: 1.35rem; }
   opacity: .38;
   cursor: not-allowed;
 }
+.br-round-stepper .br-round-current {
+  color: var(--br-ink);
+  background: var(--br-hot);
+  border-color: var(--br-hot);
+}
+.br-round-stepper .br-round-current[hidden] { display: none; }
+.br-round-stepper .br-round-current:hover,
+.br-round-stepper .br-round-current:focus-visible {
+  background: #f6f4ec;
+  border-color: #f6f4ec;
+}
 
 @media (max-width: 720px) {
   .br-round-stepper {
     width: 100%;
+    flex-wrap: wrap;
     margin-left: 0;
   }
-  .br-round-stepper button { flex: 1; }
+  .br-round-stepper button { flex: 1 1 30%; }
+  .br-round-stepper .br-round-current { order: 3; flex-basis: 100%; }
 }
 
 

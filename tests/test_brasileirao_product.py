@@ -739,11 +739,15 @@ def test_round_steppers_are_accessible_and_keep_the_select_as_fallback():
     css = (ROOT / "style.css").read_text(encoding="utf-8")
     assert 'navigation.setAttribute("aria-label", "Navegação entre rodadas")' in source
     assert 'data-round-previous' in source
+    assert 'data-round-current' in source
     assert 'data-round-next' in source
     assert 'select.dispatchEvent(new Event("change", { bubbles: true }))' in source
     assert "previous.disabled = !previousOption" in source
     assert "next.disabled = !nextOption" in source
+    assert "select.selectedIndex = select.options.length - 1" in source
+    assert "current.hidden = !currentOption || select.value === currentOption.value" in source
     assert source.count("initRoundStepper(") == 3
+    assert ".br-round-stepper .br-round-current[hidden]" in css
     assert ".br-round-stepper button:disabled" in css
     assert ".br-round-stepper button:focus-visible" in css
 
@@ -862,6 +866,16 @@ def test_round_selectors_restore_url_and_browser_history():
             )
             standings = page.locator("[data-round-select]")
             page.wait_for_function("document.querySelector('[data-round-select]').value === '10'")
+            current_round = str(load("brasileirao_2026_insights.json")["current_round"])
+            current_round_button = page.locator("[data-round-current]")
+            assert current_round_button.is_visible()
+            current_round_button.click()
+            page.wait_for_url(f"**?rodada={current_round}")
+            assert standings.input_value() == current_round
+            assert current_round_button.is_hidden()
+            page.go_back()
+            page.wait_for_function("document.querySelector('[data-round-select]').value === '10'")
+            assert current_round_button.is_visible()
             movement = page.locator("[data-standings-table] .br-position-movement")
             assert movement.count() == 20
             assert page.locator("[data-standings-table] .br-position-movement.is-up, [data-standings-table] .br-position-movement.is-down").count() > 0

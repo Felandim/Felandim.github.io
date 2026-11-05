@@ -291,19 +291,23 @@
     navigation.className = "br-round-stepper";
     navigation.dataset.roundStepper = "";
     navigation.setAttribute("aria-label", "Navegação entre rodadas");
-    navigation.innerHTML = '<button type="button" data-round-previous>← Anterior</button><button type="button" data-round-next>Próxima →</button>';
+    navigation.innerHTML = '<button type="button" data-round-previous>← Anterior</button><button type="button" data-round-current class="br-round-current">Rodada atual</button><button type="button" data-round-next>Próxima →</button>';
     control.append(navigation);
 
     const previous = navigation.querySelector("[data-round-previous]");
+    const current = navigation.querySelector("[data-round-current]");
     const next = navigation.querySelector("[data-round-next]");
     const sync = () => {
       const index = select.selectedIndex;
       const previousOption = select.options[index - 1];
       const nextOption = select.options[index + 1];
+      const currentOption = select.options[select.options.length - 1];
       previous.disabled = !previousOption;
       next.disabled = !nextOption;
+      current.hidden = !currentOption || select.value === currentOption.value;
       previous.setAttribute("aria-label", previousOption ? `Ir para ${previousOption.textContent}` : "Não há rodada anterior");
       next.setAttribute("aria-label", nextOption ? `Ir para ${nextOption.textContent}` : "Não há próxima rodada");
+      current.setAttribute("aria-label", currentOption ? `Ir para ${currentOption.textContent}, rodada atual` : "Não há rodada atual");
     };
     const move = direction => {
       const target = select.selectedIndex + direction;
@@ -313,6 +317,10 @@
     };
 
     previous.addEventListener("click", () => move(-1));
+    current.addEventListener("click", () => {
+      select.selectedIndex = select.options.length - 1;
+      select.dispatchEvent(new Event("change", { bubbles: true }));
+    });
     next.addEventListener("click", () => move(1));
     select.addEventListener("change", sync);
     window.addEventListener("popstate", sync);
