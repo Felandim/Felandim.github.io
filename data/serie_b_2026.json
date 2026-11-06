@@ -3628,7 +3628,7 @@
       "score": "-",
       "stadium": "Ressacada",
       "time": "16:00",
-      "url": ""
+      "url": "https://ge.globo.com/sc/futebol/brasileirao-serie-b/jogo/07-11-2026/avai-sao-bernardo.ghtml"
     },
     {
       "away": "Fortaleza",
@@ -3668,7 +3668,7 @@
       "score": "-",
       "stadium": "Aflitos",
       "time": "21:30",
-      "url": ""
+      "url": "https://ge.globo.com/pe/futebol/brasileirao-serie-b/jogo/07-11-2026/nautico-crb.ghtml"
     },
     {
       "away": "Atlético-GO",
@@ -3701,6 +3701,16 @@
       "url": "https://ge.globo.com/go/futebol/brasileirao-serie-b/jogo/08-11-2026/goias-ponte-preta.ghtml"
     },
     {
+      "away": "Náutico",
+      "date": "11/11/2026",
+      "home": "Londrina",
+      "round": 38,
+      "score": "-",
+      "stadium": "VGD",
+      "time": "19:00",
+      "url": ""
+    },
+    {
       "away": "Operário-PR",
       "date": "14/11/2026",
       "home": "Ponte Preta",
@@ -3727,16 +3737,6 @@
       "round": 38,
       "score": "-",
       "stadium": "Independência",
-      "time": "16:30",
-      "url": ""
-    },
-    {
-      "away": "Náutico",
-      "date": "14/11/2026",
-      "home": "Londrina",
-      "round": 38,
-      "score": "-",
-      "stadium": "VGD",
       "time": "16:30",
       "url": ""
     },
