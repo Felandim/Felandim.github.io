@@ -703,6 +703,91 @@ def unbeaten_run_spotlight(insights: dict, matches: list[dict], minimum_matches:
     }
 
 
+def clinched_status_spotlight(insights: dict, total_rounds: int = 38) -> dict | None:
+    """Destaca objetivos matematicamente confirmados apenas quando acabam de ocorrer."""
+    snapshots = insights.get("snapshots", [])
+    if len(snapshots) < 2:
+        return None
+
+    def status_flags(table: list[dict]) -> dict[str, set[str]]:
+        if len(table) != 20 or any("played" not in row for row in table):
+            return {}
+        maximum = {
+            row["team"]: int(row["points"]) + 3 * max(0, total_rounds - int(row["played"]))
+            for row in table
+        }
+        flags = {}
+        for row in table:
+            team = row["team"]
+            points = int(row["points"])
+            opponents = [other for other in table if other["team"] != team]
+            team_flags = set()
+            if all(maximum[other["team"]] < points for other in opponents):
+                team_flags.add("champion")
+            if sum(maximum[other["team"]] >= points for other in opponents) <= 3:
+                team_flags.add("top_four")
+            if sum(maximum[other["team"]] < points for other in opponents) >= 4:
+                team_flags.add("safe")
+            if sum(int(other["points"]) > maximum[team] for other in opponents) >= 16:
+                team_flags.add("relegated")
+            flags[team] = team_flags
+        return flags
+
+    previous_table = snapshots[-2].get("table", [])
+    current_table = snapshots[-1].get("table", [])
+    previous = status_flags(previous_table)
+    current = status_flags(current_table)
+    if not previous or not current:
+        return None
+
+    rows = {row["team"]: row for row in current_table}
+    status_priority = ("champion", "relegated", "top_four", "safe")
+    for status in status_priority:
+        candidates = [
+            team for team, flags in current.items()
+            if status in flags and status not in previous.get(team, set())
+        ]
+        if not candidates:
+            continue
+        # Para permanência e rebaixamento, a posição mais próxima do corte é a história mais relevante.
+        if status in {"safe", "relegated"}:
+            team = max(candidates, key=lambda name: (int(rows[name]["position"]), name))
+        else:
+            team = min(candidates, key=lambda name: (int(rows[name]["position"]), name))
+        row = rows[team]
+        points = int(row["points"])
+        position = int(row["position"])
+        stories = {
+            "champion": {
+                "kind": "champion_clinched",
+                "label": "É CAMPEÃO",
+                "text": f"{team} • título garantido com {points} pontos",
+                "caption": f"É campeão: {team} chegou a {points} pontos e não pode mais ser alcançado.",
+            },
+            "top_four": {
+                "kind": "top_four_clinched",
+                "label": "G4 GARANTIDO",
+                "text": f"{team} • vaga matematicamente garantida",
+                "caption": f"G4 garantido: {team} não pode mais terminar abaixo do 4º lugar.",
+            },
+            "safe": {
+                "kind": "survival_clinched",
+                "label": "PERMANÊNCIA GARANTIDA",
+                "text": f"{team} • Série A assegurada para 2027",
+                "caption": f"Permanência garantida: {team} não pode mais terminar no Z4.",
+            },
+            "relegated": {
+                "kind": "relegation_clinched",
+                "label": "REBAIXAMENTO CONFIRMADO",
+                "text": f"{team} • queda matematicamente confirmada",
+                "caption": f"Rebaixamento confirmado: {team} já não pode alcançar a 16ª posição.",
+                "tone": "danger",
+            },
+        }
+        return {**stories[status], "team": team, "points": points, "position": position}
+    return None
+
+
 def defensive_streak_spotlight(insights: dict, rounds: int = 3, minimum_points: int = 7) -> dict | None:
     snapshots = insights.get("snapshots", [])
     if len(snapshots) < rounds + 1:
@@ -739,6 +824,9 @@ def title_race_spotlight(insights: dict, maximum_gap: int = 3, minimum_teams: in
 
 def editorial_spotlight(insights: dict, matches: list[dict], scorer_data: dict | None = None) -> dict:
     base = instagram_matchday.matchday_spotlight(insights, matches)
+    clinched = clinched_status_spotlight(insights)
+    if clinched:
+        return clinched
     if base.get("kind") in HIGH_PRIORITY_KINDS or base.get("kind") == "delayed_match":
         return base
     return derby_day_spotlight(matches) or multi_goal_scorer_spotlight(matches, scorer_data) or collective_attack_spotlight(matches, scorer_data) or rout_wave_spotlight(matches) or high_scoring_match_spotlight(matches) or title_rivals_win_spotlight(insights, matches) or bounce_back_spotlight(insights, matches) or winless_run_ended_spotlight(insights, matches) or unbeaten_run_spotlight(insights, matches) or scoring_surge_spotlight(insights) or scoring_drought_spotlight(insights) or winning_streak_spotlight(insights, matches) or both_teams_scored_spotlight(matches) or clean_sheet_wave_spotlight(matches) or away_dominance_spotlight(matches) or home_dominance_spotlight(matches) or draw_dominance_spotlight(matches) or drawless_day_spotlight(matches) or defensive_streak_spotlight(insights) or title_race_spotlight(insights) or base

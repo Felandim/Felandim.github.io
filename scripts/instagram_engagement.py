@@ -117,6 +117,18 @@ def engagement_question(spotlight: dict) -> str:
     if kind == "unbeaten_run":
         team = str(spotlight.get("team", "")).strip()
         return f"Quem encerra a invencibilidade do {team}?" if team else "Quem encerra essa série invicta?"
+    if kind == "champion_clinched":
+        team = str(spotlight.get("team", "")).strip()
+        return f"Quem foi o principal nome do título do {team}?" if team else "Quem foi o principal nome do título?"
+    if kind == "top_four_clinched":
+        team = str(spotlight.get("team", "")).strip()
+        return f"Até onde o {team} chega nesta reta final?" if team else "Quem chega mais longe nesta reta final?"
+    if kind == "survival_clinched":
+        team = str(spotlight.get("team", "")).strip()
+        return f"O que o {team} precisa melhorar para 2027?" if team else "O que precisa mudar para 2027?"
+    if kind == "relegation_clinched":
+        team = str(spotlight.get("team", "")).strip()
+        return f"O que mais pesou na campanha do {team}?" if team else "O que mais pesou nessa campanha?"
     if kind == "scoring_surge":
         return "Esse ritmo de gols se mantém até o fim da rodada?"
     if kind == "scoring_drought":
