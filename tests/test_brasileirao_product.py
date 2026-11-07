@@ -817,6 +817,20 @@ def test_standings_team_focus_is_accessible_persistent_and_shareable():
     assert "@media (max-width: 720px)" in css
 
 
+def test_mobile_navigation_is_accessible_and_progressively_enhanced():
+    source = (ROOT / "brasileirao.js").read_text(encoding="utf-8")
+    css = (ROOT / "style.css").read_text(encoding="utf-8")
+
+    assert 'function initMobileNavigation()' in source
+    assert 'toggle.setAttribute("aria-controls", nav.id)' in source
+    assert 'toggle.setAttribute("aria-expanded", "false")' in source
+    assert 'event.key === "Escape"' in source
+    assert 'matchMedia("(min-width: 721px)")' in source
+    assert ".br-nav-toggle { display: none; }" in css
+    assert ".br-nav-enhanced nav[data-open] { display: grid; }" in css
+    assert ".br-nav-enhanced .br-nav-toggle:focus-visible" in css
+
+
 def test_round_views_expose_loading_and_recoverable_error_states():
     source = (ROOT / "brasileirao.js").read_text(encoding="utf-8")
     css = (ROOT / "style.css").read_text(encoding="utf-8")
@@ -957,6 +971,19 @@ def test_round_selectors_restore_url_and_browser_history():
                 f"{base_url}/brasileirao/classificacao-rodada-a-rodada.html",
                 wait_until="domcontentloaded",
             )
+            menu_toggle = mobile_page.locator(".br-nav-toggle")
+            primary_nav = mobile_page.locator(".br-nav nav")
+            assert menu_toggle.is_visible()
+            assert menu_toggle.get_attribute("aria-expanded") == "false"
+            assert primary_nav.is_hidden()
+            menu_toggle.click()
+            assert menu_toggle.get_attribute("aria-expanded") == "true"
+            assert primary_nav.is_visible()
+            mobile_page.keyboard.press("Escape")
+            assert menu_toggle.get_attribute("aria-expanded") == "false"
+            assert primary_nav.is_hidden()
+            assert menu_toggle.evaluate("element => element === document.activeElement")
+
             scroll_tools = mobile_page.locator("[data-table-scroll-tools]").first
             scroll_tools.wait_for(state="visible")
             scroll_previous = scroll_tools.locator("[data-table-scroll-previous]")
@@ -1000,6 +1027,19 @@ def test_round_selectors_restore_url_and_browser_history():
             assert alert.is_visible()
             assert error_page.locator("[data-round-select]").is_disabled()
             assert error_page.locator("[data-round-reload]").is_visible()
+
+            no_js_context = browser.new_context(
+                java_script_enabled=False,
+                viewport={"width": 390, "height": 844},
+            )
+            no_js_page = no_js_context.new_page()
+            no_js_page.goto(
+                f"{base_url}/brasileirao/classificacao-rodada-a-rodada.html",
+                wait_until="domcontentloaded",
+            )
+            assert no_js_page.locator(".br-nav nav").is_visible()
+            assert no_js_page.locator(".br-nav-toggle").count() == 0
+            no_js_context.close()
 
             browser.close()
     finally:

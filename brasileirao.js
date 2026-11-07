@@ -21,6 +21,51 @@
   const teamLogoUrl = team => `https://images.fotmob.com/image_resources/logo/teamlogo/${teamLogoIds[team]}.png`;
   const teamBadge = (team, variant = "inline") => `<span class="br-team-with-badge br-team-with-badge-${variant}"><img class="br-team-badge" src="${teamLogoUrl(team)}" alt="" aria-hidden="true" width="48" height="48" loading="lazy" decoding="async"><span>${safe(team)}</span></span>`;
 
+  function initMobileNavigation() {
+    document.querySelectorAll(".br-header .br-nav").forEach((headerNav, index) => {
+      const nav = headerNav.querySelector("nav");
+      if (!nav || headerNav.dataset.mobileNavEnhanced === "true") return;
+
+      headerNav.dataset.mobileNavEnhanced = "true";
+      headerNav.classList.add("br-nav-enhanced");
+      nav.id ||= `br-primary-nav-${index + 1}`;
+
+      const toggle = document.createElement("button");
+      toggle.className = "br-nav-toggle";
+      toggle.type = "button";
+      toggle.setAttribute("aria-controls", nav.id);
+      toggle.setAttribute("aria-expanded", "false");
+      toggle.innerHTML = '<span>Menu</span><span class="br-nav-toggle-icon" aria-hidden="true"></span>';
+      headerNav.insertBefore(toggle, nav);
+
+      const close = (restoreFocus = false) => {
+        toggle.setAttribute("aria-expanded", "false");
+        nav.removeAttribute("data-open");
+        if (restoreFocus) toggle.focus();
+      };
+
+      toggle.addEventListener("click", () => {
+        const opening = toggle.getAttribute("aria-expanded") !== "true";
+        toggle.setAttribute("aria-expanded", String(opening));
+        nav.toggleAttribute("data-open", opening);
+      });
+      nav.addEventListener("click", event => {
+        if (event.target.closest("a")) close();
+      });
+      headerNav.addEventListener("keydown", event => {
+        if (event.key === "Escape" && toggle.getAttribute("aria-expanded") === "true") {
+          event.preventDefault();
+          close(true);
+        }
+      });
+      matchMedia("(min-width: 721px)").addEventListener("change", event => {
+        if (event.matches) close();
+      });
+    });
+  }
+
+  initMobileNavigation();
+
 
   const standingsTooltipLabels = {
     "Pts": "Pontos",
