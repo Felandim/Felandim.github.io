@@ -453,7 +453,12 @@ def next_matches(matches: list[dict[str, Any]], limit: int = 5) -> list[dict[str
     return sorted(pending, key=sort_key)[:limit]
 
 
-def upcoming_schedule_html(matches: list[dict[str, Any]], current_round: int, limit: int = 5) -> str:
+def upcoming_schedule_html(
+    matches: list[dict[str, Any]],
+    current_round: int,
+    limit: int = 10,
+    initially_visible: int = 5,
+) -> str:
     upcoming = next_matches(matches, limit)
     if not upcoming:
         return '<p class="br-upcoming-empty">Não há partidas futuras com data disponível.</p>'
@@ -482,15 +487,31 @@ def upcoming_schedule_html(matches: list[dict[str, Any]], current_round: int, li
         items.append(
             f'<li class="br-upcoming-fixture">{card}</li>'
         )
-    return f'<ol class="br-upcoming-list">{"".join(items)}</ol>'
+    visible_items = items[:initially_visible]
+    extra_items = items[initially_visible:]
+    visible_list = f'<ol class="br-upcoming-list">{"".join(visible_items)}</ol>'
+    if not extra_items:
+        return visible_list
+
+    extra_count = len(extra_items)
+    extra_label = format_count(extra_count, "jogo")
+    extra_list = (
+        f'<ol class="br-upcoming-list br-upcoming-list-more" start="{initially_visible + 1}">'
+        f'{"".join(extra_items)}</ol>'
+    )
+    return (
+        f'{visible_list}<details class="br-upcoming-more">'
+        f'<summary>Ver mais {extra_label}</summary>{extra_list}</details>'
+    )
 
 
 def classification_content(insights: dict[str, Any], matches: list[dict[str, Any]]) -> str:
     current = insights["snapshots"][-1]
     previous = insights["snapshots"][-2]["table"] if len(insights["snapshots"]) > 1 else []
     options = "".join(f'<option value="{n}"{(" selected" if n == insights["current_round"] else "")}>Rodada {n}</option>' for n in range(1, insights["current_round"] + 1))
-    schedule = upcoming_schedule_html(matches, insights["current_round"])
-    return f'''<section class="br-page-hero"><div class="br-shell"><p class="br-kicker">Classificação histórica</p><h1>Onde cada time estava depois de cada rodada?</h1><p>Selecione uma rodada para reconstruir a tabela e compare as trajetórias.</p></div></section><section class="br-section"><div class="br-shell"><div class="br-control"><label for="round-select">Ver classificação após</label><select id="round-select" data-round-select>{options}</select></div><div class="br-analysis-grid br-classification-grid"><div><p class="br-movement-key"><strong>Movimento desde a rodada anterior:</strong> <span>↑ subiu</span><span>↓ caiu</span><span>• manteve</span></p>{table_html(current['table'], previous_rows=previous)}</div><aside class="br-classification-aside" aria-label="Agenda e evolução"><section class="br-upcoming" aria-labelledby="upcoming-title"><div class="br-upcoming-heading"><div><p class="br-kicker">Agenda atual</p><h2 id="upcoming-title">Próximos jogos</h2></div><span>{len(next_matches(matches))} partidas</span></div>{schedule}</section><div class="br-chart-panel"><p class="br-kicker">Evolução visual</p><h2>Corrida por posição</h2><div data-multi-chart aria-live="polite"></div><p class="br-note">Quanto mais alto, melhor. Critérios disponíveis: pontos, vitórias, saldo e gols marcados.</p></div></aside></div></div></section>'''
+    schedule_limit = 10
+    schedule = upcoming_schedule_html(matches, insights["current_round"], limit=schedule_limit)
+    return f'''<section class="br-page-hero"><div class="br-shell"><p class="br-kicker">Classificação histórica</p><h1>Onde cada time estava depois de cada rodada?</h1><p>Selecione uma rodada para reconstruir a tabela e compare as trajetórias.</p></div></section><section class="br-section"><div class="br-shell"><div class="br-control"><label for="round-select">Ver classificação após</label><select id="round-select" data-round-select>{options}</select></div><div class="br-analysis-grid br-classification-grid"><div><p class="br-movement-key"><strong>Movimento desde a rodada anterior:</strong> <span>↑ subiu</span><span>↓ caiu</span><span>• manteve</span></p>{table_html(current['table'], previous_rows=previous)}</div><aside class="br-classification-aside" aria-label="Agenda e evolução"><section class="br-upcoming" aria-labelledby="upcoming-title"><div class="br-upcoming-heading"><div><p class="br-kicker">Agenda atual</p><h2 id="upcoming-title">Próximos jogos</h2></div><span>{len(next_matches(matches, schedule_limit))} partidas</span></div>{schedule}</section><div class="br-chart-panel"><p class="br-kicker">Evolução visual</p><h2>Corrida por posição</h2><div data-multi-chart aria-live="polite"></div><p class="br-note">Quanto mais alto, melhor. Critérios disponíveis: pontos, vitórias, saldo e gols marcados.</p></div></aside></div></div></section>'''
 
 
 def scorers_content(insights: dict[str, Any]) -> str:

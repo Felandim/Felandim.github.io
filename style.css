@@ -594,6 +594,14 @@ h3 { margin-bottom: 12px; font-size: 1.35rem; }
 .br-upcoming-teams b { color: #87938c; font-size: .72rem; }
 .br-upcoming-fixture small { color: #9eaaa3; font-size: .62rem; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; }
 .br-upcoming-empty { margin: 0; color: #c6d0ca; font-size: .8rem; }
+.br-upcoming-more { margin-top: 10px; border-top: 1px solid #455149; }
+.br-upcoming-more summary { min-height: 44px; display: flex; align-items: center; justify-content: space-between; padding: 10px 2px; color: var(--br-hot); cursor: pointer; font-size: .72rem; font-weight: 900; letter-spacing: .04em; list-style: none; text-transform: uppercase; }
+.br-upcoming-more summary::-webkit-details-marker { display: none; }
+.br-upcoming-more summary::after { content: "+"; font-size: 1.25rem; line-height: 1; }
+.br-upcoming-more[open] summary::after { content: "−"; }
+.br-upcoming-more summary:hover { color: #f6f4ec; }
+.br-upcoming-more summary:focus-visible { outline: 3px solid var(--br-hot); outline-offset: 3px; }
+.br-upcoming-list-more { padding-top: 2px; }
 .br-chart-panel { min-width: 0; padding: 34px; color: #f6f4ec; background: var(--br-ink); }
 .br-chart-panel h2 { margin-bottom: 28px; font-size: 2.3rem; }
 .br-multi-chart, .br-line-chart { display: block; width: 100%; height: auto; }
