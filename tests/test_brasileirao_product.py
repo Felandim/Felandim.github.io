@@ -152,6 +152,8 @@ def test_classification_shows_server_rendered_upcoming_schedule():
     assert 'aria-labelledby="upcoming-title"' in classification
     assert '<h2 id="upcoming-title">Próximos jogos</h2>' in classification
     assert classification.count('class="br-upcoming-fixture"') == min(10, len(pending))
+    assert classification.count("data-upcoming-fixture") == min(10, len(pending))
+    assert classification.count("data-upcoming-focus-label") == min(10, len(pending))
     extra_count = max(0, min(10, len(pending)) - 5)
     if extra_count:
         assert '<details class="br-upcoming-more">' in classification
@@ -170,6 +172,7 @@ def test_classification_shows_server_rendered_upcoming_schedule():
         assert 'class="br-upcoming-card"' in classification
     assert ".br-upcoming-fixture a:focus-visible" in css
     assert ".br-upcoming-more summary:focus-visible" in css
+    assert ".br-upcoming-fixture.is-focused" in css
     assert "@media (max-width: 720px)" in css
 
 
@@ -825,6 +828,9 @@ def test_standings_team_focus_is_accessible_persistent_and_shareable():
     assert 'searchParams.set("time", selected)' in source
     assert 'localStorage.setItem(teamFocusStorageKey, selected)' in source
     assert 'link.setAttribute("aria-current", "true")' in source
+    assert 'document.querySelectorAll("[data-upcoming-fixture]")' in source
+    assert 'selectedFixture?.closest(".br-upcoming-more")' in source
+    assert 'Próximo jogo:' in source
     assert 'prefers-reduced-motion: reduce' in source
     assert ".br-table tbody tr.is-focused" in css
     assert ".br-team-focus a:focus-visible" in css
@@ -921,6 +927,13 @@ def test_round_selectors_restore_url_and_browser_history():
             assert "Flamengo" in focused_row.text_content()
             assert focused_row.locator("th a").get_attribute("aria-current") == "true"
             assert "Flamengo:" in page.locator("[data-team-focus-status]").text_content()
+            focused_fixture = page.locator(".br-upcoming-fixture.is-focused")
+            assert focused_fixture.count() == 1
+            assert focused_fixture.is_visible()
+            assert "Flamengo" in focused_fixture.text_content()
+            assert focused_fixture.locator("[data-upcoming-focus-label]").is_visible()
+            assert page.locator(".br-upcoming-more").get_attribute("open") == ""
+            assert "Próximo jogo:" in page.locator("[data-team-focus-status]").text_content()
             assert page.evaluate("localStorage.getItem('brasileirao-team-focus')") == "flamengo"
 
             standings.select_option("12")

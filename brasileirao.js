@@ -581,6 +581,7 @@
     const focusSelect = focus.querySelector("[data-team-focus-select]");
     const profile = focus.querySelector("[data-team-focus-profile]");
     const status = focus.querySelector("[data-team-focus-status]");
+    const upcomingFixtures = [...document.querySelectorAll("[data-upcoming-fixture]")];
     const validSlugs = new Set([...focusSelect.options].map(option => option.value).filter(Boolean));
     const requested = new URL(location.href).searchParams.get("time");
     let stored = "";
@@ -592,6 +593,14 @@
     const apply = ({ persist = false, scroll = false } = {}) => {
       const selected = focusSelect.value;
       let selectedRow = null;
+      let selectedFixture = null;
+      upcomingFixtures.forEach(fixture => {
+        const matches = Boolean(selected && !selectedFixture && [fixture.dataset.upcomingHome, fixture.dataset.upcomingAway].includes(selected));
+        fixture.classList.toggle("is-focused", matches);
+        const label = fixture.querySelector("[data-upcoming-focus-label]");
+        if (label) label.hidden = !matches;
+        if (matches) selectedFixture = fixture;
+      });
       [...table.tBodies[0].rows].forEach(row => {
         const link = row.querySelector("th a");
         const matches = Boolean(selected && link?.getAttribute("href")?.endsWith(`/${selected}.html`));
@@ -612,7 +621,12 @@
         profile.hidden = false;
         profile.href = `times/${selected}.html`;
         profile.setAttribute("aria-label", `Ver perfil de ${team}`);
-        status.textContent = `${team}: ${position}º lugar, ${points} pontos nesta rodada.`;
+        const nextMatch = selectedFixture
+          ? ` Próximo jogo: ${selectedFixture.dataset.upcomingLabel}, ${selectedFixture.dataset.upcomingDate} às ${selectedFixture.dataset.upcomingTime}.`
+          : "";
+        status.textContent = `${team}: ${position}º lugar, ${points} pontos nesta rodada.${nextMatch}`;
+        const collapsedSchedule = selectedFixture?.closest(".br-upcoming-more");
+        if (collapsedSchedule) collapsedSchedule.open = true;
         if (scroll) {
           selectedRow.scrollIntoView({
             block: "center",

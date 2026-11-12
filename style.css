@@ -592,7 +592,10 @@ h3 { margin-bottom: 12px; font-size: 1.35rem; }
 .br-upcoming-teams .br-team-with-badge { gap: 6px; font-size: .76rem; font-weight: 850; }
 .br-upcoming-teams .br-team-badge { width: 24px; height: 24px; }
 .br-upcoming-teams b { color: #87938c; font-size: .72rem; }
-.br-upcoming-fixture small { color: #9eaaa3; font-size: .62rem; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; }
+.br-upcoming-fixture small { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 4px 8px; color: #9eaaa3; font-size: .62rem; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; }
+.br-upcoming-fixture.is-focused > * { background: #26382f; border-color: var(--br-hot); box-shadow: inset 4px 0 0 var(--br-hot); }
+.br-upcoming-focus-label { padding: 3px 5px; color: var(--br-ink); background: var(--br-hot); font-size: .56rem; letter-spacing: .02em; }
+.br-upcoming-focus-label[hidden] { display: none; }
 .br-upcoming-empty { margin: 0; color: #c6d0ca; font-size: .8rem; }
 .br-upcoming-more { margin-top: 10px; border-top: 1px solid #455149; }
 .br-upcoming-more summary { min-height: 44px; display: flex; align-items: center; justify-content: space-between; padding: 10px 2px; color: var(--br-hot); cursor: pointer; font-size: .72rem; font-weight: 900; letter-spacing: .04em; list-style: none; text-transform: uppercase; }

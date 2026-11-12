@@ -477,7 +477,8 @@ def upcoming_schedule_html(
             f'{when}<span class="br-upcoming-teams">'
             f'<span>{team_badge(match["home"], "schedule")}</span><b aria-hidden="true">×</b>'
             f'<span>{team_badge(match["away"], "schedule")}</span></span>'
-            f'<small>Rodada {round_number}</small>'
+            f'<small><span>Rodada {round_number}</span>'
+            f'<span class="br-upcoming-focus-label" data-upcoming-focus-label hidden>Próximo jogo do time</span></small>'
         )
         card = (
             f'<a href="rodadas/rodada-{round_number}.html" aria-label="{esc(label, True)}">{content}</a>'
@@ -485,7 +486,10 @@ def upcoming_schedule_html(
             else f'<div class="br-upcoming-card">{content}</div>'
         )
         items.append(
-            f'<li class="br-upcoming-fixture">{card}</li>'
+            f'<li class="br-upcoming-fixture" data-upcoming-fixture '
+            f'data-upcoming-home="{slugify(match["home"])}" data-upcoming-away="{slugify(match["away"])}" '
+            f'data-upcoming-label="{esc(match["home"] + " x " + match["away"], True)}" '
+            f'data-upcoming-date="{esc(date_label, True)}" data-upcoming-time="{esc(time_label, True)}">{card}</li>'
         )
     visible_items = items[:initially_visible]
     extra_items = items[initially_visible:]
