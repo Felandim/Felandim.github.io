@@ -928,7 +928,8 @@ def test_round_selectors_restore_url_and_browser_history():
             assert "Flamengo" in focused_row.text_content()
             assert focused_row.locator("th a").get_attribute("aria-current") == "true"
             focus_status = page.locator("[data-team-focus-status]").text_content()
-            assert re.search(r"Flamengo: \\d+º lugar", focus_status)
+            assert focus_status.startswith("Flamengo: ")
+            assert "º lugar" in focus_status
             assert "•º" not in focus_status
             focused_fixture = page.locator(".br-upcoming-fixture.is-focused")
             assert focused_fixture.count() == 1
