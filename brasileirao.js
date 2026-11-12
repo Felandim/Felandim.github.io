@@ -616,7 +616,7 @@
       if (selectedRow) {
         const link = selectedRow.querySelector("th a");
         const team = link.textContent.trim();
-        const position = selectedRow.cells[0].textContent.trim();
+        const position = selectedRow.cells[0].textContent.match(/\d+/)?.[0] || "—";
         const points = selectedRow.cells[2].textContent.trim();
         profile.hidden = false;
         profile.href = `times/${selected}.html`;

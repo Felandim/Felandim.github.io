@@ -831,6 +831,7 @@ def test_standings_team_focus_is_accessible_persistent_and_shareable():
     assert 'document.querySelectorAll("[data-upcoming-fixture]")' in source
     assert 'selectedFixture?.closest(".br-upcoming-more")' in source
     assert 'Próximo jogo:' in source
+    assert 'textContent.match(/\\d+/)' in source
     assert 'prefers-reduced-motion: reduce' in source
     assert ".br-table tbody tr.is-focused" in css
     assert ".br-team-focus a:focus-visible" in css
@@ -926,7 +927,7 @@ def test_round_selectors_restore_url_and_browser_history():
             assert focused_row.count() == 1
             assert "Flamengo" in focused_row.text_content()
             assert focused_row.locator("th a").get_attribute("aria-current") == "true"
-            assert "Flamengo:" in page.locator("[data-team-focus-status]").text_content()
+            assert "Flamengo: 1º lugar" in page.locator("[data-team-focus-status]").text_content()
             focused_fixture = page.locator(".br-upcoming-fixture.is-focused")
             assert focused_fixture.count() == 1
             assert focused_fixture.is_visible()
