@@ -4,11 +4,13 @@
 from __future__ import annotations
 
 import html
+import hashlib
 import json
 import re
 import unicodedata
 from collections import defaultdict
 from datetime import datetime
+from functools import lru_cache
 from pathlib import Path
 from typing import Any
 
@@ -26,6 +28,16 @@ SEASON = 2026
 
 def esc(value: Any, quote: bool = False) -> str:
     return html.escape(str(value), quote=quote)
+
+
+@lru_cache(maxsize=None)
+def asset_fingerprint(name: str) -> str:
+    """Mantém cache entre deploys e troca a URL apenas quando o arquivo muda."""
+    return hashlib.sha256((ROOT / name).read_bytes()).hexdigest()[:12]
+
+
+def asset_url(depth: str, name: str) -> str:
+    return f"{depth}{name}?v={asset_fingerprint(name)}"
 
 
 def format_count(value: int, singular: str, plural: str | None = None) -> str:
@@ -253,13 +265,15 @@ def head(
     social_image_alt: str = "Rodada a Rodada — Brasileirão 2026 em números",
     theme_color: str = "#101714",
 ) -> str:
-    return f'''<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>{esc(title)}</title><meta name="description" content="{esc(description, True)}"><meta name="theme-color" content="{esc(theme_color, True)}"><link rel="canonical" href="{canonical}"><meta property="og:type" content="website"><meta property="og:locale" content="pt_BR"><meta property="og:title" content="{esc(title, True)}"><meta property="og:description" content="{esc(description, True)}"><meta property="og:url" content="{canonical}"><meta property="og:image" content="{social_image}"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta property="og:image:alt" content="{esc(social_image_alt, True)}"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="{esc(title, True)}"><meta name="twitter:description" content="{esc(description, True)}"><meta name="twitter:image" content="{social_image}"><meta name="twitter:image:alt" content="{esc(social_image_alt, True)}"><link rel="stylesheet" href="{depth}style.css"></head>'''
+    return f'''<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>{esc(title)}</title><meta name="description" content="{esc(description, True)}"><meta name="theme-color" content="{esc(theme_color, True)}"><link rel="canonical" href="{canonical}"><meta property="og:type" content="website"><meta property="og:locale" content="pt_BR"><meta property="og:title" content="{esc(title, True)}"><meta property="og:description" content="{esc(description, True)}"><meta property="og:url" content="{canonical}"><meta property="og:image" content="{social_image}"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta property="og:image:alt" content="{esc(social_image_alt, True)}"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="{esc(title, True)}"><meta name="twitter:description" content="{esc(description, True)}"><meta name="twitter:image" content="{social_image}"><meta name="twitter:image:alt" content="{esc(social_image_alt, True)}"><link rel="stylesheet" href="{asset_url(depth, 'style.css')}"></head>'''
 
 
 def page(title: str, description: str, canonical: str, content: str, *, depth: str = "../", current: str = "", body_class: str = "br-page", body_style: str = "", script: bool = False, social_image: str = f"{SITE_URL}/assets/og/rodada-a-rodada.png", social_image_alt: str = "Rodada a Rodada — Brasileirão 2026 em números", theme_color: str = "#101714") -> str:
-    script_tag = f'<script src="{depth}brasileirao.js" defer></script>' if script else ""
+    product_script_url = asset_url(depth, "brasileirao.js")
+    site_script_url = asset_url(depth, "site.js")
+    script_tag = f'<script src="{product_script_url}" defer></script>' if script else ""
     style_attr = f' style="{esc(body_style, True)}"' if body_style else ""
-    return f'{head(title, description, canonical, depth, social_image, social_image_alt, theme_color)}<body class="{body_class}"{style_attr}><a class="skip-link" href="#conteudo">Pular para o conteúdo</a>{nav(depth, current)}<main id="conteudo">{content}</main>{footer(depth)}{script_tag}<script src="{depth}site.js" defer></script></body></html>\n'
+    return f'{head(title, description, canonical, depth, social_image, social_image_alt, theme_color)}<body class="{body_class}"{style_attr}><a class="skip-link" href="#conteudo">Pular para o conteúdo</a>{nav(depth, current)}<main id="conteudo">{content}</main>{footer(depth)}{script_tag}<script src="{site_script_url}" defer></script></body></html>\n'
 
 
 def line_chart(history: list[dict[str, Any]], label: str) -> str:

@@ -1,3 +1,4 @@
+import hashlib
 import json
 import re
 import sys
@@ -405,7 +406,7 @@ def test_round_pages_offer_persistent_shareable_team_focus():
     assert 'data-round-fixtures' in source
     assert 'data-team-home=' in source
     assert 'data-team-away=' in source
-    assert '<script src="../../brasileirao.js" defer></script>' in source
+    assert re.search(r'<script src="../../brasileirao\.js\?v=[0-9a-f]{12}" defer></script>', source)
     assert "function initRoundTeamFocus()" in script
     assert 'url.searchParams.set("time", selected)' in script
     assert 'localStorage.setItem(teamFocusStorageKey, selected)' in script
@@ -621,13 +622,27 @@ def test_team_finder_is_accessible_progressive_and_filters_names():
         assert 'data-team-finder' in source
         assert source.count('class="br-team-chip"') == 20
 
-    assert '<script src="../brasileirao.js" defer></script>' in hub
+    assert re.search(r'<script src="../brasileirao\.js\?v=[0-9a-f]{12}" defer></script>', hub)
     assert 'normalize("NFD")' in script
     assert '.includes(query)' in script
     assert 'event.key === "Escape"' in script
     assert 'visible === 1 ? "time encontrado" : "times encontrados"' in script
     assert ".br-team-chip[hidden]" in css
     assert ".br-team-search-row:focus-within" in css
+
+
+def test_generated_pages_version_static_assets_by_content():
+    def version(name):
+        return hashlib.sha256((ROOT / name).read_bytes()).hexdigest()[:12]
+
+    classification = (ROOT / "brasileirao" / "classificacao-rodada-a-rodada.html").read_text(encoding="utf-8")
+    team_page = (ROOT / "brasileirao" / "times" / "flamengo.html").read_text(encoding="utf-8")
+
+    for source, depth in ((classification, "../"), (team_page, "../../")):
+        assert f'href="{depth}style.css?v={version("style.css")}"' in source
+        assert f'src="{depth}brasileirao.js?v={version("brasileirao.js")}"' in source
+        assert f'src="{depth}site.js?v={version("site.js")}"' in source
+    assert f'href="../../brasileirao-team-pages.css?v={version("brasileirao-team-pages.css")}"' in team_page
 
 
 def test_team_finder_filters_accent_insensitively_in_browser():

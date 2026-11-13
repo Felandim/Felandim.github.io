@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import html
+import hashlib
 import json
 import os
 import re
@@ -16,7 +17,8 @@ from team_assets import team_badge
 ROOT = Path(os.environ.get("BRASILEIRAO_ROOT", Path(__file__).resolve().parents[1]))
 START = "<!-- team-details:start -->"
 END = "<!-- team-details:end -->"
-CSS = '<link rel="stylesheet" href="../../brasileirao-team-pages.css">'
+CSS_VERSION = hashlib.sha256((ROOT / "brasileirao-team-pages.css").read_bytes()).hexdigest()[:12]
+CSS = f'<link rel="stylesheet" href="../../brasileirao-team-pages.css?v={CSS_VERSION}">'
 
 
 def esc(value: Any) -> str:
