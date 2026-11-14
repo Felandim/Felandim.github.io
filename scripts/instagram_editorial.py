@@ -577,6 +577,81 @@ def away_dominance_spotlight(matches: list[dict], minimum_matches: int = 4, mini
     return {"kind":"away_dominance","label":"VISITANTES MANDARAM","text":f"{away_wins} vitórias fora em {len(scored)} jogos • {percentage}% do {period}","caption":f"Visitantes mandaram: quem jogou fora venceu {away_wins} das {len(scored)} partidas do {period} ({percentage}%).","away_wins":away_wins,"matches":len(scored),"share":share}
 
 
+def fortress_breached_spotlight(
+    insights: dict,
+    matches: list[dict],
+    minimum_home_matches: int = 8,
+    minimum_home_ppg: float = 2.0,
+    minimum_home_win_rate: float = 0.60,
+) -> dict | None:
+    """Destaca vitória visitante contra um mandante de campanha caseira comprovadamente forte."""
+    profiles = {
+        profile.get("team"): profile
+        for profile in insights.get("team_profiles", {}).values()
+        if profile.get("team")
+    }
+    candidates = []
+    for match in matches:
+        score = instagram_daily._score(match.get("score", ""))
+        if not score or score[1] <= score[0]:
+            continue
+
+        home_team, away_team = match.get("home", ""), match.get("away", "")
+        profile = profiles.get(home_team, {})
+        home_stats = profile.get("home", {})
+        round_number = int(match.get("round") or 0)
+        included = any(
+            int(game.get("round") or 0) == round_number
+            and game.get("venue") == "Casa"
+            and game.get("opponent") == away_team
+            and game.get("result") == "D"
+            for game in profile.get("last_five", [])
+        )
+        if not included:
+            continue
+
+        previous_played = int(home_stats.get("played") or 0) - 1
+        previous_points = int(home_stats.get("points") or 0)
+        previous_wins = int(home_stats.get("wins") or 0)
+        if previous_played < minimum_home_matches:
+            continue
+        points_per_game = previous_points / previous_played
+        win_rate = previous_wins / previous_played
+        if points_per_game < minimum_home_ppg or win_rate < minimum_home_win_rate:
+            continue
+        candidates.append({
+            "winner": away_team,
+            "home_team": home_team,
+            "score": f"{score[1]} x {score[0]}",
+            "home_played": previous_played,
+            "home_points": previous_points,
+            "home_wins": previous_wins,
+            "home_ppg": points_per_game,
+            "home_win_rate": win_rate,
+        })
+
+    if not candidates:
+        return None
+    best = max(
+        candidates,
+        key=lambda item: (item["home_ppg"], item["home_win_rate"], item["home_played"], item["winner"]),
+    )
+    return {
+        "kind": "fortress_breached",
+        "label": "FORTALEZA INVADIDA",
+        "text": (
+            f"{best['winner']} venceu fora • {best['home_team']} tinha "
+            f"{best['home_wins']} vitórias em {best['home_played']} jogos em casa"
+        ),
+        "caption": (
+            f"Fortaleza invadida: {best['winner']} venceu o {best['home_team']} fora por {best['score']}; "
+            f"antes do jogo, o mandante somava {best['home_points']} pontos em {best['home_played']} "
+            f"partidas em casa ({best['home_ppg']:.1f} por jogo)."
+        ),
+        **best,
+    }
+
+
 def home_dominance_spotlight(matches: list[dict], minimum_matches: int = 4, minimum_share: float = 0.75) -> dict | None:
     """Destaca dias em que o mando de campo realmente dominou os resultados."""
     scored = [score for match in matches if (score := instagram_daily._score(match.get("score", "")))]
@@ -829,7 +904,7 @@ def editorial_spotlight(insights: dict, matches: list[dict], scorer_data: dict |
         return clinched
     if base.get("kind") in HIGH_PRIORITY_KINDS or base.get("kind") == "delayed_match":
         return base
-    return derby_day_spotlight(matches) or multi_goal_scorer_spotlight(matches, scorer_data) or collective_attack_spotlight(matches, scorer_data) or rout_wave_spotlight(matches) or high_scoring_match_spotlight(matches) or title_rivals_win_spotlight(insights, matches) or bounce_back_spotlight(insights, matches) or winless_run_ended_spotlight(insights, matches) or unbeaten_run_spotlight(insights, matches) or scoring_surge_spotlight(insights) or scoring_drought_spotlight(insights) or winning_streak_spotlight(insights, matches) or both_teams_scored_spotlight(matches) or clean_sheet_wave_spotlight(matches) or away_dominance_spotlight(matches) or home_dominance_spotlight(matches) or draw_dominance_spotlight(matches) or drawless_day_spotlight(matches) or defensive_streak_spotlight(insights) or title_race_spotlight(insights) or base
+    return derby_day_spotlight(matches) or multi_goal_scorer_spotlight(matches, scorer_data) or collective_attack_spotlight(matches, scorer_data) or rout_wave_spotlight(matches) or high_scoring_match_spotlight(matches) or title_rivals_win_spotlight(insights, matches) or bounce_back_spotlight(insights, matches) or winless_run_ended_spotlight(insights, matches) or unbeaten_run_spotlight(insights, matches) or fortress_breached_spotlight(insights, matches) or scoring_surge_spotlight(insights) or scoring_drought_spotlight(insights) or winning_streak_spotlight(insights, matches) or both_teams_scored_spotlight(matches) or clean_sheet_wave_spotlight(matches) or away_dominance_spotlight(matches) or home_dominance_spotlight(matches) or draw_dominance_spotlight(matches) or drawless_day_spotlight(matches) or defensive_streak_spotlight(insights) or title_race_spotlight(insights) or base
 
 
 def _spotlight_sentence(spotlight: dict) -> str:

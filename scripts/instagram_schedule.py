@@ -92,6 +92,7 @@ def block_spotlight(insights: dict, block: dict, scorer_data: dict | None = None
     bounce_back = instagram_editorial.bounce_back_spotlight(insights, matches)
     drought_end = instagram_editorial.winless_run_ended_spotlight(insights, matches)
     unbeaten_run = instagram_editorial.unbeaten_run_spotlight(insights, matches)
+    fortress = instagram_editorial.fortress_breached_spotlight(insights, matches)
     if len(matches) == 1:
         if scorer:
             return scorer
@@ -103,6 +104,8 @@ def block_spotlight(insights: dict, block: dict, scorer_data: dict | None = None
             return drought_end
         if unbeaten_run:
             return unbeaten_run
+        if fortress:
+            return fortress
         # Pontos deste jogo e posição atual, sem atribuir movimentos de outros jogos a ele.
         match = matches[0]
         home, away = (int(n) for n in re.split(r"\s*x\s*", match["score"].strip()))

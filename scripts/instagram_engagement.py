@@ -117,6 +117,9 @@ def engagement_question(spotlight: dict) -> str:
     if kind == "unbeaten_run":
         team = str(spotlight.get("team", "")).strip()
         return f"Quem encerra a invencibilidade do {team}?" if team else "Quem encerra essa série invicta?"
+    if kind == "fortress_breached":
+        winner = str(spotlight.get("winner", "")).strip()
+        return f"Essa vitória fora muda o patamar do {winner}?" if winner else "Essa vitória fora muda o patamar do visitante?"
     if kind == "champion_clinched":
         team = str(spotlight.get("team", "")).strip()
         return f"Quem foi o principal nome do título do {team}?" if team else "Quem foi o principal nome do título?"
