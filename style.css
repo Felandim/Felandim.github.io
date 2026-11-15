@@ -1387,7 +1387,7 @@ h3 { margin-bottom: 12px; font-size: 1.35rem; }
 }
 .br-team-focus {
   display: grid;
-  grid-template-columns: auto minmax(150px, 1fr) auto;
+  grid-template-columns: auto minmax(150px, 1fr) auto auto;
   align-items: center;
   gap: 8px 12px;
 }
@@ -1398,17 +1398,30 @@ h3 { margin-bottom: 12px; font-size: 1.35rem; }
 .br-team-focus select {
   min-width: 170px;
 }
-.br-team-focus a {
+.br-team-focus a,
+.br-team-focus button {
   color: var(--br-hot);
   font-size: .72rem;
   font-weight: 850;
   text-decoration: none;
 }
+.br-team-focus button {
+  min-height: 44px;
+  padding: 0 10px;
+  background: transparent;
+  border: 1px solid #58645e;
+  cursor: pointer;
+}
+.br-team-focus button:hover {
+  color: #fff;
+  border-color: var(--br-hot);
+}
 .br-team-focus a:hover {
   text-decoration: underline;
   text-underline-offset: 3px;
 }
-.br-team-focus a:focus-visible {
+.br-team-focus a:focus-visible,
+.br-team-focus button:focus-visible {
   border-radius: 2px;
   outline: 2px solid var(--br-hot);
   outline-offset: 4px;

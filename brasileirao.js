@@ -575,11 +575,12 @@
     const focus = document.createElement("div");
     focus.className = "br-team-focus";
     focus.dataset.teamFocus = "";
-    focus.innerHTML = `<label for="team-focus-select">Destacar time</label><select id="team-focus-select" data-team-focus-select><option value="">Nenhum time</option>${teams.map(team => `<option value="${slugify(team)}">${safe(team)}</option>`).join("")}</select><a data-team-focus-profile hidden>Ver perfil →</a><p class="br-team-focus-status" data-team-focus-status aria-live="polite"></p>`;
+    focus.innerHTML = `<label for="team-focus-select">Destacar time</label><select id="team-focus-select" data-team-focus-select><option value="">Nenhum time</option>${teams.map(team => `<option value="${slugify(team)}">${safe(team)}</option>`).join("")}</select><a data-team-focus-profile hidden>Ver perfil →</a><button type="button" data-team-focus-clear hidden>Limpar destaque</button><p class="br-team-focus-status" data-team-focus-status aria-live="polite"></p>`;
     control.append(focus);
 
     const focusSelect = focus.querySelector("[data-team-focus-select]");
     const profile = focus.querySelector("[data-team-focus-profile]");
+    const clear = focus.querySelector("[data-team-focus-clear]");
     const status = focus.querySelector("[data-team-focus-status]");
     const upcomingFixtures = [...document.querySelectorAll("[data-upcoming-fixture]")];
     const validSlugs = new Set([...focusSelect.options].map(option => option.value).filter(Boolean));
@@ -638,6 +639,7 @@
         profile.removeAttribute("href");
         status.textContent = selected ? "Time não encontrado nesta rodada." : "";
       }
+      clear.hidden = !selected;
 
       if (persist) {
         const url = new URL(location.href);
@@ -652,6 +654,11 @@
     };
 
     focusSelect.addEventListener("change", () => apply({ persist: true, scroll: true }));
+    clear.addEventListener("click", () => {
+      focusSelect.value = "";
+      apply({ persist: true });
+      focusSelect.focus();
+    });
     apply();
     return apply;
   }

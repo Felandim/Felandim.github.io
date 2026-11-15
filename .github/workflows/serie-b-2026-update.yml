@@ -4,6 +4,14 @@ on:
   pull_request:
     paths:
       - 'serie_b_2026/**'
+      - 'tests/test_serie_b_update.py'
+      - '.github/workflows/serie-b-2026-update.yml'
+  push:
+    branches:
+      - main
+    paths:
+      - 'serie_b_2026/**'
+      - 'tests/test_serie_b_update.py'
       - '.github/workflows/serie-b-2026-update.yml'
   schedule:
     - cron: '30 */6 * * *'
@@ -29,12 +37,14 @@ jobs:
           python-version: '3.11'
       - name: Install Playwright
         run: |
-          pip install playwright
+          pip install playwright pytest
           python -m playwright install --with-deps chromium
       - name: Run updater validation
         run: |
           set -o pipefail
           python3 serie_b_2026/main.py 2>&1 | tee serie-b-updater.log
+      - name: Test updater resilience
+        run: python -m pytest tests/test_serie_b_update.py -q
       - name: Upload updater log
         if: always()
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
@@ -69,12 +79,14 @@ jobs:
           python-version: '3.11'
       - name: Install Playwright
         run: |
-          pip install playwright
+          pip install playwright pytest
           python -m playwright install --with-deps chromium
       - name: Run updater
         run: |
           set -o pipefail
           python3 serie_b_2026/main.py 2>&1 | tee serie-b-updater.log
+      - name: Test updater resilience
+        run: python -m pytest tests/test_serie_b_update.py -q
       - name: Validate all rounds
         run: |
           python3 - <<'PY'

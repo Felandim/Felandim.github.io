@@ -839,6 +839,7 @@ def test_standings_team_focus_is_accessible_persistent_and_shareable():
     source = (ROOT / "brasileirao.js").read_text(encoding="utf-8")
     css = (ROOT / "style.css").read_text(encoding="utf-8")
     assert 'data-team-focus-select' in source
+    assert 'data-team-focus-clear' in source
     assert 'aria-live="polite"' in source
     assert 'searchParams.set("time", selected)' in source
     assert 'localStorage.setItem(teamFocusStorageKey, selected)' in source
@@ -951,9 +952,24 @@ def test_round_selectors_restore_url_and_browser_history():
             assert focused_fixture.is_visible()
             assert "Flamengo" in focused_fixture.text_content()
             assert focused_fixture.locator("[data-upcoming-focus-label]").is_visible()
-            assert page.locator(".br-upcoming-more").get_attribute("open") == ""
+            collapsed_schedule = focused_fixture.locator("xpath=ancestor::details[contains(@class, 'br-upcoming-more')]")
+            if collapsed_schedule.count():
+                assert collapsed_schedule.get_attribute("open") == ""
             assert "Próximo jogo:" in page.locator("[data-team-focus-status]").text_content()
             assert page.evaluate("localStorage.getItem('brasileirao-team-focus')") == "flamengo"
+
+            clear_focus = page.locator("[data-team-focus-clear]")
+            assert clear_focus.is_visible()
+            clear_focus.click()
+            page.wait_for_function("!new URL(location.href).searchParams.has('time')")
+            assert team_focus.input_value() == ""
+            assert focused_row.count() == 0
+            assert focused_fixture.count() == 0
+            assert page.evaluate("localStorage.getItem('brasileirao-team-focus')") is None
+            assert team_focus.evaluate("element => element === document.activeElement")
+
+            team_focus.select_option("flamengo")
+            page.wait_for_url("**time=flamengo")
 
             standings.select_option("12")
             page.wait_for_url("**rodada=12&time=flamengo")

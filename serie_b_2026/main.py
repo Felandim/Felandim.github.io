@@ -10,7 +10,7 @@ import re
 from datetime import datetime
 from typing import Any
 
-from playwright.sync_api import Page, sync_playwright
+from playwright.sync_api import Page, TimeoutError as PlaywrightTimeoutError, sync_playwright
 
 SOURCE_URL = "https://ge.globo.com/futebol/brasileirao-serie-b/"
 DATA_FILE = "data/serie_b_2026.json"
@@ -22,6 +22,7 @@ ROUND_LABEL = ".lista-jogos__navegacao--rodada"
 PREVIOUS_BUTTON = ".lista-jogos__navegacao--seta-esquerda"
 NEXT_BUTTON = ".lista-jogos__navegacao--seta-direita"
 GAME_SELECTOR = ".lista-jogos__jogo"
+SOURCE_LOAD_ATTEMPTS = 2
 
 
 def clean(value: Any) -> str:
@@ -58,6 +59,27 @@ def navigate(page: Page, selector: str) -> None:
     old_first_game = clean(first_meta.get_attribute("content"))
     page.locator(selector).click()
     wait_for_round_change(page, old_label, old_first_game)
+
+
+def load_source_page(page: Page) -> None:
+    """Load the dynamic source with one bounded retry for transient render delays."""
+    last_error: PlaywrightTimeoutError | None = None
+    for attempt in range(1, SOURCE_LOAD_ATTEMPTS + 1):
+        try:
+            page.goto(SOURCE_URL, wait_until="domcontentloaded", timeout=120_000)
+            page.wait_for_selector(ROUND_LABEL, state="visible")
+            page.wait_for_selector(GAME_SELECTOR, state="attached")
+            return
+        except PlaywrightTimeoutError as error:
+            last_error = error
+            if attempt < SOURCE_LOAD_ATTEMPTS:
+                print(
+                    f"Fonte não ficou pronta na tentativa {attempt}/{SOURCE_LOAD_ATTEMPTS}; "
+                    "tentando novamente."
+                )
+    raise RuntimeError(
+        f"A fonte não exibiu rodada e jogos após {SOURCE_LOAD_ATTEMPTS} tentativas."
+    ) from last_error
 
 
 def scrape_visible_round(page: Page, number: int) -> list[dict[str, Any]]:
@@ -138,9 +160,7 @@ def scrape_all_matches() -> list[dict[str, Any]]:
         page = browser.new_page(locale="pt-BR")
         page.set_default_timeout(90_000)
         try:
-            page.goto(SOURCE_URL, wait_until="domcontentloaded", timeout=120_000)
-            page.wait_for_selector(ROUND_LABEL, state="visible")
-            page.wait_for_selector(GAME_SELECTOR, state="attached")
+            load_source_page(page)
 
             current = round_number(page.locator(ROUND_LABEL).inner_text())
             if not 1 <= current <= EXPECTED_ROUNDS:
