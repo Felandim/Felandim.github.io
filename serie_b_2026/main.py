@@ -29,6 +29,27 @@ def clean(value: Any) -> str:
     return re.sub(r"\s+", " ", str(value)).strip() if value is not None else ""
 
 
+def load_completed_matches(path: str = DATA_FILE) -> list[dict[str, Any]] | None:
+    """Reuse the immutable final table once all 380 matches have a score."""
+    if not os.path.exists(path):
+        return None
+    try:
+        with open(path, "r", encoding="utf-8") as file:
+            matches = json.load(file).get("matches", [])
+    except (OSError, json.JSONDecodeError, AttributeError):
+        return None
+
+    rounds = {match.get("round") for match in matches}
+    complete = (
+        len(matches) == EXPECTED_MATCHES
+        and rounds == set(range(1, EXPECTED_ROUNDS + 1))
+        and all(sum(match.get("round") == number for match in matches) == MATCHES_PER_ROUND for number in rounds)
+        and all(clean(match.get("home")) and clean(match.get("away")) for match in matches)
+        and all(clean(match.get("score")) not in {"", "-"} for match in matches)
+    )
+    return matches if complete else None
+
+
 def round_number(label: str) -> int:
     match = re.search(r"\d+", label)
     if not match:
@@ -244,7 +265,11 @@ def build_html(matches: list[dict[str, Any]]) -> str:
 
 
 def main() -> None:
-    matches = scrape_all_matches()
+    matches = load_completed_matches()
+    if matches is None:
+        matches = scrape_all_matches()
+    else:
+        print("Série B 2026 concluída: preservando os 380 resultados finais validados.")
     data = {
         "name": "Brasileirão Série B 2026",
         "source": SOURCE_URL,
