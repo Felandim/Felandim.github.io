@@ -49,62 +49,21 @@ jobs:
 
       - name: Validate Instagram token
         if: github.event_name != 'push' && steps.should_post.outputs.publish == 'true'
-        run: |
-          python - <<'PY'
-          import os
-          import requests
-          from requests.adapters import HTTPAdapter
-          from urllib3.util.retry import Retry
-
-          ig_user_id = os.environ['INSTAGRAM_IG_USER_ID']
-          token = os.environ['INSTAGRAM_ACCESS_TOKEN']
-          api_version = os.environ['INSTAGRAM_API_VERSION']
-          if not token:
-              raise SystemExit('INSTAGRAM_ACCESS_TOKEN is not configured.')
-
-          retry = Retry(
-              total=4,
-              connect=3,
-              read=3,
-              backoff_factor=2,
-              status_forcelist=(429, 500, 502, 503, 504),
-              allowed_methods=frozenset({'GET'}),
-              respect_retry_after_header=True,
-          )
-          session = requests.Session()
-          session.mount('https://', HTTPAdapter(max_retries=retry))
-
-          base = f'https://graph.instagram.com/{api_version}/{ig_user_id}'
-          response = session.get(
-              base,
-              params={'fields': 'id,username', 'access_token': token},
-              timeout=30,
-          )
-          response.raise_for_status()
-          profile = response.json()
-          if not profile.get('id'):
-              raise SystemExit('Instagram API returned no account identifier.')
-
-          media = session.get(
-              f'{base}/media',
-              params={'fields': 'id', 'limit': 1, 'access_token': token},
-              timeout=30,
-          )
-          media.raise_for_status()
-          print(f"Instagram token validated for {profile.get('username', 'configured account')}.")
-          PY
+        id: token_check
+        continue-on-error: true
+        run: python scripts/instagram_token_check.py
 
       - name: Explain block skip
         if: github.event_name != 'push' && steps.should_post.outputs.publish != 'true'
         run: echo "No unposted round block closed yesterday; Instagram publishing was skipped."
 
       - name: Render round block cards
-        if: steps.should_post.outputs.publish == 'true'
+        if: steps.should_post.outputs.publish == 'true' && steps.token_check.outcome == 'success'
         run: python scripts/instagram_schedule.py render
 
       - name: Commit round block cards
         id: card_commit
-        if: steps.should_post.outputs.publish == 'true'
+        if: steps.should_post.outputs.publish == 'true' && steps.token_check.outcome == 'success'
         run: |
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git config user.name "github-actions[bot]"
@@ -118,7 +77,7 @@ jobs:
 
       - name: Publish to Instagram
         id: publish
-        if: steps.should_post.outputs.publish == 'true' && env.INSTAGRAM_ACCESS_TOKEN != ''
+        if: steps.should_post.outputs.publish == 'true' && steps.token_check.outcome == 'success'
         continue-on-error: true
         env:
           IMAGE_BASE_URL: https://raw.githubusercontent.com/${{ github.repository }}/${{ steps.card_commit.outputs.sha }}/assets/instagram/blocks
@@ -128,11 +87,12 @@ jobs:
 
       - name: Explain missing token
         if: steps.should_post.outputs.publish == 'true' && env.INSTAGRAM_ACCESS_TOKEN == ''
-        run: echo "INSTAGRAM_ACCESS_TOKEN is not configured; card generation succeeded but publishing was skipped."
+        run: echo "INSTAGRAM_ACCESS_TOKEN is not configured; the pending block was preserved for retry."
 
       - name: Record sanitized publish status
         if: always() && steps.should_post.outputs.publish == 'true'
         env:
+          TOKEN_OUTCOME: ${{ steps.token_check.outcome }}
           PUBLISH_OUTCOME: ${{ steps.publish.outcome }}
         run: |
           python - <<'PY'
@@ -141,12 +101,19 @@ jobs:
           from datetime import datetime, timezone
           from pathlib import Path
 
-          outcome = os.environ.get('PUBLISH_OUTCOME', 'skipped')
+          token_outcome = os.environ.get('TOKEN_OUTCOME', 'skipped')
+          publish_outcome = os.environ.get('PUBLISH_OUTCOME', 'skipped')
+          if token_outcome == 'failure':
+              outcome = 'credential_failure'
+          else:
+              outcome = publish_outcome
           payload = {
               'timestamp_utc': datetime.now(timezone.utc).isoformat(),
               'outcome': outcome,
           }
-          if outcome == 'failure':
+          if outcome == 'credential_failure':
+              payload['detail'] = 'Credencial do Instagram inválida, expirada ou sem permissão; publicação pendente até atualizar o secret.'
+          elif outcome == 'failure':
               payload['detail'] = 'Falha de publicação; resposta bruta da API suprimida por segurança.'
           path = Path('data/instagram_publish_status.json')
           path.parent.mkdir(parents=True, exist_ok=True)
@@ -165,7 +132,9 @@ jobs:
             git push origin main
           fi
 
-      - name: Fail if Instagram publish failed
-        if: steps.publish.outcome == 'failure'
-        run: exit 1
+      - name: Fail if Instagram delivery is blocked
+        if: steps.token_check.outcome == 'failure' || steps.publish.outcome == 'failure'
+        run: |
+          echo "::error::Instagram delivery is blocked. Review the sanitized status and update the credential when outcome is credential_failure."
+          exit 1
 

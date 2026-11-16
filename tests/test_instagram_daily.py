@@ -286,11 +286,18 @@ class InstagramWorkflowResilienceTests(unittest.TestCase):
         )
 
     def test_token_validation_retries_only_transient_api_errors(self):
+        checker = (ROOT / "scripts/instagram_token_check.py").read_text(encoding="utf-8")
+        self.assertIn("Retry(", checker)
+        self.assertIn("status_forcelist=(429, 500, 502, 503, 504)", checker)
+        self.assertIn('HTTPAdapter(max_retries=retry)', checker)
+        self.assertNotIn("response.raise_for_status()", checker)
+
+    def test_credential_failure_preserves_pending_block_and_fails_workflow(self):
         workflow = (ROOT / ".github/workflows/instagram-daily.yml").read_text(encoding="utf-8")
-        self.assertIn("Retry(", workflow)
-        self.assertIn("status_forcelist=(429, 500, 502, 503, 504)", workflow)
-        self.assertIn("HTTPAdapter(max_retries=retry)", workflow)
-        self.assertIn("response.raise_for_status()", workflow)
+        self.assertIn("id: token_check", workflow)
+        self.assertIn("steps.token_check.outcome == 'success'", workflow)
+        self.assertIn("outcome = 'credential_failure'", workflow)
+        self.assertIn("steps.token_check.outcome == 'failure' || steps.publish.outcome == 'failure'", workflow)
 
     def test_push_validation_cannot_publish(self):
         workflow = (ROOT / ".github/workflows/instagram-daily.yml").read_text(encoding="utf-8")
