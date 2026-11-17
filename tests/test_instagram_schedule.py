@@ -96,6 +96,27 @@ class RoundBlockScheduleTests(unittest.TestCase):
             publish.assert_called_once()
             self.assertEqual(schedule.read_state(state)[plan[0]["id"]]["outcome"], "published")
 
+    def test_failed_token_day_remains_queued_for_the_next_run(self):
+        block = schedule.due_blocks([match(19)], at(20))[0]
+        self.assertEqual(schedule.due_blocks([match(19)], at(21)), [])
+        self.assertEqual(schedule.merge_pending([block], [], {}), [block])
+
+    def test_published_pending_block_is_removed_from_queue(self):
+        block = schedule.due_blocks([match(19)], at(20))[0]
+        state = {block["id"]: {"match_keys": block["match_keys"], "outcome": "published"}}
+        self.assertEqual(schedule.merge_pending([block], [], state), [])
+
+    def test_successful_publication_removes_only_its_pending_block(self):
+        plan = schedule.due_blocks([match(19)], at(20))
+        plan[0]["caption"] = "Resumo do bloco."
+        other = dict(plan[0], id="outro-bloco")
+        with tempfile.TemporaryDirectory() as directory, patch.dict(os.environ, {"INSTAGRAM_IG_USER_ID": "id", "INSTAGRAM_ACCESS_TOKEN": "test"}), patch("instagram_engagement.publish_when_ready", return_value="media"):
+            state = Path(directory) / "state.json"
+            pending = Path(directory) / "pending.json"
+            schedule.write_json(pending, [plan[0], other])
+            schedule.publish_plan(plan, "https://example.com", state, pending)
+            self.assertEqual(json.loads(pending.read_text()), [other])
+
     def test_ambiguous_failure_is_recorded_and_never_blindly_retried(self):
         plan = schedule.due_blocks([match(19)], at(20))
         plan[0]["caption"] = "Resumo do bloco."

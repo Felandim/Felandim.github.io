@@ -17,6 +17,7 @@ ROOT = Path(__file__).resolve().parents[1]
 TZ = ZoneInfo("America/Sao_Paulo")
 GAP = timedelta(hours=48)
 STATE = ROOT / "data/instagram_blocks_published.json"
+PENDING = ROOT / "data/instagram_blocks_pending.json"
 CARDS = ROOT / "assets/instagram/blocks"
 
 
@@ -82,6 +83,27 @@ def due_blocks(matches: list[dict], now: datetime | None = None, state: dict | N
         due.append({"id": block_id, "round": block["round"], "start": block["start"].date().isoformat(),
                     "end": block["end"].date().isoformat(), "matches": selected, "match_keys": keys})
     return due
+
+
+def merge_pending(pending: list[dict], new_blocks: list[dict], state: dict) -> list[dict]:
+    """Keep selected blocks queued until they are published or safely de-duplicated."""
+    recorded = {key for entry in state.values() for key in entry.get("match_keys", [])}
+    merged = []
+    seen = set()
+    for block in [*pending, *new_blocks]:
+        selected = [m for m in block.get("matches", []) if match_key(m) not in recorded]
+        if not selected:
+            continue
+        keys = sorted(match_key(m) for m in selected)
+        block_id = hashlib.sha256("\n".join(keys).encode()).hexdigest()[:20]
+        if block_id in seen:
+            continue
+        seen.add(block_id)
+        queued = dict(block)
+        queued.update(id=block_id, matches=selected, match_keys=keys)
+        queued.pop("caption", None)
+        merged.append(queued)
+    return merged
 
 
 def block_spotlight(insights: dict, block: dict, scorer_data: dict | None = None) -> dict:
@@ -163,7 +185,12 @@ def read_state(path: Path) -> dict:
     return json.loads(path.read_text(encoding="utf-8")) if path.exists() else {}
 
 
-def publish_plan(plan: list[dict], image_base_url: str, state_path: Path = STATE) -> None:
+def publish_plan(
+    plan: list[dict],
+    image_base_url: str,
+    state_path: Path = STATE,
+    pending_path: Path | None = None,
+) -> None:
     import instagram_daily
     import instagram_engagement
     state = read_state(state_path)
@@ -181,6 +208,9 @@ def publish_plan(plan: list[dict], image_base_url: str, state_path: Path = STATE
         state[block["id"]].update(outcome="published", media_id=media_id,
                                   published_at=datetime.now(TZ).isoformat())
         write_json(state_path, state)
+        if pending_path is not None:
+            pending = json.loads(pending_path.read_text(encoding="utf-8")) if pending_path.exists() else []
+            write_json(pending_path, [item for item in pending if item.get("id") != block["id"]])
         print(f"Bloco {block['id']} publicado: {media_id}")
 
 
@@ -190,12 +220,16 @@ def main() -> None:
     parser.add_argument("--plan", type=Path, default=Path("/tmp/instagram-plan.json"))
     parser.add_argument("--matches", type=Path, default=ROOT / "data/serie_a_2026.json")
     parser.add_argument("--state", type=Path, default=STATE)
+    parser.add_argument("--pending", type=Path, default=PENDING)
     parser.add_argument("--image-base-url")
     args = parser.parse_args()
     if args.command == "select":
         matches = json.loads(args.matches.read_text(encoding="utf-8"))["matches"]
-        plan = due_blocks(matches, state=read_state(args.state))
+        state = read_state(args.state)
+        pending = json.loads(args.pending.read_text(encoding="utf-8")) if args.pending.exists() else []
+        plan = merge_pending(pending, due_blocks(matches, state=state), state)
         write_json(args.plan, plan)
+        write_json(args.pending, plan)
         print(f"{len(plan)} bloco(s) encerrado(s) com publicação devida.")
         if os.environ.get("GITHUB_OUTPUT"):
             with open(os.environ["GITHUB_OUTPUT"], "a", encoding="utf-8") as out:
@@ -211,7 +245,12 @@ def main() -> None:
     else:
         if not args.image_base_url:
             parser.error("publish exige --image-base-url")
-        publish_plan(json.loads(args.plan.read_text(encoding="utf-8")), args.image_base_url, args.state)
+        publish_plan(
+            json.loads(args.plan.read_text(encoding="utf-8")),
+            args.image_base_url,
+            args.state,
+            args.pending,
+        )
 
 
 if __name__ == "__main__":

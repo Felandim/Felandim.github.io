@@ -295,6 +295,8 @@ class InstagramWorkflowResilienceTests(unittest.TestCase):
     def test_credential_failure_preserves_pending_block_and_fails_workflow(self):
         workflow = (ROOT / ".github/workflows/instagram-daily.yml").read_text(encoding="utf-8")
         self.assertIn("id: token_check", workflow)
+        self.assertIn("Persist pending publication queue", workflow)
+        self.assertIn("git add data/instagram_blocks_pending.json", workflow)
         self.assertIn("steps.token_check.outcome == 'success'", workflow)
         self.assertIn("outcome = 'credential_failure'", workflow)
         self.assertIn("steps.token_check.outcome == 'failure' || steps.publish.outcome == 'failure'", workflow)

@@ -47,6 +47,18 @@ jobs:
         id: should_post
         run: python scripts/instagram_schedule.py select
 
+      - name: Persist pending publication queue
+        if: github.event_name != 'push'
+        run: |
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git config user.name "github-actions[bot]"
+          git add data/instagram_blocks_pending.json
+          if ! git diff --cached --quiet; then
+            git commit -m "chore(instagram): persist pending publication queue"
+            git pull --rebase origin main
+            git push origin main
+          fi
+
       - name: Validate Instagram token
         if: github.event_name != 'push' && steps.should_post.outputs.publish == 'true'
         id: token_check
@@ -125,6 +137,9 @@ jobs:
           git add data/instagram_publish_status.json
           if [ -f data/instagram_blocks_published.json ]; then
             git add data/instagram_blocks_published.json
+          fi
+          if [ -f data/instagram_blocks_pending.json ]; then
+            git add data/instagram_blocks_pending.json
           fi
           if ! git diff --cached --quiet; then
             git commit -m "chore(instagram): record sanitized publish status"

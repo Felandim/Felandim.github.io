@@ -1,0 +1,44 @@
+[
+  {
+    "id": "407f973e8e53bd5f32c5",
+    "round": 21,
+    "start": "2026-11-14",
+    "end": "2026-11-14",
+    "matches": [
+      {
+        "away": "Vasco",
+        "date": "14/11/2026",
+        "home": "Chapecoense",
+        "round": 21,
+        "score": "0 x 2",
+        "stadium": "Arena Condá",
+        "time": "20:30",
+        "url": "https://ge.globo.com/sc/futebol/brasileirao-serie-a/jogo/14-11-2026/chapecoense-vasco.ghtml"
+      }
+    ],
+    "match_keys": [
+      "[21, \"Chapecoense\", \"Vasco\"]"
+    ]
+  },
+  {
+    "id": "2a848e3a164f100286ca",
+    "round": 35,
+    "start": "2026-11-14",
+    "end": "2026-11-14",
+    "matches": [
+      {
+        "away": "Atlético-MG",
+        "date": "14/11/2026",
+        "home": "Mirassol",
+        "round": 35,
+        "score": "0 x 0",
+        "stadium": "Maião",
+        "time": "18:30",
+        "url": "https://ge.globo.com/sp/tem-esporte/futebol/brasileirao-serie-a/jogo/14-11-2026/mirassol-atletico-mg.ghtml"
+      }
+    ],
+    "match_keys": [
+      "[35, \"Mirassol\", \"Atlético-MG\"]"
+    ]
+  }
+]
