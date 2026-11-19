@@ -264,16 +264,18 @@ def head(
     social_image: str = f"{SITE_URL}/assets/og/rodada-a-rodada.png",
     social_image_alt: str = "Rodada a Rodada — Brasileirão 2026 em números",
     theme_color: str = "#101714",
+    extra_css: str = "",
 ) -> str:
-    return f'''<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>{esc(title)}</title><meta name="description" content="{esc(description, True)}"><meta name="theme-color" content="{esc(theme_color, True)}"><link rel="canonical" href="{canonical}"><meta property="og:type" content="website"><meta property="og:locale" content="pt_BR"><meta property="og:title" content="{esc(title, True)}"><meta property="og:description" content="{esc(description, True)}"><meta property="og:url" content="{canonical}"><meta property="og:image" content="{social_image}"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta property="og:image:alt" content="{esc(social_image_alt, True)}"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="{esc(title, True)}"><meta name="twitter:description" content="{esc(description, True)}"><meta name="twitter:image" content="{social_image}"><meta name="twitter:image:alt" content="{esc(social_image_alt, True)}"><link rel="stylesheet" href="{asset_url(depth, 'style.css')}"></head>'''
+    extra_style = f'<link rel="stylesheet" href="{asset_url(depth, extra_css)}">' if extra_css else ""
+    return f'''<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>{esc(title)}</title><meta name="description" content="{esc(description, True)}"><meta name="theme-color" content="{esc(theme_color, True)}"><link rel="canonical" href="{canonical}"><meta property="og:type" content="website"><meta property="og:locale" content="pt_BR"><meta property="og:title" content="{esc(title, True)}"><meta property="og:description" content="{esc(description, True)}"><meta property="og:url" content="{canonical}"><meta property="og:image" content="{social_image}"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta property="og:image:alt" content="{esc(social_image_alt, True)}"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="{esc(title, True)}"><meta name="twitter:description" content="{esc(description, True)}"><meta name="twitter:image" content="{social_image}"><meta name="twitter:image:alt" content="{esc(social_image_alt, True)}"><link rel="stylesheet" href="{asset_url(depth, 'style.css')}">{extra_style}</head>'''
 
 
-def page(title: str, description: str, canonical: str, content: str, *, depth: str = "../", current: str = "", body_class: str = "br-page", body_style: str = "", script: bool = False, social_image: str = f"{SITE_URL}/assets/og/rodada-a-rodada.png", social_image_alt: str = "Rodada a Rodada — Brasileirão 2026 em números", theme_color: str = "#101714") -> str:
+def page(title: str, description: str, canonical: str, content: str, *, depth: str = "../", current: str = "", body_class: str = "br-page", body_style: str = "", script: bool = False, social_image: str = f"{SITE_URL}/assets/og/rodada-a-rodada.png", social_image_alt: str = "Rodada a Rodada — Brasileirão 2026 em números", theme_color: str = "#101714", extra_css: str = "") -> str:
     product_script_url = asset_url(depth, "brasileirao.js")
     site_script_url = asset_url(depth, "site.js")
     script_tag = f'<script src="{product_script_url}" defer></script>' if script else ""
     style_attr = f' style="{esc(body_style, True)}"' if body_style else ""
-    return f'{head(title, description, canonical, depth, social_image, social_image_alt, theme_color)}<body class="{body_class}"{style_attr}><a class="skip-link" href="#conteudo">Pular para o conteúdo</a>{nav(depth, current)}<main id="conteudo">{content}</main>{footer(depth)}{script_tag}<script src="{site_script_url}" defer></script></body></html>\n'
+    return f'{head(title, description, canonical, depth, social_image, social_image_alt, theme_color, extra_css)}<body class="{body_class}"{style_attr}><a class="skip-link" href="#conteudo">Pular para o conteúdo</a>{nav(depth, current)}<main id="conteudo">{content}</main>{footer(depth)}{script_tag}<script src="{site_script_url}" defer></script></body></html>\n'
 
 
 def line_chart(history: list[dict[str, Any]], label: str) -> str:
@@ -420,7 +422,7 @@ def zone_preview(rows: list[dict[str, Any]], zone: str, label: str) -> str:
     return f'<details class="br-zone-preview {zone}" name="home-zones"><summary aria-label="{zone.upper()}: {label}. Abrir ou fechar detalhes"><strong>{zone.upper()}</strong><span class="br-zone-badges" aria-hidden="true">{badges}</span><span aria-hidden="true">⌄</span></summary><div class="br-zone-panel"><p>{label}</p><ol>{teams}</ol></div></details>'
 
 
-def home_content(insights: dict[str, Any]) -> str:
+def home_content(insights: dict[str, Any], matches: list[dict[str, Any]]) -> str:
     current = insights["snapshots"][-1]["table"]
     latest = insights["rounds"][-1]
     leader = current[0]
@@ -436,7 +438,7 @@ def home_content(insights: dict[str, Any]) -> str:
 <div class="br-home-heading"><div><p class="br-kicker">Brasileirão Série A · {SEASON} · Rodada {insights['current_round']}</p><h1 id="home-standings-title">Classificação</h1></div><a href="brasileirao/classificacao-rodada-a-rodada.html">Ver rodada a rodada →</a></div>
 <div class="br-zone-previews" aria-label="Resumo do G4 e Z4">{zone_preview(current[:4], 'g4', 'Os quatro primeiros')}{zone_preview(current[-4:], 'z4', 'Zona de rebaixamento')}</div>
 <div class="br-home-grid"><div class="br-home-table">{table_html(current, team_prefix='brasileirao/times/')}<p class="br-home-table-note"><span><i class="g4" aria-hidden="true"></i>G4 · 1º ao 4º</span><span><i class="z4" aria-hidden="true"></i>Z4 · 17º ao 20º</span></p></div>
-<aside class="br-home-highlights" aria-label="Destaques da temporada"><article class="br-ranking-card br-home-leader"><span>Líder</span><strong class="br-leader-name">{team_badge(leader['team'], 'leader-card')}</strong><b>{leader['points']} pts</b><small>{leader['wins']} vitórias · saldo {leader['gd']:+d}</small></article><article class="br-ranking-card br-ranking-card-hot"><span>Artilharia</span><strong>{scorer_text}</strong><a href="brasileirao/artilharia-rodada-a-rodada.html">Abrir corrida →</a></article><a class="br-home-round-link" href="brasileirao/rodadas/rodada-{insights['current_round']}.html">Ver a rodada {insights['current_round']} →</a></aside></div></div></section>
+<aside class="br-home-highlights" aria-label="Agenda e destaques da temporada">{upcoming_panel(matches, insights["current_round"], "brasileirao/")}<article class="br-ranking-card br-home-leader"><span>Líder</span><strong class="br-leader-name">{team_badge(leader['team'], 'leader-card')}</strong><b>{leader['points']} pts</b><small>{leader['wins']} vitórias · saldo {leader['gd']:+d}</small></article><article class="br-ranking-card br-ranking-card-hot"><span>Artilharia</span><strong>{scorer_text}</strong><a href="brasileirao/artilharia-rodada-a-rodada.html">Abrir corrida →</a></article><a class="br-home-round-link" href="brasileirao/rodadas/rodada-{insights['current_round']}.html">Ver a rodada {insights['current_round']} →</a></aside></div></div></section>
 <section class="br-ticker"><div class="br-shell"><span>Rodada {insights['current_round']}</span><strong>{latest['goals']} gols</strong><strong>{team_badge(latest['leader'], 'ticker')} na liderança</strong><strong>{latest['matches']} jogos concluídos</strong></div></section>
 <section class="br-record-preview"><div class="br-shell"><div class="br-section-head"><div><p class="br-kicker">Rankings atualizados</p><h2>Quem domina o campeonato?</h2></div><a href="brasileirao/rankings-recordes.html">Ver todos os rankings →</a></div><div class="br-record-preview-grid">{record_preview(rankings)}</div></div></section>
 <section class="br-section br-section-dark"><div class="br-shell"><div class="br-section-head"><div><p class="br-kicker">O que mudou</p><h2>Raio-x da rodada {latest['round']}</h2></div><a href="brasileirao/rodadas/rodada-{latest['round']}.html">Ler resumo completo →</a></div><div class="br-change-grid"><article><span>01</span><h3>Liderança</h3><p>{team_badge(latest['leader'], 'sentence')}{' assumiu a ponta.' if latest['leader_changed'] else ' manteve a ponta.'}</p></article><article><span>02</span><h3>Maior subida</h3><p>{team_badge_list(latest['biggest_rise']['teams'], 'sentence', 'Sem mudança')} · {latest['biggest_rise']['places']} posições</p></article><article><span>03</span><h3>Z4</h3><p>Entraram: {team_badge_list(latest['z4_in'], 'sentence')}<br>Saíram: {team_badge_list(latest['z4_out'], 'sentence')}</p></article></div></div></section>
@@ -472,6 +474,8 @@ def upcoming_schedule_html(
     current_round: int,
     limit: int = 10,
     initially_visible: int = 5,
+    *,
+    round_prefix: str = "",
 ) -> str:
     upcoming = next_matches(matches, limit)
     if not upcoming:
@@ -495,7 +499,7 @@ def upcoming_schedule_html(
             f'<span class="br-upcoming-focus-label" data-upcoming-focus-label hidden>Próximo jogo do time</span></small>'
         )
         card = (
-            f'<a href="rodadas/rodada-{round_number}.html" aria-label="{esc(label, True)}">{content}</a>'
+            f'<a href="{round_prefix}rodadas/rodada-{round_number}.html" aria-label="{esc(label, True)}">{content}</a>'
             if round_number <= current_round
             else f'<div class="br-upcoming-card">{content}</div>'
         )
@@ -523,13 +527,17 @@ def upcoming_schedule_html(
     )
 
 
+def upcoming_panel(matches: list[dict[str, Any]], current_round: int, round_prefix: str = "") -> str:
+    limit = 10
+    schedule = upcoming_schedule_html(matches, current_round, limit=limit, round_prefix=round_prefix)
+    return f'''<section class="br-upcoming" aria-labelledby="upcoming-title"><div class="br-upcoming-heading"><div><p class="br-kicker">Agenda atual</p><h2 id="upcoming-title">Próximos jogos</h2></div><span>{len(next_matches(matches, limit))} partidas</span></div>{schedule}</section>'''
+
+
 def classification_content(insights: dict[str, Any], matches: list[dict[str, Any]]) -> str:
     current = insights["snapshots"][-1]
     previous = insights["snapshots"][-2]["table"] if len(insights["snapshots"]) > 1 else []
     options = "".join(f'<option value="{n}"{(" selected" if n == insights["current_round"] else "")}>Rodada {n}</option>' for n in range(1, insights["current_round"] + 1))
-    schedule_limit = 10
-    schedule = upcoming_schedule_html(matches, insights["current_round"], limit=schedule_limit)
-    return f'''<section class="br-page-hero"><div class="br-shell"><p class="br-kicker">Classificação histórica</p><h1>Onde cada time estava depois de cada rodada?</h1><p>Selecione uma rodada para reconstruir a tabela e compare as trajetórias.</p></div></section><section class="br-section"><div class="br-shell"><div class="br-control"><label for="round-select">Ver classificação após</label><select id="round-select" data-round-select>{options}</select></div><div class="br-analysis-grid br-classification-grid"><div><p class="br-movement-key"><strong>Movimento desde a rodada anterior:</strong> <span>↑ subiu</span><span>↓ caiu</span><span>• manteve</span></p>{table_html(current['table'], previous_rows=previous)}</div><aside class="br-classification-aside" aria-label="Agenda e evolução"><section class="br-upcoming" aria-labelledby="upcoming-title"><div class="br-upcoming-heading"><div><p class="br-kicker">Agenda atual</p><h2 id="upcoming-title">Próximos jogos</h2></div><span>{len(next_matches(matches, schedule_limit))} partidas</span></div>{schedule}</section><div class="br-chart-panel"><p class="br-kicker">Evolução visual</p><h2>Corrida por posição</h2><div data-multi-chart aria-live="polite"></div><p class="br-note">Quanto mais alto, melhor. Critérios disponíveis: pontos, vitórias, saldo e gols marcados.</p></div></aside></div></div></section>'''
+    return f'''<section class="br-page-hero"><div class="br-shell"><p class="br-kicker">Classificação histórica</p><h1>Onde cada time estava depois de cada rodada?</h1><p>Selecione uma rodada para reconstruir a tabela e compare as trajetórias.</p></div></section><section class="br-section"><div class="br-shell"><div class="br-control"><label for="round-select">Ver classificação após</label><select id="round-select" data-round-select>{options}</select></div><div class="br-analysis-grid br-classification-grid"><div><p class="br-movement-key"><strong>Movimento desde a rodada anterior:</strong> <span>↑ subiu</span><span>↓ caiu</span><span>• manteve</span></p>{table_html(current['table'], previous_rows=previous)}</div><aside class="br-classification-aside" aria-label="Agenda e evolução">{upcoming_panel(matches, insights["current_round"])}<div class="br-chart-panel"><p class="br-kicker">Evolução visual</p><h2>Corrida por posição</h2><div data-multi-chart aria-live="polite"></div><p class="br-note">Quanto mais alto, melhor. Critérios disponíveis: pontos, vitórias, saldo e gols marcados.</p></div></aside></div></div></section>'''
 
 
 def scorers_content(insights: dict[str, Any]) -> str:
@@ -698,7 +706,7 @@ def main() -> None:
     leader_team = insights["snapshots"][-1]["table"][0]["team"]
     leader_color, leader_text = team_theme(leader_team)
     leader_style = f"--br-leader-color:{leader_color};--br-leader-text:{leader_text}"
-    home = page("Rodada a Rodada | Brasileirão 2026 em números", "Veja a evolução da classificação, artilharia, times e rodadas do Brasileirão 2026.", f"{SITE_URL}/", home_content(insights), depth="", body_class="br-page br-home", body_style=leader_style, script=True)
+    home = page("Rodada a Rodada | Brasileirão 2026 em números", "Veja a evolução da classificação, artilharia, times e rodadas do Brasileirão 2026.", f"{SITE_URL}/", home_content(insights, matches), depth="", body_class="br-page br-home", body_style=leader_style, script=True, extra_css="brasileirao-home.css")
     write(ROOT / "index.html", home)
     write(OUTPUT / "index.html", page("Brasileirão 2026 rodada a rodada", "Explore classificação, artilharia, times e todas as rodadas do Brasileirão 2026.", f"{SITE_URL}/brasileirao/", hub_content(insights), script=True))
     write(OUTPUT / "classificacao-rodada-a-rodada.html", page("Classificação do Brasileirão 2026 rodada a rodada", "Reconstrua a classificação do Brasileirão 2026 após qualquer rodada e compare a evolução dos times.", f"{SITE_URL}/brasileirao/classificacao-rodada-a-rodada.html", classification_content(insights, matches), current="classificacao", script=True, social_image=f"{SITE_URL}/assets/og/classificacao.png", social_image_alt="Classificação histórica do Brasileirão 2026 rodada a rodada"))

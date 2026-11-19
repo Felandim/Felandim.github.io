@@ -1,0 +1,7 @@
+.br-home-highlights > .br-upcoming { grid-column: 1 / -1; padding: 16px; }
+.br-home-highlights .br-upcoming-heading { gap: 8px; }
+.br-home-highlights .br-upcoming-heading h2 { font-size: 1.25rem; }
+.br-home-highlights .br-upcoming-fixture > * { grid-template-columns: minmax(0, 1fr); }
+.br-home-highlights .br-upcoming-fixture time,
+.br-home-highlights .br-upcoming-date { display: flex; align-items: center; justify-content: space-between; grid-row: auto; padding: 0 0 6px; border: 0; border-bottom: 1px solid #455149; }
+.br-home-highlights .br-upcoming-teams .br-team-with-badge > span { white-space: normal; }
