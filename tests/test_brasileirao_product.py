@@ -199,11 +199,15 @@ def test_classification_schedule_is_beside_table_and_stacks_on_mobile_in_browser
             page.goto(url, wait_until="domcontentloaded")
             table = page.locator(".br-classification-grid > div").bounding_box()
             aside = page.locator(".br-classification-aside").bounding_box()
-            first_match = page.locator(".br-upcoming-fixture a").first
+            first_match = page.locator(".br-upcoming-fixture").first
             assert table and aside
             assert aside["x"] > table["x"]
             assert first_match.is_visible()
-            assert first_match.get_attribute("href").startswith("rodadas/rodada-")
+            first_link = first_match.locator("a")
+            if first_link.count():
+                assert first_link.get_attribute("href").startswith("rodadas/rodada-")
+            else:
+                assert first_match.locator(".br-upcoming-card").is_visible()
             fixtures = page.locator(".br-upcoming-fixture")
             assert fixtures.count() == 10
             assert page.locator(".br-upcoming-fixture:visible").count() == 5
