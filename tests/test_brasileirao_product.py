@@ -237,9 +237,11 @@ def test_classification_schedule_is_beside_table_and_stacks_on_mobile_in_browser
             assert jump.is_visible()
             jump.locator('a[href="#upcoming-title"]').click()
             assert page.evaluate("location.hash") == "#upcoming-title"
+            page.wait_for_function("document.querySelector('#upcoming-title').getBoundingClientRect().top >= 0")
             assert page.locator("#upcoming-title").bounding_box()["y"] >= 0
             jump.locator('a[href="#classification-table-anchor"]').click()
             assert page.evaluate("location.hash") == "#classification-table-anchor"
+            page.wait_for_function("document.querySelector('#classification-table-anchor').getBoundingClientRect().top >= 0")
             assert page.locator("#classification-table-anchor").bounding_box()["y"] >= 0
             browser.close()
     finally:
