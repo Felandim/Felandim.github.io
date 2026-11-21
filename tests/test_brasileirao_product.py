@@ -163,10 +163,10 @@ def test_classification_shows_server_rendered_upcoming_schedule():
     assert 'class="br-classification-aside"' in classification
     assert 'data-multi-chart aria-live="polite"' in classification
     assert '<nav class="br-classification-jump" aria-label="Atalhos da classificação">' in classification
-    assert 'href="#classification-table">Tabela</a>' in classification
+    assert 'href="#classification-table-anchor">Tabela</a>' in classification
     assert 'href="#upcoming-title">Próximos jogos</a>' in classification
     assert 'href="#evolution-title">Evolução</a>' in classification
-    assert 'id="classification-table" aria-labelledby="classification-table-title"' in classification
+    assert 'id="classification-table-anchor" class="br-classification-anchor" aria-hidden="true"' in classification
     assert 'id="classification-table-title" class="br-visually-hidden"' in classification
     assert 'id="evolution-title">Corrida por posição</h2>' in classification
     scheduled_rounds = {int(match["round"]) for match in upcoming}
@@ -238,9 +238,9 @@ def test_classification_schedule_is_beside_table_and_stacks_on_mobile_in_browser
             jump.locator('a[href="#upcoming-title"]').click()
             assert page.evaluate("location.hash") == "#upcoming-title"
             assert page.locator("#upcoming-title").bounding_box()["y"] >= 0
-            jump.locator('a[href="#classification-table"]').click()
-            assert page.evaluate("location.hash") == "#classification-table"
-            assert page.locator("#classification-table").bounding_box()["y"] >= 0
+            jump.locator('a[href="#classification-table-anchor"]').click()
+            assert page.evaluate("location.hash") == "#classification-table-anchor"
+            assert page.locator("#classification-table-anchor").bounding_box()["y"] >= 0
             browser.close()
     finally:
         server.shutdown()
