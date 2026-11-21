@@ -162,6 +162,13 @@ def test_classification_shows_server_rendered_upcoming_schedule():
         assert 'class="br-upcoming-list br-upcoming-list-more" start="6"' in classification
     assert 'class="br-classification-aside"' in classification
     assert 'data-multi-chart aria-live="polite"' in classification
+    assert '<nav class="br-classification-jump" aria-label="Atalhos da classificação">' in classification
+    assert 'href="#classification-table">Tabela</a>' in classification
+    assert 'href="#upcoming-title">Próximos jogos</a>' in classification
+    assert 'href="#evolution-title">Evolução</a>' in classification
+    assert 'id="classification-table" aria-labelledby="classification-table-title"' in classification
+    assert 'id="classification-table-title" class="br-visually-hidden"' in classification
+    assert 'id="evolution-title">Corrida por posição</h2>' in classification
     scheduled_rounds = {int(match["round"]) for match in upcoming}
     for round_number in scheduled_rounds:
         link = f'href="rodadas/rodada-{round_number}.html"'
@@ -174,6 +181,10 @@ def test_classification_shows_server_rendered_upcoming_schedule():
     assert ".br-upcoming-fixture a:focus-visible" in css
     assert ".br-upcoming-more summary:focus-visible" in css
     assert ".br-upcoming-fixture.is-focused" in css
+    assert ".br-classification-jump { display: none; }" in css
+    assert ".br-visually-hidden" in css
+    assert ".br-classification-jump a:focus-visible" in css
+    assert "scroll-margin-top: 66px" in css
     assert "@media (max-width: 720px)" in css
 
 
@@ -222,6 +233,14 @@ def test_classification_schedule_is_beside_table_and_stacks_on_mobile_in_browser
             aside = page.locator(".br-classification-aside").bounding_box()
             assert table and aside
             assert aside["y"] >= table["y"] + table["height"]
+            jump = page.locator(".br-classification-jump")
+            assert jump.is_visible()
+            jump.locator('a[href="#upcoming-title"]').click()
+            assert page.evaluate("location.hash") == "#upcoming-title"
+            assert page.locator("#upcoming-title").bounding_box()["y"] >= 0
+            jump.locator('a[href="#classification-table"]').click()
+            assert page.evaluate("location.hash") == "#classification-table"
+            assert page.locator("#classification-table").bounding_box()["y"] >= 0
             browser.close()
     finally:
         server.shutdown()

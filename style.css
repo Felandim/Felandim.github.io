@@ -575,6 +575,8 @@ h3 { margin-bottom: 12px; font-size: 1.35rem; }
 .br-control label { font-size: .75rem; font-weight: 900; letter-spacing: .11em; text-transform: uppercase; }
 .br-control select { min-width: 190px; padding: 11px 40px 11px 13px; color: var(--br-ink); background: var(--br-hot); border: 0; border-radius: 0; font-weight: 850; }
 .br-analysis-grid { display: grid; grid-template-columns: 1.08fr .92fr; gap: 28px; align-items: start; }
+.br-visually-hidden { position: absolute; width: 1px; height: 1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+.br-classification-jump { display: none; }
 .br-classification-aside { display: grid; min-width: 0; gap: 28px; }
 .br-upcoming { padding: 24px; color: #f6f4ec; background: var(--br-ink); }
 .br-upcoming-heading { display: flex; align-items: end; justify-content: space-between; gap: 16px; margin-bottom: 16px; }
@@ -918,6 +920,11 @@ h3 { margin-bottom: 12px; font-size: 1.35rem; }
   .br-page-hero h1, .br-team-hero h1, .br-round-hero h1 { font-size: clamp(3.2rem, 16vw, 5.4rem); }
   .br-control { align-items: flex-start; flex-direction: column; }
   .br-control select { width: 100%; }
+  .br-classification-jump { position: sticky; top: 0; z-index: 20; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); margin: -10px 0 20px; padding: 6px; background: var(--br-ink); box-shadow: 0 8px 18px rgba(16, 23, 20, .18); }
+  .br-classification-jump a { min-height: 44px; display: flex; align-items: center; justify-content: center; padding: 8px 6px; color: #f6f4ec; border: 1px solid transparent; font-size: .68rem; font-weight: 900; line-height: 1.15; text-align: center; text-decoration: none; text-transform: uppercase; }
+  .br-classification-jump a + a { border-left-color: #455149; }
+  .br-classification-jump a:hover, .br-classification-jump a:focus-visible { color: var(--br-ink); background: var(--br-hot); outline: 0; }
+  #classification-table, #upcoming-title, #evolution-title { scroll-margin-top: 66px; }
   .br-upcoming { padding: 20px 16px; }
   .br-upcoming-fixture > * { grid-template-columns: 68px minmax(0, 1fr); padding-inline: 10px; }
   .br-upcoming-teams .br-team-with-badge > span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
