@@ -121,9 +121,10 @@ def test_standings_render_badges_initially_and_after_round_change():
     classification = (ROOT / "brasileirao" / "classificacao-rodada-a-rodada.html").read_text(encoding="utf-8")
     script = (ROOT / "brasileirao.js").read_text(encoding="utf-8")
     css = (ROOT / "style.css").read_text(encoding="utf-8")
-    assert classification.count('class="br-team-badge"') == 40
+    schedule_count = classification.count("data-upcoming-fixture")
+    assert classification.count('class="br-team-badge"') == 20 + (schedule_count * 2)
     assert classification.count("br-team-with-badge-table") == 20
-    assert classification.count("br-team-with-badge-schedule") == 20
+    assert classification.count("br-team-with-badge-schedule") == schedule_count * 2
     assert classification.count("br-position-movement") == 20
     assert "Movimento desde a rodada anterior:" in classification
     assert 'const teamBadge = (team, variant = "inline") =>' in script
@@ -142,20 +143,24 @@ def test_classification_shows_server_rendered_upcoming_schedule():
     source_dir = str(ROOT / "brasileirao_2026")
     sys.path.insert(0, source_dir)
     try:
-        from build import next_matches
+        from build import upcoming_schedule_matches
     finally:
         sys.path.remove(source_dir)
-    upcoming = next_matches(matches, limit=10)
+    upcoming = upcoming_schedule_matches(matches, minimum=10)
+    upcoming_count = len(upcoming)
     classification = (ROOT / "brasileirao" / "classificacao-rodada-a-rodada.html").read_text(encoding="utf-8")
     css = (ROOT / "style.css").read_text(encoding="utf-8")
 
     assert pending
     assert 'aria-labelledby="upcoming-title"' in classification
     assert '<h2 id="upcoming-title">Próximos jogos</h2>' in classification
-    assert classification.count('class="br-upcoming-fixture"') == min(10, len(pending))
-    assert classification.count("data-upcoming-fixture") == min(10, len(pending))
-    assert classification.count("data-upcoming-focus-label") == min(10, len(pending))
-    extra_count = max(0, min(10, len(pending)) - 5)
+    assert classification.count('class="br-upcoming-fixture"') == upcoming_count
+    assert classification.count("data-upcoming-fixture") == upcoming_count
+    assert classification.count("data-upcoming-focus-label") == upcoming_count
+    pending_teams = {match[side] for match in pending for side in ("home", "away")}
+    scheduled_teams = {match[side] for match in upcoming for side in ("home", "away")}
+    assert pending_teams <= scheduled_teams
+    extra_count = max(0, upcoming_count - 5)
     if extra_count:
         assert '<details class="br-upcoming-more">' in classification
         assert f'<summary>Ver mais {extra_count} jogos</summary>' in classification
@@ -220,13 +225,14 @@ def test_classification_schedule_is_beside_table_and_stacks_on_mobile_in_browser
             else:
                 assert first_match.locator(".br-upcoming-card").is_visible()
             fixtures = page.locator(".br-upcoming-fixture")
-            assert fixtures.count() == 10
+            fixture_count = fixtures.count()
+            assert fixture_count >= 10
             assert page.locator(".br-upcoming-fixture:visible").count() == 5
             more = page.locator(".br-upcoming-more summary")
             more.focus()
             page.keyboard.press("Enter")
             assert page.locator(".br-upcoming-more").get_attribute("open") == ""
-            assert page.locator(".br-upcoming-fixture:visible").count() == 10
+            assert page.locator(".br-upcoming-fixture:visible").count() == fixture_count
 
             page.set_viewport_size({"width": 390, "height": 844})
             table = page.locator(".br-classification-grid > div").bounding_box()

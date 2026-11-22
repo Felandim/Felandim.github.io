@@ -469,6 +469,23 @@ def next_matches(matches: list[dict[str, Any]], limit: int = 5) -> list[dict[str
     return sorted(pending, key=sort_key)[:limit]
 
 
+def upcoming_schedule_matches(matches: list[dict[str, Any]], minimum: int = 10) -> list[dict[str, Any]]:
+    """Mantém a agenda compacta sem esconder o próximo jogo de nenhum time."""
+    ordered = next_matches(matches, limit=len(matches))
+    selected = ordered[:minimum]
+    pending_teams = {match[side] for match in ordered for side in ("home", "away")}
+    covered_teams = {match[side] for match in selected for side in ("home", "away")}
+
+    for match in ordered[minimum:]:
+        if pending_teams <= covered_teams:
+            break
+        match_teams = {match["home"], match["away"]}
+        if match_teams - covered_teams:
+            selected.append(match)
+            covered_teams.update(match_teams)
+    return selected
+
+
 def upcoming_schedule_html(
     matches: list[dict[str, Any]],
     current_round: int,
@@ -477,7 +494,7 @@ def upcoming_schedule_html(
     *,
     round_prefix: str = "",
 ) -> str:
-    upcoming = next_matches(matches, limit)
+    upcoming = upcoming_schedule_matches(matches, minimum=limit)
     if not upcoming:
         return '<p class="br-upcoming-empty">Não há partidas futuras com data disponível.</p>'
 
@@ -530,7 +547,8 @@ def upcoming_schedule_html(
 def upcoming_panel(matches: list[dict[str, Any]], current_round: int, round_prefix: str = "") -> str:
     limit = 10
     schedule = upcoming_schedule_html(matches, current_round, limit=limit, round_prefix=round_prefix)
-    return f'''<section class="br-upcoming" aria-labelledby="upcoming-title"><div class="br-upcoming-heading"><div><p class="br-kicker">Agenda atual</p><h2 id="upcoming-title">Próximos jogos</h2></div><span>{len(next_matches(matches, limit))} partidas</span></div>{schedule}</section>'''
+    total = len(upcoming_schedule_matches(matches, minimum=limit))
+    return f'''<section class="br-upcoming" aria-labelledby="upcoming-title"><div class="br-upcoming-heading"><div><p class="br-kicker">Agenda atual</p><h2 id="upcoming-title">Próximos jogos</h2></div><span>{total} partidas</span></div>{schedule}</section>'''
 
 
 def classification_content(insights: dict[str, Any], matches: list[dict[str, Any]]) -> str:
