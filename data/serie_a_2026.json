@@ -3505,7 +3505,7 @@
       "date": "21/11/2026",
       "home": "Palmeiras",
       "round": 36,
-      "score": "-",
+      "score": "1 x 1",
       "stadium": "Nubank Parque",
       "time": "16:30",
       "url": "https://ge.globo.com/sp/futebol/brasileirao-serie-a/jogo/21-11-2026/palmeiras-flamengo.ghtml"
@@ -3515,7 +3515,7 @@
       "date": "21/11/2026",
       "home": "Bahia",
       "round": 36,
-      "score": "-",
+      "score": "0 x 1",
       "stadium": "Arena Fonte Nova",
       "time": "17:30",
       "url": "https://ge.globo.com/ba/futebol/brasileirao-serie-a/jogo/21-11-2026/bahia-coritiba.ghtml"
@@ -3525,7 +3525,7 @@
       "date": "21/11/2026",
       "home": "Chapecoense",
       "round": 36,
-      "score": "-",
+      "score": "1 x 2",
       "stadium": "Arena Condá",
       "time": "21:00",
       "url": "https://ge.globo.com/sc/futebol/brasileirao-serie-a/jogo/21-11-2026/chapecoense-cruzeiro.ghtml"
@@ -3548,7 +3548,7 @@
       "score": "-",
       "stadium": "Maracanã",
       "time": "18:30",
-      "url": ""
+      "url": "https://ge.globo.com/rj/futebol/brasileirao-serie-a/jogo/22-11-2026/fluminense-mirassol.ghtml"
     },
     {
       "away": "Vasco",
@@ -3578,7 +3578,7 @@
       "score": "-",
       "stadium": "Nilton Santos (Engenhão)",
       "time": "20:00",
-      "url": ""
+      "url": "https://ge.globo.com/rj/futebol/brasileirao-serie-a/jogo/23-11-2026/botafogo-sao-paulo.ghtml"
     },
     {
       "away": "Grêmio",
@@ -3588,7 +3588,7 @@
       "score": "-",
       "stadium": "Morumbis",
       "time": "21:00",
-      "url": ""
+      "url": "https://ge.globo.com/sp/santos-e-regiao/futebol/brasileirao-serie-a/jogo/23-11-2026/santos-gremio.ghtml"
     },
     {
       "away": "Corinthians",
