@@ -123,6 +123,9 @@ def engagement_question(spotlight: dict) -> str:
     if kind == "champion_clinched":
         team = str(spotlight.get("team", "")).strip()
         return f"Quem foi o principal nome do título do {team}?" if team else "Quem foi o principal nome do título?"
+    if kind == "title_match_point":
+        team = str(spotlight.get("team", "")).strip()
+        return f"O {team} confirma o título na próxima rodada?" if team else "O título sai na próxima rodada?"
     if kind == "top_four_clinched":
         team = str(spotlight.get("team", "")).strip()
         return f"Até onde o {team} chega nesta reta final?" if team else "Quem chega mais longe nesta reta final?"

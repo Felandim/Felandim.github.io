@@ -863,6 +863,64 @@ def clinched_status_spotlight(insights: dict, total_rounds: int = 38) -> dict | 
     return None
 
 
+def title_match_point_spotlight(
+    insights: dict,
+    matches: list[dict],
+    total_rounds: int = 38,
+    maximum_points_needed: int = 3,
+) -> dict | None:
+    """Mostra quando o líder está a até uma vitória de garantir o título.
+
+    O cálculo é conservador: não presume critérios de desempate e só considera
+    a história no bloco da rodada que produziu a tabela atual.
+    """
+    try:
+        snapshot, latest = instagram_daily.current_snapshot(insights)
+    except ValueError:
+        return None
+    table = snapshot.get("table", [])
+    if len(table) != 20 or any("played" not in row for row in table):
+        return None
+
+    latest_round = int(latest.get("round") or snapshot.get("round") or 0)
+    match_rounds = {int(match.get("round") or 0) for match in matches}
+    if latest_round <= 0 or latest_round not in match_rounds:
+        return None
+
+    leader = min(table, key=lambda row: int(row.get("position", 99)))
+    leader_points = int(leader["points"])
+    leader_remaining_points = 3 * max(0, total_rounds - int(leader["played"]))
+    rivals = []
+    for row in table:
+        if row["team"] == leader["team"]:
+            continue
+        maximum = int(row["points"]) + 3 * max(0, total_rounds - int(row["played"]))
+        rivals.append((maximum, int(row["points"]), -int(row.get("position", 99)), row["team"]))
+    if not rivals:
+        return None
+
+    rival_maximum, _, _, rival = max(rivals)
+    points_needed = rival_maximum - leader_points + 1
+    if not 1 <= points_needed <= min(maximum_points_needed, leader_remaining_points):
+        return None
+
+    unit = "ponto" if points_needed == 1 else "pontos"
+    return {
+        "kind": "title_match_point",
+        "label": "TÍTULO À VISTA",
+        "text": f"{leader['team']} • {points_needed} {unit} garante o título sem desempate",
+        "caption": (
+            f"Título à vista: {leader['team']} precisa de mais {points_needed} {unit} "
+            "para garantir o campeonato sem depender dos critérios de desempate. "
+            f"{rival} ainda pode chegar a {rival_maximum}."
+        ),
+        "team": leader["team"],
+        "points_needed": points_needed,
+        "rival": rival,
+        "rival_maximum": rival_maximum,
+    }
+
+
 def defensive_streak_spotlight(insights: dict, rounds: int = 3, minimum_points: int = 7) -> dict | None:
     snapshots = insights.get("snapshots", [])
     if len(snapshots) < rounds + 1:
@@ -902,6 +960,9 @@ def editorial_spotlight(insights: dict, matches: list[dict], scorer_data: dict |
     clinched = clinched_status_spotlight(insights)
     if clinched:
         return clinched
+    match_point = title_match_point_spotlight(insights, matches)
+    if match_point:
+        return match_point
     if base.get("kind") in HIGH_PRIORITY_KINDS or base.get("kind") == "delayed_match":
         return base
     return derby_day_spotlight(matches) or multi_goal_scorer_spotlight(matches, scorer_data) or collective_attack_spotlight(matches, scorer_data) or rout_wave_spotlight(matches) or high_scoring_match_spotlight(matches) or title_rivals_win_spotlight(insights, matches) or bounce_back_spotlight(insights, matches) or winless_run_ended_spotlight(insights, matches) or unbeaten_run_spotlight(insights, matches) or fortress_breached_spotlight(insights, matches) or scoring_surge_spotlight(insights) or scoring_drought_spotlight(insights) or winning_streak_spotlight(insights, matches) or both_teams_scored_spotlight(matches) or clean_sheet_wave_spotlight(matches) or away_dominance_spotlight(matches) or home_dominance_spotlight(matches) or draw_dominance_spotlight(matches) or drawless_day_spotlight(matches) or defensive_streak_spotlight(insights) or title_race_spotlight(insights) or base
