@@ -298,8 +298,12 @@
     }).join("");
   }
 
-  function multiChart(rows, snapshots, round) {
+  function multiChart(rows, snapshots, round, focusedTeam = "") {
     const selected = rows.slice(0, 8);
+    const focusedRow = focusedTeam && rows.find(row => slugify(row.team) === focusedTeam);
+    if (focusedRow && !selected.some(row => row.team === focusedRow.team)) {
+      selected.splice(selected.length - 1, 1, focusedRow);
+    }
     const width = 760, height = 430, left = 48, right = 30, top = 32, bottom = 56;
     const colors = ["#dfff00", "#ff654d", "#71c7ff", "#f4aeff", "#ffffff", "#ffc857", "#79e6b0", "#a99cff"];
     const pointsFor = team => snapshots.slice(0, round).map((snapshot, index) => {
@@ -308,12 +312,18 @@
       const y = top + (row.position - 1) * (height - top - bottom) / 19;
       return `${x.toFixed(1)},${y.toFixed(1)}`;
     }).join(" ");
-    const lines = selected.map((row, index) => `<polyline points="${pointsFor(row.team)}" stroke="${colors[index]}"/><text x="${width - right + 4}" y="${top + (row.position - 1) * (height - top - bottom) / 19 + 4}" fill="${colors[index]}">${row.position}</text>`).join("");
+    const lines = selected.map((row, index) => {
+      const isFocused = slugify(row.team) === focusedTeam;
+      return `<polyline${isFocused ? ' class="is-team-focused"' : ""} data-chart-team="${slugify(row.team)}" points="${pointsFor(row.team)}" stroke="${colors[index]}"/><text x="${width - right + 4}" y="${top + (row.position - 1) * (height - top - bottom) / 19 + 4}" fill="${colors[index]}">${row.position}</text>`;
+    }).join("");
     const guides = [1, 5, 10, 15, 20].map(position => {
       const y = top + (position - 1) * (height - top - bottom) / 19;
       return `<line x1="${left}" y1="${y}" x2="${width - right}" y2="${y}"/><text x="8" y="${y + 4}">${position}º</text>`;
     }).join("");
-    const legend = selected.map((row, index) => `<li><i style="--legend:${colors[index]}"></i>${teamBadge(row.team, "legend")}</li>`).join("");
+    const legend = selected.map((row, index) => {
+      const isFocused = slugify(row.team) === focusedTeam;
+      return `<li data-chart-team="${slugify(row.team)}"${isFocused ? ' class="is-team-focused" aria-current="true"' : ""}><i style="--legend:${colors[index]}"></i>${teamBadge(row.team, "legend")}${isFocused ? '<small>Destacado</small>' : ""}</li>`;
+    }).join("");
     return `<svg class="br-multi-chart" viewBox="0 0 ${width} ${height}" role="img" aria-label="Evolução dos oito primeiros times até a rodada ${round}">${guides}${lines}</svg><ul class="br-chart-legend">${legend}</ul>`;
   }
 
@@ -567,7 +577,7 @@
 
   initRoundTeamFocus();
 
-  function initStandingsTeamFocus(table, roundSelect) {
+  function initStandingsTeamFocus(table, roundSelect, onFocusChange = () => {}) {
     const control = roundSelect.closest(".br-control");
     if (!control || control.querySelector("[data-team-focus]")) return () => {};
 
@@ -640,6 +650,7 @@
         status.textContent = selected ? "Time não encontrado nesta rodada." : "";
       }
       clear.hidden = !selected;
+      onFocusChange(selected);
 
       if (persist) {
         const url = new URL(location.href);
@@ -691,13 +702,17 @@
     loadInsights().then(data => {
       const table = document.querySelector("[data-standings-table]");
       const tableBody = table.querySelector("tbody");
-      const applyTeamFocus = initStandingsTeamFocus(table, roundSelect);
+      let activeSnapshot;
+      const renderChart = focusedTeam => {
+        if (activeSnapshot) chart.innerHTML = multiChart(activeSnapshot.table, data.snapshots, activeSnapshot.round, focusedTeam);
+      };
+      const applyTeamFocus = initStandingsTeamFocus(table, roundSelect, renderChart);
       const update = () => {
         const round = Number(roundSelect.value);
         const snapshot = data.snapshots.find(item => item.round === round);
         const previous = data.snapshots.find(item => item.round === round - 1);
+        activeSnapshot = snapshot;
         tableBody.innerHTML = standingsRows(snapshot.table, previous?.table);
-        chart.innerHTML = multiChart(snapshot.table, data.snapshots, round);
         applyTeamFocus();
       };
       restoreRoundFromUrl(roundSelect, defaultRound);

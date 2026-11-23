@@ -878,9 +878,15 @@ def test_standings_team_focus_is_accessible_persistent_and_shareable():
     assert 'document.querySelectorAll("[data-upcoming-fixture]")' in source
     assert 'selectedFixture?.closest(".br-upcoming-more")' in source
     assert 'Próximo jogo:' in source
+    assert 'multiChart(activeSnapshot.table, data.snapshots, activeSnapshot.round, focusedTeam)' in source
+    assert 'data-chart-team=' in source
+    assert 'aria-current="true"' in source
+    assert '>Destacado</small>' in source
     assert 'textContent.match(/\\d+/)' in source
     assert 'prefers-reduced-motion: reduce' in source
     assert ".br-table tbody tr.is-focused" in css
+    assert ".br-multi-chart polyline.is-team-focused" in css
+    assert ".br-chart-legend li.is-team-focused" in css
     assert ".br-team-focus a:focus-visible" in css
     assert "@media (max-width: 720px)" in css
 
@@ -988,6 +994,16 @@ def test_round_selectors_restore_url_and_browser_history():
                 assert collapsed_schedule.get_attribute("open") == ""
             assert "Próximo jogo:" in page.locator("[data-team-focus-status]").text_content()
             assert page.evaluate("localStorage.getItem('brasileirao-team-focus')") == "flamengo"
+
+            team_focus.select_option("chapecoense")
+            page.wait_for_url("**time=chapecoense")
+            focused_chart_line = page.locator('.br-multi-chart polyline[data-chart-team="chapecoense"]')
+            focused_chart_legend = page.locator('.br-chart-legend li[data-chart-team="chapecoense"]')
+            assert focused_chart_line.count() == 1
+            assert focused_chart_line.get_attribute("class") == "is-team-focused"
+            assert focused_chart_legend.get_attribute("aria-current") == "true"
+            assert "Destacado" in focused_chart_legend.text_content()
+            assert page.locator(".br-chart-legend li").count() == 8
 
             clear_focus = page.locator("[data-team-focus-clear]")
             assert clear_focus.is_visible()
