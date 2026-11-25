@@ -149,5 +149,26 @@
       "[35, \"Vasco\", \"Internacional\"]",
       "[35, \"Vitória\", \"Bragantino\"]"
     ]
+  },
+  {
+    "id": "40bd273dca6908434553",
+    "round": 37,
+    "start": "2026-11-24",
+    "end": "2026-11-24",
+    "matches": [
+      {
+        "away": "Palmeiras",
+        "date": "24/11/2026",
+        "home": "Chapecoense",
+        "round": 37,
+        "score": "3 x 0",
+        "stadium": "Arena Condá",
+        "time": "18:00",
+        "url": "https://ge.globo.com/sc/futebol/brasileirao-serie-a/jogo/24-11-2026/chapecoense-palmeiras.ghtml"
+      }
+    ],
+    "match_keys": [
+      "[37, \"Chapecoense\", \"Palmeiras\"]"
+    ]
   }
 ]
