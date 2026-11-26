@@ -170,5 +170,125 @@
     "match_keys": [
       "[37, \"Chapecoense\", \"Palmeiras\"]"
     ]
+  },
+  {
+    "id": "951106176440895f347b",
+    "round": 36,
+    "start": "2026-11-21",
+    "end": "2026-11-25",
+    "matches": [
+      {
+        "away": "Flamengo",
+        "date": "21/11/2026",
+        "home": "Palmeiras",
+        "round": 36,
+        "score": "1 x 1",
+        "stadium": "Nubank Parque",
+        "time": "16:30",
+        "url": "https://ge.globo.com/sp/futebol/brasileirao-serie-a/jogo/21-11-2026/palmeiras-flamengo.ghtml"
+      },
+      {
+        "away": "Coritiba",
+        "date": "21/11/2026",
+        "home": "Bahia",
+        "round": 36,
+        "score": "0 x 1",
+        "stadium": "Arena Fonte Nova",
+        "time": "17:30",
+        "url": "https://ge.globo.com/ba/futebol/brasileirao-serie-a/jogo/21-11-2026/bahia-coritiba.ghtml"
+      },
+      {
+        "away": "Cruzeiro",
+        "date": "21/11/2026",
+        "home": "Chapecoense",
+        "round": 36,
+        "score": "1 x 2",
+        "stadium": "Arena Condá",
+        "time": "21:00",
+        "url": "https://ge.globo.com/sc/futebol/brasileirao-serie-a/jogo/21-11-2026/chapecoense-cruzeiro.ghtml"
+      },
+      {
+        "away": "Remo",
+        "date": "22/11/2026",
+        "home": "Athletico-PR",
+        "round": 36,
+        "score": "4 x 2",
+        "stadium": "Arena da Baixada",
+        "time": "16:00",
+        "url": "https://ge.globo.com/pr/futebol/brasileirao-serie-a/jogo/22-11-2026/athletico-pr-remo.ghtml"
+      },
+      {
+        "away": "Mirassol",
+        "date": "22/11/2026",
+        "home": "Fluminense",
+        "round": 36,
+        "score": "1 x 0",
+        "stadium": "Maracanã",
+        "time": "18:30",
+        "url": "https://ge.globo.com/rj/futebol/brasileirao-serie-a/jogo/22-11-2026/fluminense-mirassol.ghtml"
+      },
+      {
+        "away": "Vasco",
+        "date": "22/11/2026",
+        "home": "Bragantino",
+        "round": 36,
+        "score": "1 x 0",
+        "stadium": "Cícero de Souza Marques",
+        "time": "19:30",
+        "url": "https://ge.globo.com/sp/vale-do-paraiba-regiao/futebol/brasileirao-serie-a/jogo/22-11-2026/bragantino-vasco.ghtml"
+      },
+      {
+        "away": "Vitória",
+        "date": "23/11/2026",
+        "home": "Internacional",
+        "round": 36,
+        "score": "2 x 5",
+        "stadium": "Beira-Rio",
+        "time": "19:30",
+        "url": "https://ge.globo.com/rs/futebol/brasileirao-serie-a/jogo/23-11-2026/internacional-vitoria.ghtml"
+      },
+      {
+        "away": "São Paulo",
+        "date": "23/11/2026",
+        "home": "Botafogo",
+        "round": 36,
+        "score": "1 x 1",
+        "stadium": "Nilton Santos (Engenhão)",
+        "time": "20:00",
+        "url": "https://ge.globo.com/rj/futebol/brasileirao-serie-a/jogo/23-11-2026/botafogo-sao-paulo.ghtml"
+      },
+      {
+        "away": "Grêmio",
+        "date": "23/11/2026",
+        "home": "Santos",
+        "round": 36,
+        "score": "0 x 2",
+        "stadium": "Morumbis",
+        "time": "21:00",
+        "url": "https://ge.globo.com/sp/santos-e-regiao/futebol/brasileirao-serie-a/jogo/23-11-2026/santos-gremio.ghtml"
+      },
+      {
+        "away": "Corinthians",
+        "date": "25/11/2026",
+        "home": "Atlético-MG",
+        "round": 36,
+        "score": "1 x 1",
+        "stadium": "Arena MRV",
+        "time": "20:00",
+        "url": "https://ge.globo.com/mg/futebol/brasileirao-serie-a/jogo/25-11-2026/atletico-mg-corinthians.ghtml"
+      }
+    ],
+    "match_keys": [
+      "[36, \"Athletico-PR\", \"Remo\"]",
+      "[36, \"Atlético-MG\", \"Corinthians\"]",
+      "[36, \"Bahia\", \"Coritiba\"]",
+      "[36, \"Botafogo\", \"São Paulo\"]",
+      "[36, \"Bragantino\", \"Vasco\"]",
+      "[36, \"Chapecoense\", \"Cruzeiro\"]",
+      "[36, \"Fluminense\", \"Mirassol\"]",
+      "[36, \"Internacional\", \"Vitória\"]",
+      "[36, \"Palmeiras\", \"Flamengo\"]",
+      "[36, \"Santos\", \"Grêmio\"]"
+    ]
   }
 ]
