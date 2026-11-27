@@ -73,11 +73,17 @@
     "published_at": "2026-10-27T18:50:16.113503+00:00"
   },
   "407f973e8e53bd5f32c5": {
-    "state": "creating_containers",
+    "state": "container_ready",
     "summary_media_id": "17898004281439735",
     "summary_permalink": "https://www.instagram.com/p/DgQcVT9ic7C/",
     "caption_sha256": "76079120e576d887b31cb7478efc09d2e843d7f288a32e906b64bc948159cf73",
     "source_commit": "751c1074aae1dd2e3f1b68b38a34dea38936a596",
-    "updated_at": "2026-11-27T20:43:11.848036+00:00"
+    "updated_at": "2026-11-27T20:43:35.881770+00:00",
+    "container_id": "18124462495999380",
+    "child_container_ids": [
+      "18124462426999380",
+      "18124462459999380",
+      "18124462477999380"
+    ]
   }
 }
