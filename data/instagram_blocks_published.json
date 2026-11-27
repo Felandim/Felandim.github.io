@@ -49,5 +49,62 @@
     ],
     "media_id": "18119316913782976",
     "published_at": "2026-10-27T15:35:43.582559-03:00"
+  },
+  "407f973e8e53bd5f32c5": {
+    "outcome": "published",
+    "match_keys": [
+      "[21, \"Chapecoense\", \"Vasco\"]"
+    ],
+    "media_id": "17898004281439735",
+    "published_at": "2026-11-27T16:34:53.322819-03:00"
+  },
+  "2a848e3a164f100286ca": {
+    "outcome": "published",
+    "match_keys": [
+      "[35, \"Mirassol\", \"Atlético-MG\"]"
+    ],
+    "media_id": "18082337456746581",
+    "published_at": "2026-11-27T16:35:01.862911-03:00"
+  },
+  "06599fcda2755c767625": {
+    "outcome": "published",
+    "match_keys": [
+      "[35, \"Corinthians\", \"Botafogo\"]",
+      "[35, \"Coritiba\", \"Santos\"]",
+      "[35, \"Cruzeiro\", \"Palmeiras\"]",
+      "[35, \"Flamengo\", \"Athletico-PR\"]",
+      "[35, \"Grêmio\", \"Bahia\"]",
+      "[35, \"Remo\", \"Chapecoense\"]",
+      "[35, \"São Paulo\", \"Fluminense\"]",
+      "[35, \"Vasco\", \"Internacional\"]",
+      "[35, \"Vitória\", \"Bragantino\"]"
+    ],
+    "media_id": "18111775565337948",
+    "published_at": "2026-11-27T16:35:12.950918-03:00"
+  },
+  "40bd273dca6908434553": {
+    "outcome": "published",
+    "match_keys": [
+      "[37, \"Chapecoense\", \"Palmeiras\"]"
+    ],
+    "media_id": "18146509075594982",
+    "published_at": "2026-11-27T16:35:21.439352-03:00"
+  },
+  "951106176440895f347b": {
+    "outcome": "published",
+    "match_keys": [
+      "[36, \"Athletico-PR\", \"Remo\"]",
+      "[36, \"Atlético-MG\", \"Corinthians\"]",
+      "[36, \"Bahia\", \"Coritiba\"]",
+      "[36, \"Botafogo\", \"São Paulo\"]",
+      "[36, \"Bragantino\", \"Vasco\"]",
+      "[36, \"Chapecoense\", \"Cruzeiro\"]",
+      "[36, \"Fluminense\", \"Mirassol\"]",
+      "[36, \"Internacional\", \"Vitória\"]",
+      "[36, \"Palmeiras\", \"Flamengo\"]",
+      "[36, \"Santos\", \"Grêmio\"]"
+    ],
+    "media_id": "17924586612240133",
+    "published_at": "2026-11-27T16:35:35.551426-03:00"
   }
 }

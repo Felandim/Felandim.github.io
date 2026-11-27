@@ -1,5 +1,4 @@
 {
-  "timestamp_utc": "2026-11-26T22:09:12.844538+00:00",
-  "outcome": "credential_failure",
-  "detail": "Credencial do Instagram inválida, expirada ou sem permissão; publicação pendente até atualizar o secret."
+  "timestamp_utc": "2026-11-27T19:35:35.600225+00:00",
+  "outcome": "success"
 }
