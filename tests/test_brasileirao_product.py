@@ -186,6 +186,7 @@ def test_classification_shows_server_rendered_upcoming_schedule():
     assert ".br-upcoming-fixture a:focus-visible" in css
     assert ".br-upcoming-more summary:focus-visible" in css
     assert ".br-upcoming-fixture.is-focused" in css
+    assert ".br-upcoming-relative" in css
     assert ".br-classification-jump { display: none; }" in css
     assert ".br-visually-hidden" in css
     assert ".br-classification-jump a:focus-visible" in css
@@ -235,10 +236,17 @@ def test_classification_schedule_is_beside_table_and_stacks_on_mobile_in_browser
             assert page.locator(".br-upcoming-fixture:visible").count() == fixture_count
 
             page.set_viewport_size({"width": 390, "height": 844})
-            table = page.locator(".br-classification-grid > div").bounding_box()
-            aside = page.locator(".br-classification-aside").bounding_box()
-            assert table and aside
-            assert aside["y"] >= table["y"] + table["height"]
+            # Capture both rectangles in the same frame: lazy badge images may
+            # otherwise settle between two separate browser protocol reads.
+            mobile_layout = page.evaluate("""() => {
+              const table = document.querySelector('.br-classification-grid > div').getBoundingClientRect();
+              const aside = document.querySelector('.br-classification-aside').getBoundingClientRect();
+              return { tableBottom: table.bottom, asideTop: aside.top };
+            }""")
+            assert mobile_layout["asideTop"] >= mobile_layout["tableBottom"]
+            relative_dates = page.locator(".br-upcoming-relative")
+            for index in range(relative_dates.count()):
+                assert relative_dates.nth(index).text_content() in ("Hoje", "Amanhã")
             jump = page.locator(".br-classification-jump")
             assert jump.is_visible()
             jump.locator('a[href="#upcoming-title"]').click()
@@ -889,6 +897,18 @@ def test_standings_team_focus_is_accessible_persistent_and_shareable():
     assert ".br-chart-legend li.is-team-focused" in css
     assert ".br-team-focus a:focus-visible" in css
     assert "@media (max-width: 720px)" in css
+
+
+def test_upcoming_schedule_adds_local_relative_dates_progressively():
+    source = (ROOT / "brasileirao.js").read_text(encoding="utf-8")
+    classification = (ROOT / "brasileirao" / "classificacao-rodada-a-rodada.html").read_text(encoding="utf-8")
+
+    assert 'function initUpcomingRelativeDates()' in source
+    assert 'timeZone: "America/Sao_Paulo"' in source
+    assert 'daysAway === 0 ? "Hoje" : daysAway === 1 ? "Amanhã"' in source
+    assert 'label.className = "br-upcoming-relative"' in source
+    assert classification.count('<time datetime="') >= classification.count("data-upcoming-fixture")
+    assert re.search(r'aria-label="Ver rodada \d+: .+ x .+, .+ às \d{1,2}h\d{2}"', classification)
 
 
 def test_mobile_navigation_is_accessible_and_progressively_enhanced():

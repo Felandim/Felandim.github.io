@@ -507,7 +507,7 @@ def upcoming_schedule_html(
             if date_iso else f'<span class="br-upcoming-date"><span>{date_label}</span><strong>{time_label}</strong></span>'
         )
         round_number = int(match.get("round") or 0)
-        label = f'Ver rodada {round_number}: {match["home"]} x {match["away"]}'
+        label = f'Ver rodada {round_number}: {match["home"]} x {match["away"]}, {date_label} às {time_label}'
         content = (
             f'{when}<span class="br-upcoming-teams">'
             f'<span>{team_badge(match["home"], "schedule")}</span><b aria-hidden="true">×</b>'

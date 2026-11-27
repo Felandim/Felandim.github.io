@@ -66,6 +66,35 @@
 
   initMobileNavigation();
 
+  function initUpcomingRelativeDates() {
+    const formatter = new Intl.DateTimeFormat("en-CA", {
+      timeZone: "America/Sao_Paulo",
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+    });
+    const dateParts = Object.fromEntries(
+      formatter.formatToParts(new Date()).filter(part => part.type !== "literal").map(part => [part.type, Number(part.value)])
+    );
+    const today = Date.UTC(dateParts.year, dateParts.month - 1, dateParts.day);
+
+    document.querySelectorAll("[data-upcoming-fixture] time[datetime]").forEach(time => {
+      const isoDate = time.getAttribute("datetime")?.slice(0, 10);
+      if (!isoDate) return;
+      const [year, month, day] = isoDate.split("-").map(Number);
+      const daysAway = Math.round((Date.UTC(year, month - 1, day) - today) / 86400000);
+      const relativeLabel = daysAway === 0 ? "Hoje" : daysAway === 1 ? "Amanhã" : "";
+      if (!relativeLabel) return;
+
+      const label = document.createElement("em");
+      label.className = "br-upcoming-relative";
+      label.textContent = relativeLabel;
+      time.prepend(label);
+    });
+  }
+
+  initUpcomingRelativeDates();
+
 
   const standingsTooltipLabels = {
     "Pts": "Pontos",

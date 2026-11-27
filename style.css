@@ -589,6 +589,7 @@ h3 { margin-bottom: 12px; font-size: 1.35rem; }
 .br-upcoming-fixture a:focus-visible { outline: 3px solid var(--br-hot); outline-offset: 2px; }
 .br-upcoming-fixture time, .br-upcoming-date { display: grid; align-content: center; grid-row: 1 / span 2; gap: 3px; padding-right: 10px; border-right: 1px solid #455149; }
 .br-upcoming-fixture time span, .br-upcoming-date span { color: #b8c3bd; font-size: .64rem; font-weight: 850; text-transform: uppercase; }
+.br-upcoming-relative { color: var(--br-hot); font-size: .62rem; font-style: normal; font-weight: 950; letter-spacing: .05em; line-height: 1; text-transform: uppercase; }
 .br-upcoming-fixture time strong, .br-upcoming-date strong { color: var(--br-hot); font-size: .9rem; }
 .br-upcoming-teams { display: flex; min-width: 0; align-items: center; justify-content: space-between; gap: 7px; }
 .br-upcoming-teams > span { min-width: 0; }
