@@ -96,12 +96,12 @@
     "published_at": "2026-11-27T20:43:46.113279+00:00"
   },
   "2a848e3a164f100286ca": {
-    "state": "container_ready",
+    "state": "publish_requested",
     "summary_media_id": "18082337456746581",
     "summary_permalink": "https://www.instagram.com/p/DgQcWjpiRTO/",
     "caption_sha256": "1f606101159173b3c9a462bb36fbf3eb1d5334439d462d815f5261cd94468fb1",
     "source_commit": "751c1074aae1dd2e3f1b68b38a34dea38936a596",
-    "updated_at": "2026-11-27T20:44:11.795345+00:00",
+    "updated_at": "2026-11-27T20:44:13.912599+00:00",
     "container_id": "18124462597999380",
     "child_container_ids": [
       "18124462522999380",
