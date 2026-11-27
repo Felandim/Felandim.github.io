@@ -1,0 +1,115 @@
+{
+  "block_id": "2a848e3a164f100286ca",
+  "summary_media_id": "18082337456746581",
+  "match_keys": [
+    "[35, \"Mirassol\", \"Atlético-MG\"]"
+  ],
+  "account_id": "17841429981371844",
+  "api_profile_id": "27834175349616492",
+  "username": "brasileiraoemrodadas",
+  "reviewed": true,
+  "images": [
+    {
+      "file": "01.jpg",
+      "match_key": "[35, \"Mirassol\", \"Atlético-MG\"]",
+      "match": {
+        "away": "Atlético-MG",
+        "date": "14/11/2026",
+        "home": "Mirassol",
+        "round": 35,
+        "score": "0 x 0",
+        "stadium": "Maião",
+        "time": "18:30",
+        "url": "https://ge.globo.com/sp/tem-esporte/futebol/brasileirao-serie-a/jogo/14-11-2026/mirassol-atletico-mg.ghtml"
+      },
+      "sha256": "92db3159b2c84a3ca7189b10402980db28f8b7517b522c009ac39bd2c13db761",
+      "template_url": "https://raw.githubusercontent.com/cipherdragon/memebank/2a7c42493d12a181fba486494b023addd4d37b8f/Sad-Pablo-Escobar.jpg",
+      "template_page": "https://github.com/cipherdragon/memebank/blob/2a7c42493d12a181fba486494b023addd4d37b8f/Sad-Pablo-Escobar.jpg",
+      "context_sources": [
+        "https://ge.globo.com/sp/tem-esporte/futebol/brasileirao-serie-a/jogo/14-11-2026/mirassol-atletico-mg.ghtml"
+      ],
+      "editing": "Pillow; original template pixels, Liberation Sans; no generative images",
+      "text": [
+        "EU: SÓ VOU DORMIR\nDEPOIS QUE SAIR UM GOL",
+        "",
+        ""
+      ],
+      "photo_research": {
+        "page": "https://ge.globo.com/sp/tem-esporte/futebol/brasileirao-serie-a/jogo/14-11-2026/mirassol-atletico-mg.ghtml",
+        "image_url": "https://s3.glbimg.com/v1/AUTH_378ee63fe83141e69caddd838034e850/static/preview-share-min.png",
+        "used_in_artwork": false,
+        "note": "Generic page preview, not a match photo; not used."
+      }
+    },
+    {
+      "file": "02.jpg",
+      "match_key": "[35, \"Mirassol\", \"Atlético-MG\"]",
+      "match": {
+        "away": "Atlético-MG",
+        "date": "14/11/2026",
+        "home": "Mirassol",
+        "round": 35,
+        "score": "0 x 0",
+        "stadium": "Maião",
+        "time": "18:30",
+        "url": "https://ge.globo.com/sp/tem-esporte/futebol/brasileirao-serie-a/jogo/14-11-2026/mirassol-atletico-mg.ghtml"
+      },
+      "sha256": "daa122b14ad582a350939cf288f0822244deccf00b4d0ee08c47a8d206ba89cb",
+      "template_url": "https://raw.githubusercontent.com/cipherdragon/memebank/2a7c42493d12a181fba486494b023addd4d37b8f/Spiderman-pointing-at-spiderman.jpg",
+      "template_page": "https://github.com/cipherdragon/memebank/blob/2a7c42493d12a181fba486494b023addd4d37b8f/Spiderman-pointing-at-spiderman.jpg",
+      "context_sources": [
+        "https://ge.globo.com/sp/tem-esporte/futebol/brasileirao-serie-a/jogo/14-11-2026/mirassol-atletico-mg.ghtml"
+      ],
+      "editing": "Pillow; original template pixels, Liberation Sans; no generative images",
+      "text": [
+        "MIRASSOL: FAZ UM GOL AÍ\nGALO: FAZ VOCÊ",
+        "",
+        ""
+      ],
+      "photo_research": {
+        "page": "https://ge.globo.com/sp/tem-esporte/futebol/brasileirao-serie-a/jogo/14-11-2026/mirassol-atletico-mg.ghtml",
+        "image_url": "https://s3.glbimg.com/v1/AUTH_378ee63fe83141e69caddd838034e850/static/preview-share-min.png",
+        "used_in_artwork": false,
+        "note": "Generic page preview, not a match photo; not used."
+      }
+    },
+    {
+      "file": "03.jpg",
+      "match_key": "[35, \"Mirassol\", \"Atlético-MG\"]",
+      "match": {
+        "away": "Atlético-MG",
+        "date": "14/11/2026",
+        "home": "Mirassol",
+        "round": 35,
+        "score": "0 x 0",
+        "stadium": "Maião",
+        "time": "18:30",
+        "url": "https://ge.globo.com/sp/tem-esporte/futebol/brasileirao-serie-a/jogo/14-11-2026/mirassol-atletico-mg.ghtml"
+      },
+      "sha256": "566ecb9e6cde5eee3c6e267634eaa2a6e9dbe196e64b21c305b6d069dd1a52c2",
+      "template_url": "https://raw.githubusercontent.com/cipherdragon/memebank/2a7c42493d12a181fba486494b023addd4d37b8f/This-Is-Where-Id-Put-My-Trophy-If-I-Had-One.jpg",
+      "template_page": "https://github.com/cipherdragon/memebank/blob/2a7c42493d12a181fba486494b023addd4d37b8f/This-Is-Where-Id-Put-My-Trophy-If-I-Had-One.jpg",
+      "context_sources": [
+        "https://ge.globo.com/sp/tem-esporte/futebol/brasileirao-serie-a/jogo/14-11-2026/mirassol-atletico-mg.ghtml"
+      ],
+      "editing": "Pillow; original template pixels, Liberation Sans; no generative images",
+      "text": [
+        "AQUI FICARIA O GOL DO JOGO\nSE TIVESSE UM",
+        "",
+        ""
+      ],
+      "photo_research": {
+        "page": "https://ge.globo.com/sp/tem-esporte/futebol/brasileirao-serie-a/jogo/14-11-2026/mirassol-atletico-mg.ghtml",
+        "image_url": "https://s3.glbimg.com/v1/AUTH_378ee63fe83141e69caddd838034e850/static/preview-share-min.png",
+        "used_in_artwork": false,
+        "note": "Generic page preview, not a match photo; not used."
+      }
+    }
+  ],
+  "caption": "Abertura da 35ª em 14/11: Mirassol 0 x 0 Atlético-MG. O gol ficou pra próxima. Quem aguentou até o fim?",
+  "review_notes": "Visually reviewed all three slides: original recognizable template pixels, no AI characters, simple legible typography, exact block scores and dates. Photos not used; no invented photo credits.",
+  "additional_research_sources": [
+    "https://www.gazetaesportiva.com/times/mirassol/veja-fotos-de-mirassol-x-atletico-mg-pelo-campeonato-brasileiro/",
+    "https://atletico.com.br/galo-empata-com-mirassol-foco-agora-e-a-final-continental/"
+  ]
+}

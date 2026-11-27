@@ -1,0 +1,114 @@
+{
+  "block_id": "407f973e8e53bd5f32c5",
+  "summary_media_id": "17898004281439735",
+  "match_keys": [
+    "[21, \"Chapecoense\", \"Vasco\"]"
+  ],
+  "account_id": "17841429981371844",
+  "api_profile_id": "27834175349616492",
+  "username": "brasileiraoemrodadas",
+  "reviewed": true,
+  "images": [
+    {
+      "file": "01.jpg",
+      "match_key": "[21, \"Chapecoense\", \"Vasco\"]",
+      "match": {
+        "away": "Vasco",
+        "date": "14/11/2026",
+        "home": "Chapecoense",
+        "round": 21,
+        "score": "0 x 2",
+        "stadium": "Arena Condá",
+        "time": "20:30",
+        "url": "https://ge.globo.com/sc/futebol/brasileirao-serie-a/jogo/14-11-2026/chapecoense-vasco.ghtml"
+      },
+      "sha256": "4d3dd606cb445d08aa80ac59cc48e13452fc9bb0c2747ea97499c3ea6dd37e62",
+      "template_url": "https://raw.githubusercontent.com/cipherdragon/memebank/2a7c42493d12a181fba486494b023addd4d37b8f/Drake-Hotline-Bling.jpg",
+      "template_page": "https://github.com/cipherdragon/memebank/blob/2a7c42493d12a181fba486494b023addd4d37b8f/Drake-Hotline-Bling.jpg",
+      "context_sources": [
+        "https://ge.globo.com/sc/futebol/brasileirao-serie-a/jogo/14-11-2026/chapecoense-vasco.ghtml"
+      ],
+      "editing": "Pillow; original template pixels, Liberation Sans; no generative images",
+      "text": [
+        "VASCO NA ARENA CONDÁ",
+        "Ganhar no sufoco",
+        "Bruno Duarte fazer os dois"
+      ],
+      "photo_research": {
+        "page": "https://ge.globo.com/sc/futebol/brasileirao-serie-a/jogo/14-11-2026/chapecoense-vasco.ghtml",
+        "image_url": "https://s3.glbimg.com/v1/AUTH_378ee63fe83141e69caddd838034e850/static/preview-share-min.png",
+        "used_in_artwork": false,
+        "note": "Generic page preview, not a match photo; not used."
+      }
+    },
+    {
+      "file": "02.jpg",
+      "match_key": "[21, \"Chapecoense\", \"Vasco\"]",
+      "match": {
+        "away": "Vasco",
+        "date": "14/11/2026",
+        "home": "Chapecoense",
+        "round": 21,
+        "score": "0 x 2",
+        "stadium": "Arena Condá",
+        "time": "20:30",
+        "url": "https://ge.globo.com/sc/futebol/brasileirao-serie-a/jogo/14-11-2026/chapecoense-vasco.ghtml"
+      },
+      "sha256": "f56431ec3d403f32118b39b79cdc2915b63f84fb6563f4ba7ffe37d5c2af6d96",
+      "template_url": "https://raw.githubusercontent.com/cipherdragon/memebank/2a7c42493d12a181fba486494b023addd4d37b8f/Sad-Pablo-Escobar.jpg",
+      "template_page": "https://github.com/cipherdragon/memebank/blob/2a7c42493d12a181fba486494b023addd4d37b8f/Sad-Pablo-Escobar.jpg",
+      "context_sources": [
+        "https://ge.globo.com/sc/futebol/brasileirao-serie-a/jogo/14-11-2026/chapecoense-vasco.ghtml"
+      ],
+      "editing": "Pillow; original template pixels, Liberation Sans; no generative images",
+      "text": [
+        "EU ESPERANDO O VASCO\nCOMPLICAR UM JOGO GANHO",
+        "",
+        ""
+      ],
+      "photo_research": {
+        "page": "https://ge.globo.com/sc/futebol/brasileirao-serie-a/jogo/14-11-2026/chapecoense-vasco.ghtml",
+        "image_url": "https://s3.glbimg.com/v1/AUTH_378ee63fe83141e69caddd838034e850/static/preview-share-min.png",
+        "used_in_artwork": false,
+        "note": "Generic page preview, not a match photo; not used."
+      }
+    },
+    {
+      "file": "03.jpg",
+      "match_key": "[21, \"Chapecoense\", \"Vasco\"]",
+      "match": {
+        "away": "Vasco",
+        "date": "14/11/2026",
+        "home": "Chapecoense",
+        "round": 21,
+        "score": "0 x 2",
+        "stadium": "Arena Condá",
+        "time": "20:30",
+        "url": "https://ge.globo.com/sc/futebol/brasileirao-serie-a/jogo/14-11-2026/chapecoense-vasco.ghtml"
+      },
+      "sha256": "0571f1d0aa22c0ce8e6509c47254d848a0f439f36f7a3201ba8d46fe416a6e7a",
+      "template_url": "https://raw.githubusercontent.com/cipherdragon/memebank/2a7c42493d12a181fba486494b023addd4d37b8f/Monkey-Puppet.jpg",
+      "template_page": "https://github.com/cipherdragon/memebank/blob/2a7c42493d12a181fba486494b023addd4d37b8f/Monkey-Puppet.jpg",
+      "context_sources": [
+        "https://ge.globo.com/sc/futebol/brasileirao-serie-a/jogo/14-11-2026/chapecoense-vasco.ghtml"
+      ],
+      "editing": "Pillow; original template pixels, Liberation Sans; no generative images",
+      "text": [
+        "EU QUE FALEI\n“HOJE O VASCO NÃO GANHA”",
+        "",
+        ""
+      ],
+      "photo_research": {
+        "page": "https://ge.globo.com/sc/futebol/brasileirao-serie-a/jogo/14-11-2026/chapecoense-vasco.ghtml",
+        "image_url": "https://s3.glbimg.com/v1/AUTH_378ee63fe83141e69caddd838034e850/static/preview-share-min.png",
+        "used_in_artwork": false,
+        "note": "Generic page preview, not a match photo; not used."
+      }
+    }
+  ],
+  "caption": "Jogo adiado da 21ª: Chapecoense 0 x 2 Vasco, em 14/11. Bruno Duarte resolveu duas vezes. Vascaíno conseguiu relaxar?",
+  "review_notes": "Visually reviewed all three slides: original recognizable template pixels, no AI characters, simple legible typography, exact block scores and dates. Photos not used; no invented photo credits.",
+  "additional_research_sources": [
+    "https://www.fferj.com.br/partidas/6502?aba=lances&lances=gols"
+  ]
+}

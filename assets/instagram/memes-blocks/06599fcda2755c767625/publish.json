@@ -1,0 +1,122 @@
+{
+  "block_id": "06599fcda2755c767625",
+  "summary_media_id": "18111775565337948",
+  "match_keys": [
+    "[35, \"Corinthians\", \"Botafogo\"]",
+    "[35, \"Coritiba\", \"Santos\"]",
+    "[35, \"Cruzeiro\", \"Palmeiras\"]",
+    "[35, \"Flamengo\", \"Athletico-PR\"]",
+    "[35, \"Grêmio\", \"Bahia\"]",
+    "[35, \"Remo\", \"Chapecoense\"]",
+    "[35, \"São Paulo\", \"Fluminense\"]",
+    "[35, \"Vasco\", \"Internacional\"]",
+    "[35, \"Vitória\", \"Bragantino\"]"
+  ],
+  "account_id": "17841429981371844",
+  "api_profile_id": "27834175349616492",
+  "username": "brasileiraoemrodadas",
+  "reviewed": true,
+  "images": [
+    {
+      "file": "01.jpg",
+      "match_key": "[35, \"Corinthians\", \"Botafogo\"]",
+      "match": {
+        "away": "Botafogo",
+        "date": "18/11/2026",
+        "home": "Corinthians",
+        "round": 35,
+        "score": "4 x 0",
+        "stadium": "Neo Química Arena",
+        "time": "21:30",
+        "url": "https://ge.globo.com/sp/futebol/brasileirao-serie-a/jogo/18-11-2026/corinthians-botafogo.ghtml"
+      },
+      "sha256": "294416280f5a7fc5c51b442bb0590ef28c8d1a06b0fc9cbb5a8276d7fbd4d1e2",
+      "template_url": "https://raw.githubusercontent.com/cipherdragon/memebank/2a7c42493d12a181fba486494b023addd4d37b8f/Tuxedo-Winnie-The-Pooh.jpg",
+      "template_page": "https://github.com/cipherdragon/memebank/blob/2a7c42493d12a181fba486494b023addd4d37b8f/Tuxedo-Winnie-The-Pooh.jpg",
+      "context_sources": [
+        "https://ge.globo.com/sp/futebol/brasileirao-serie-a/jogo/18-11-2026/corinthians-botafogo.ghtml"
+      ],
+      "editing": "Pillow; original template pixels, Liberation Sans; no generative images",
+      "text": [
+        "KAIO CÉSAR CONTRA O BOTAFOGO",
+        "Fazer um gol pra ajudar",
+        "Fazer três e sair do Z4"
+      ],
+      "photo_research": {
+        "page": "https://ge.globo.com/sp/futebol/brasileirao-serie-a/jogo/18-11-2026/corinthians-botafogo.ghtml",
+        "image_url": "https://s3.glbimg.com/v1/AUTH_378ee63fe83141e69caddd838034e850/static/preview-share-min.png",
+        "used_in_artwork": false,
+        "note": "Generic page preview, not a match photo; not used."
+      }
+    },
+    {
+      "file": "02.jpg",
+      "match_key": "[35, \"Cruzeiro\", \"Palmeiras\"]",
+      "match": {
+        "away": "Palmeiras",
+        "date": "18/11/2026",
+        "home": "Cruzeiro",
+        "round": 35,
+        "score": "2 x 1",
+        "stadium": "Mineirão",
+        "time": "20:30",
+        "url": "https://ge.globo.com/mg/futebol/brasileirao-serie-a/jogo/18-11-2026/cruzeiro-palmeiras.ghtml"
+      },
+      "sha256": "e1a89489c60e82dca0285d1571f3ccd4ae616d2e66f23ec2925c312c17179f44",
+      "template_url": "https://raw.githubusercontent.com/cipherdragon/memebank/2a7c42493d12a181fba486494b023addd4d37b8f/Dissapointed-black-guy.jpg",
+      "template_page": "https://github.com/cipherdragon/memebank/blob/2a7c42493d12a181fba486494b023addd4d37b8f/Dissapointed-black-guy.jpg",
+      "context_sources": [
+        "https://ge.globo.com/mg/futebol/brasileirao-serie-a/jogo/18-11-2026/cruzeiro-palmeiras.ghtml"
+      ],
+      "editing": "Pillow; original template pixels, Liberation Sans; no generative images",
+      "text": [
+        "PALMEIRENSE NO MINEIRÃO",
+        "Sosa abriu o placar",
+        "Cruzeiro virou: 2 a 1"
+      ],
+      "photo_research": {
+        "page": "https://ge.globo.com/mg/futebol/brasileirao-serie-a/jogo/18-11-2026/cruzeiro-palmeiras.ghtml",
+        "image_url": "https://s3.glbimg.com/v1/AUTH_378ee63fe83141e69caddd838034e850/static/preview-share-min.png",
+        "used_in_artwork": false,
+        "note": "Generic page preview, not a match photo; not used."
+      }
+    },
+    {
+      "file": "03.jpg",
+      "match_key": "[35, \"Flamengo\", \"Athletico-PR\"]",
+      "match": {
+        "away": "Athletico-PR",
+        "date": "18/11/2026",
+        "home": "Flamengo",
+        "round": 35,
+        "score": "2 x 1",
+        "stadium": "Maracanã",
+        "time": "20:30",
+        "url": "https://ge.globo.com/rj/futebol/brasileirao-serie-a/jogo/18-11-2026/flamengo-athletico-pr.ghtml"
+      },
+      "sha256": "3a2e74e8919f30f3567421da7d5879067343b91215c021539232c3c2bf5a1a4c",
+      "template_url": "https://raw.githubusercontent.com/cipherdragon/memebank/2a7c42493d12a181fba486494b023addd4d37b8f/Drake-Hotline-Bling.jpg",
+      "template_page": "https://github.com/cipherdragon/memebank/blob/2a7c42493d12a181fba486494b023addd4d37b8f/Drake-Hotline-Bling.jpg",
+      "context_sources": [
+        "https://ge.globo.com/rj/futebol/brasileirao-serie-a/jogo/18-11-2026/flamengo-athletico-pr.ghtml"
+      ],
+      "editing": "Pillow; original template pixels, Liberation Sans; no generative images",
+      "text": [
+        "FLAMENGO CONTRA O ATHLETICO",
+        "Tomar 1 a 0 e aceitar",
+        "Virar e ficar a um empate do título"
+      ],
+      "photo_research": {
+        "page": "https://ge.globo.com/rj/futebol/brasileirao-serie-a/jogo/18-11-2026/flamengo-athletico-pr.ghtml",
+        "image_url": "https://s3.glbimg.com/v1/AUTH_378ee63fe83141e69caddd838034e850/static/preview-share-min.png",
+        "used_in_artwork": false,
+        "note": "Generic page preview, not a match photo; not used."
+      }
+    }
+  ],
+  "caption": "Bloco de 18–19/11 da 35ª: hat-trick de Kaio César no 4 x 0 do Corinthians e viradas de Cruzeiro e Flamengo por 2 x 1. Qual torcida saiu mais aliviada?",
+  "review_notes": "Visually reviewed all three slides: original recognizable template pixels, no AI characters, simple legible typography, exact block scores and dates. Photos not used; no invented photo credits.",
+  "additional_research_sources": [
+    "https://www.flamengo.com.br/noticias/futebol/flamengo-vence-o-athletico-pr-de-virada-no-maracana-e-fica-a-um-empate-do-titulo-brasileiro"
+  ]
+}

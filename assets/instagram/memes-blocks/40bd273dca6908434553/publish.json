@@ -1,0 +1,114 @@
+{
+  "block_id": "40bd273dca6908434553",
+  "summary_media_id": "18146509075594982",
+  "match_keys": [
+    "[37, \"Chapecoense\", \"Palmeiras\"]"
+  ],
+  "account_id": "17841429981371844",
+  "api_profile_id": "27834175349616492",
+  "username": "brasileiraoemrodadas",
+  "reviewed": true,
+  "images": [
+    {
+      "file": "01.jpg",
+      "match_key": "[37, \"Chapecoense\", \"Palmeiras\"]",
+      "match": {
+        "away": "Palmeiras",
+        "date": "24/11/2026",
+        "home": "Chapecoense",
+        "round": 37,
+        "score": "3 x 0",
+        "stadium": "Arena Condá",
+        "time": "18:00",
+        "url": "https://ge.globo.com/sc/futebol/brasileirao-serie-a/jogo/24-11-2026/chapecoense-palmeiras.ghtml"
+      },
+      "sha256": "81c921cd91170f144ab82e547fe8f331dc399bf974741c5907155438b6cc3391",
+      "template_url": "https://raw.githubusercontent.com/cipherdragon/memebank/2a7c42493d12a181fba486494b023addd4d37b8f/Drake-Hotline-Bling.jpg",
+      "template_page": "https://github.com/cipherdragon/memebank/blob/2a7c42493d12a181fba486494b023addd4d37b8f/Drake-Hotline-Bling.jpg",
+      "context_sources": [
+        "https://ge.globo.com/sc/futebol/brasileirao-serie-a/jogo/24-11-2026/chapecoense-palmeiras.ghtml"
+      ],
+      "editing": "Pillow; original template pixels, Liberation Sans; no generative images",
+      "text": [
+        "CHAPE JÁ REBAIXADA",
+        "Só cumprir tabela",
+        "Meter 3 no Palmeiras"
+      ],
+      "photo_research": {
+        "page": "https://ge.globo.com/sc/futebol/brasileirao-serie-a/jogo/24-11-2026/chapecoense-palmeiras.ghtml",
+        "image_url": "https://s3.glbimg.com/v1/AUTH_378ee63fe83141e69caddd838034e850/static/preview-share-min.png",
+        "used_in_artwork": false,
+        "note": "Generic page preview, not a match photo; not used."
+      }
+    },
+    {
+      "file": "02.jpg",
+      "match_key": "[37, \"Chapecoense\", \"Palmeiras\"]",
+      "match": {
+        "away": "Palmeiras",
+        "date": "24/11/2026",
+        "home": "Chapecoense",
+        "round": 37,
+        "score": "3 x 0",
+        "stadium": "Arena Condá",
+        "time": "18:00",
+        "url": "https://ge.globo.com/sc/futebol/brasileirao-serie-a/jogo/24-11-2026/chapecoense-palmeiras.ghtml"
+      },
+      "sha256": "63d7b1917a93e35a22b9807735698c61d6b4f07190eda3604f88b1f4922099c9",
+      "template_url": "https://raw.githubusercontent.com/cipherdragon/memebank/2a7c42493d12a181fba486494b023addd4d37b8f/Hide-the-Pain-Harold.jpg",
+      "template_page": "https://github.com/cipherdragon/memebank/blob/2a7c42493d12a181fba486494b023addd4d37b8f/Hide-the-Pain-Harold.jpg",
+      "context_sources": [
+        "https://ge.globo.com/sc/futebol/brasileirao-serie-a/jogo/24-11-2026/chapecoense-palmeiras.ghtml"
+      ],
+      "editing": "Pillow; original template pixels, Liberation Sans; no generative images",
+      "text": [
+        "É SÓ O TIME ALTERNATIVO\nNÃO TEM COMO DAR TÃO ERRADO",
+        "",
+        ""
+      ],
+      "photo_research": {
+        "page": "https://ge.globo.com/sc/futebol/brasileirao-serie-a/jogo/24-11-2026/chapecoense-palmeiras.ghtml",
+        "image_url": "https://s3.glbimg.com/v1/AUTH_378ee63fe83141e69caddd838034e850/static/preview-share-min.png",
+        "used_in_artwork": false,
+        "note": "Generic page preview, not a match photo; not used."
+      }
+    },
+    {
+      "file": "03.jpg",
+      "match_key": "[37, \"Chapecoense\", \"Palmeiras\"]",
+      "match": {
+        "away": "Palmeiras",
+        "date": "24/11/2026",
+        "home": "Chapecoense",
+        "round": 37,
+        "score": "3 x 0",
+        "stadium": "Arena Condá",
+        "time": "18:00",
+        "url": "https://ge.globo.com/sc/futebol/brasileirao-serie-a/jogo/24-11-2026/chapecoense-palmeiras.ghtml"
+      },
+      "sha256": "cdfed91056147be73e94497cb0be230650fe3395ef686f7f1ccab1cd9f0aa6ad",
+      "template_url": "https://raw.githubusercontent.com/cipherdragon/memebank/2a7c42493d12a181fba486494b023addd4d37b8f/Monkey-Puppet.jpg",
+      "template_page": "https://github.com/cipherdragon/memebank/blob/2a7c42493d12a181fba486494b023addd4d37b8f/Monkey-Puppet.jpg",
+      "context_sources": [
+        "https://ge.globo.com/sc/futebol/brasileirao-serie-a/jogo/24-11-2026/chapecoense-palmeiras.ghtml"
+      ],
+      "editing": "Pillow; original template pixels, Liberation Sans; no generative images",
+      "text": [
+        "FUI VER O PLACAR DO PALMEIRAS\nE FECHEI O APP",
+        "",
+        ""
+      ],
+      "photo_research": {
+        "page": "https://ge.globo.com/sc/futebol/brasileirao-serie-a/jogo/24-11-2026/chapecoense-palmeiras.ghtml",
+        "image_url": "https://s3.glbimg.com/v1/AUTH_378ee63fe83141e69caddd838034e850/static/preview-share-min.png",
+        "used_in_artwork": false,
+        "note": "Generic page preview, not a match photo; not used."
+      }
+    }
+  ],
+  "caption": "Jogo antecipado da 37ª, em 24/11: Chapecoense 3 x 0 Palmeiras. A tabela dizia uma coisa, o campo disse outra. Quem apostava nesse placar?",
+  "review_notes": "Visually reviewed all three slides: original recognizable template pixels, no AI characters, simple legible typography, exact block scores and dates. Photos not used; no invented photo credits.",
+  "additional_research_sources": [
+    "https://palmeiras.com.br/central-de-midia/fotos/album/?n=d7a72ae6-00a5-9533-93e9-d2bd7402534c&t=chapecoense-x-palmeiras"
+  ]
+}

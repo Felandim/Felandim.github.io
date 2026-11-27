@@ -1,0 +1,124 @@
+{
+  "block_id": "951106176440895f347b",
+  "summary_media_id": "17924586612240133",
+  "match_keys": [
+    "[36, \"Athletico-PR\", \"Remo\"]",
+    "[36, \"Atlético-MG\", \"Corinthians\"]",
+    "[36, \"Bahia\", \"Coritiba\"]",
+    "[36, \"Botafogo\", \"São Paulo\"]",
+    "[36, \"Bragantino\", \"Vasco\"]",
+    "[36, \"Chapecoense\", \"Cruzeiro\"]",
+    "[36, \"Fluminense\", \"Mirassol\"]",
+    "[36, \"Internacional\", \"Vitória\"]",
+    "[36, \"Palmeiras\", \"Flamengo\"]",
+    "[36, \"Santos\", \"Grêmio\"]"
+  ],
+  "account_id": "17841429981371844",
+  "api_profile_id": "27834175349616492",
+  "username": "brasileiraoemrodadas",
+  "reviewed": true,
+  "images": [
+    {
+      "file": "01.jpg",
+      "match_key": "[36, \"Palmeiras\", \"Flamengo\"]",
+      "match": {
+        "away": "Flamengo",
+        "date": "21/11/2026",
+        "home": "Palmeiras",
+        "round": 36,
+        "score": "1 x 1",
+        "stadium": "Nubank Parque",
+        "time": "16:30",
+        "url": "https://ge.globo.com/sp/futebol/brasileirao-serie-a/jogo/21-11-2026/palmeiras-flamengo.ghtml"
+      },
+      "sha256": "45dd79f21a7bbd69bff7bce82a0216f85d5d8baacb110d3c80723d8f0cf6b471",
+      "template_url": "https://raw.githubusercontent.com/cipherdragon/memebank/2a7c42493d12a181fba486494b023addd4d37b8f/Drake-Hotline-Bling.jpg",
+      "template_page": "https://github.com/cipherdragon/memebank/blob/2a7c42493d12a181fba486494b023addd4d37b8f/Drake-Hotline-Bling.jpg",
+      "context_sources": [
+        "https://ge.globo.com/sp/futebol/brasileirao-serie-a/jogo/21-11-2026/palmeiras-flamengo.ghtml"
+      ],
+      "editing": "Pillow; original template pixels, Liberation Sans; no generative images",
+      "text": [
+        "FLAMENGO NA CASA DO RIVAL",
+        "Precisar vencer",
+        "Empatar e sair campeão"
+      ],
+      "photo_research": {
+        "page": "https://ge.globo.com/sp/futebol/brasileirao-serie-a/jogo/21-11-2026/palmeiras-flamengo.ghtml",
+        "image_url": "https://s3.glbimg.com/v1/AUTH_378ee63fe83141e69caddd838034e850/static/preview-share-min.png",
+        "used_in_artwork": false,
+        "note": "Generic page preview, not a match photo; not used."
+      }
+    },
+    {
+      "file": "02.jpg",
+      "match_key": "[36, \"Internacional\", \"Vitória\"]",
+      "match": {
+        "away": "Vitória",
+        "date": "23/11/2026",
+        "home": "Internacional",
+        "round": 36,
+        "score": "2 x 5",
+        "stadium": "Beira-Rio",
+        "time": "19:30",
+        "url": "https://ge.globo.com/rs/futebol/brasileirao-serie-a/jogo/23-11-2026/internacional-vitoria.ghtml"
+      },
+      "sha256": "d0408edeb4c127d767f22d6d74564d49bdadc98641dc0656590ceedbaaf16192",
+      "template_url": "https://raw.githubusercontent.com/cipherdragon/memebank/2a7c42493d12a181fba486494b023addd4d37b8f/This-Is-Fine.jpg",
+      "template_page": "https://github.com/cipherdragon/memebank/blob/2a7c42493d12a181fba486494b023addd4d37b8f/This-Is-Fine.jpg",
+      "context_sources": [
+        "https://ge.globo.com/rs/futebol/brasileirao-serie-a/jogo/23-11-2026/internacional-vitoria.ghtml"
+      ],
+      "editing": "Pillow; original template pixels, Liberation Sans; no generative images",
+      "text": [
+        "INTER TOMANDO CINCO EM CASA\n“AINDA DÁ PRA REAGIR”",
+        "",
+        ""
+      ],
+      "photo_research": {
+        "page": "https://ge.globo.com/rs/futebol/brasileirao-serie-a/jogo/23-11-2026/internacional-vitoria.ghtml",
+        "image_url": "https://s3.glbimg.com/v1/AUTH_378ee63fe83141e69caddd838034e850/static/preview-share-min.png",
+        "used_in_artwork": false,
+        "note": "Generic page preview, not a match photo; not used."
+      }
+    },
+    {
+      "file": "03.jpg",
+      "match_key": "[36, \"Santos\", \"Grêmio\"]",
+      "match": {
+        "away": "Grêmio",
+        "date": "23/11/2026",
+        "home": "Santos",
+        "round": 36,
+        "score": "0 x 2",
+        "stadium": "Morumbis",
+        "time": "21:00",
+        "url": "https://ge.globo.com/sp/santos-e-regiao/futebol/brasileirao-serie-a/jogo/23-11-2026/santos-gremio.ghtml"
+      },
+      "sha256": "7b5d35a09281f53eef5e3b4d506fa9c1faecbd7a3701c913e904afa3ee350162",
+      "template_url": "https://raw.githubusercontent.com/cipherdragon/memebank/2a7c42493d12a181fba486494b023addd4d37b8f/Hide-the-Pain-Harold.jpg",
+      "template_page": "https://github.com/cipherdragon/memebank/blob/2a7c42493d12a181fba486494b023addd4d37b8f/Hide-the-Pain-Harold.jpg",
+      "context_sources": [
+        "https://ge.globo.com/sp/santos-e-regiao/futebol/brasileirao-serie-a/jogo/23-11-2026/santos-gremio.ghtml"
+      ],
+      "editing": "Pillow; original template pixels, Liberation Sans; no generative images",
+      "text": [
+        "LEVAMOS O SANTOS PRO MORUMBIS\nA DERROTA FOI JUNTO",
+        "",
+        ""
+      ],
+      "photo_research": {
+        "page": "https://ge.globo.com/sp/santos-e-regiao/futebol/brasileirao-serie-a/jogo/23-11-2026/santos-gremio.ghtml",
+        "image_url": "https://s3.glbimg.com/v1/AUTH_378ee63fe83141e69caddd838034e850/static/preview-share-min.png",
+        "used_in_artwork": false,
+        "note": "Generic page preview, not a match photo; not used."
+      }
+    }
+  ],
+  "caption": "Bloco de 21–25/11 da 36ª: Flamengo campeão com 1 x 1, Vitória fez 5 x 2 no Inter e Grêmio bateu o Santos por 2 x 0. Qual resultado mais te pegou?",
+  "review_notes": "Visually reviewed all three slides: original recognizable template pixels, no AI characters, simple legible typography, exact block scores and dates. Photos not used; no invented photo credits.",
+  "additional_research_sources": [
+    "https://www.flamengo.com.br/noticias/futebol/decacampeao-brasileiro-flamengo-empata-com-o-palmeiras-e-conquista-o-titulo-nacional-em-sao-paulo",
+    "https://www.gremiopedia.com/wiki/Ficha_T%C3%A9cnica%3ASantos_0_x_2_Gr%C3%AAmio_-_23/11/2026"
+  ]
+}
