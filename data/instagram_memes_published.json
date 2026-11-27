@@ -142,17 +142,18 @@
     "published_at": "2026-11-27T20:44:54.336204+00:00"
   },
   "40bd273dca6908434553": {
-    "state": "publish_requested",
+    "state": "published_pending_verification",
     "summary_media_id": "18146509075594982",
     "summary_permalink": "https://www.instagram.com/p/DgQcY8NCZt8/",
     "caption_sha256": "8a2d8cd6dd8003976305ac8b7574b45d5ed3fa2ed1fdc7c57a61b98ce75fd7a9",
     "source_commit": "751c1074aae1dd2e3f1b68b38a34dea38936a596",
-    "updated_at": "2026-11-27T20:45:19.091041+00:00",
+    "updated_at": "2026-11-27T20:45:24.154236+00:00",
     "container_id": "18124462990999380",
     "child_container_ids": [
       "18124462819999380",
       "18124462840999380",
       "18124462861999380"
-    ]
+    ],
+    "carousel_id": "18136954600751936"
   }
 }
