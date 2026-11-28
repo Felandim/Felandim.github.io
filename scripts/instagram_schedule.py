@@ -110,6 +110,7 @@ def block_spotlight(insights: dict, block: dict, scorer_data: dict | None = None
     import instagram_editorial
     matches = block["matches"]
     scorer = instagram_editorial.multi_goal_scorer_spotlight(matches, scorer_data)
+    scorer_race = instagram_editorial.scorer_race_spotlight(insights, matches, scorer_data)
     collective = instagram_editorial.collective_attack_spotlight(matches, scorer_data)
     bounce_back = instagram_editorial.bounce_back_spotlight(insights, matches)
     drought_end = instagram_editorial.winless_run_ended_spotlight(insights, matches)
@@ -118,6 +119,8 @@ def block_spotlight(insights: dict, block: dict, scorer_data: dict | None = None
     if len(matches) == 1:
         if scorer:
             return scorer
+        if scorer_race:
+            return scorer_race
         if collective:
             return collective
         if bounce_back:

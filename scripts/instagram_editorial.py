@@ -194,6 +194,103 @@ def multi_goal_scorer_spotlight(
     }
 
 
+def scorer_race_spotlight(
+    insights: dict,
+    matches: list[dict],
+    scorer_data: dict | None,
+    maximum_gap: int = 1,
+) -> dict | None:
+    """Destaca quem marcou no bloco e entrou de vez na corrida pela artilharia."""
+    round_numbers = {int(match.get("round") or 0) for match in matches if match.get("round")}
+    if len(round_numbers) != 1:
+        return None
+    round_number = round_numbers.pop()
+    histories = {int(item.get("round") or 0): item.get("ranking", []) for item in insights.get("scorers", [])}
+    current = histories.get(round_number, [])
+    if not current:
+        return None
+
+    previous = histories.get(round_number - 1, [])
+    current_by_name = {str(row.get("name") or ""): row for row in current}
+    previous_by_name = {str(row.get("name") or ""): row for row in previous}
+    leader_goals = max(int(row.get("goals") or 0) for row in current)
+    previous_leader_goals = max((int(row.get("goals") or 0) for row in previous), default=0)
+    previous_leaders = {
+        str(row.get("name") or "")
+        for row in previous
+        if int(row.get("goals") or 0) == previous_leader_goals
+    }
+
+    block_scorers: dict[str, dict] = {}
+    scorer_matches = (scorer_data or {}).get("matches", {})
+    for match in matches:
+        match_scorers = scorer_matches.get(match.get("url", ""), {})
+        for side in ("home", "away"):
+            for scorer in match_scorers.get(side, []):
+                name = str(scorer.get("name") or "").strip()
+                if not name or scorer.get("own_goal"):
+                    continue
+                item = block_scorers.setdefault(name, {"team": match.get(side, ""), "goals_in_block": 0})
+                item["goals_in_block"] += int(scorer.get("goals") or 1)
+
+    candidates = []
+    for player, block in block_scorers.items():
+        row = current_by_name.get(player)
+        if not row:
+            continue
+        goals = int(row.get("goals") or 0)
+        previous_goals = int(previous_by_name.get(player, {}).get("goals") or 0)
+        gap = leader_goals - goals
+        if gap > maximum_gap or goals <= previous_goals:
+            continue
+        candidates.append({
+            "player": player,
+            "team": str(row.get("team") or block["team"]),
+            "goals": goals,
+            "goals_in_block": block["goals_in_block"],
+            "gap": gap,
+            "previous_leader": player in previous_leaders,
+        })
+    if not candidates:
+        return None
+
+    best = min(candidates, key=lambda item: (item["gap"], item["previous_leader"], -item["goals_in_block"], item["player"]))
+    leaders = [str(row.get("name") or "") for row in current if int(row.get("goals") or 0) == leader_goals]
+    rivals = [name for name in leaders if name != best["player"]]
+    other_rows = [row for row in current if str(row.get("name") or "") != best["player"]]
+    closest_goals = max((int(row.get("goals") or 0) for row in other_rows), default=0)
+    closest_rivals = [
+        str(row.get("name") or "")
+        for row in other_rows
+        if int(row.get("goals") or 0) == closest_goals
+    ]
+    if best["gap"] == 0 and not best["previous_leader"]:
+        if rivals:
+            label = "ARTILHARIA EMPATADA"
+            text = f"{best['player']} chegou a {best['goals']} gols • mesma marca de {_join_pt(rivals)}"
+            caption = f"Artilharia empatada: {best['player']} marcou pelo {best['team']} e chegou a {best['goals']} gols, mesma marca de {_join_pt(rivals)}."
+        else:
+            label = "NOVO ARTILHEIRO"
+            text = f"{best['player']} • {best['goals']} gols • liderança isolada"
+            caption = f"Novo artilheiro: {best['player']} marcou pelo {best['team']}, chegou a {best['goals']} gols e assumiu sozinho a liderança da corrida."
+    elif best["gap"] == 0:
+        label = "ARTILHEIRO MARCOU"
+        text = f"{best['player']} • {best['goals']} gols no Brasileirão"
+        caption = f"Artilheiro marcou: {best['player']} balançou a rede pelo {best['team']} e chegou a {best['goals']} gols no campeonato."
+    else:
+        label = "NA COLA DO ARTILHEIRO"
+        text = f"{best['player']} • {best['goals']} gols • a 1 do topo"
+        caption = f"Na cola da artilharia: {best['player']} marcou pelo {best['team']}, chegou a {best['goals']} gols e ficou a um de {_join_pt(leaders)}."
+    return {
+        "kind": "scorer_race",
+        "label": label,
+        "text": text,
+        "caption": caption,
+        "rivals": rivals or closest_rivals,
+        **best,
+    }
+
+
 def collective_attack_spotlight(
     matches: list[dict],
     scorer_data: dict | None,
@@ -965,7 +1062,7 @@ def editorial_spotlight(insights: dict, matches: list[dict], scorer_data: dict |
         return match_point
     if base.get("kind") in HIGH_PRIORITY_KINDS or base.get("kind") == "delayed_match":
         return base
-    return derby_day_spotlight(matches) or multi_goal_scorer_spotlight(matches, scorer_data) or collective_attack_spotlight(matches, scorer_data) or rout_wave_spotlight(matches) or high_scoring_match_spotlight(matches) or title_rivals_win_spotlight(insights, matches) or bounce_back_spotlight(insights, matches) or winless_run_ended_spotlight(insights, matches) or unbeaten_run_spotlight(insights, matches) or fortress_breached_spotlight(insights, matches) or scoring_surge_spotlight(insights) or scoring_drought_spotlight(insights) or winning_streak_spotlight(insights, matches) or both_teams_scored_spotlight(matches) or clean_sheet_wave_spotlight(matches) or away_dominance_spotlight(matches) or home_dominance_spotlight(matches) or draw_dominance_spotlight(matches) or drawless_day_spotlight(matches) or defensive_streak_spotlight(insights) or title_race_spotlight(insights) or base
+    return derby_day_spotlight(matches) or multi_goal_scorer_spotlight(matches, scorer_data) or scorer_race_spotlight(insights, matches, scorer_data) or collective_attack_spotlight(matches, scorer_data) or rout_wave_spotlight(matches) or high_scoring_match_spotlight(matches) or title_rivals_win_spotlight(insights, matches) or bounce_back_spotlight(insights, matches) or winless_run_ended_spotlight(insights, matches) or unbeaten_run_spotlight(insights, matches) or fortress_breached_spotlight(insights, matches) or scoring_surge_spotlight(insights) or scoring_drought_spotlight(insights) or winning_streak_spotlight(insights, matches) or both_teams_scored_spotlight(matches) or clean_sheet_wave_spotlight(matches) or away_dominance_spotlight(matches) or home_dominance_spotlight(matches) or draw_dominance_spotlight(matches) or drawless_day_spotlight(matches) or defensive_streak_spotlight(insights) or title_race_spotlight(insights) or base
 
 
 def _spotlight_sentence(spotlight: dict) -> str:

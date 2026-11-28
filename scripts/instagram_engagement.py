@@ -96,6 +96,12 @@ def engagement_question(spotlight: dict) -> str:
     if kind == "multi_goal_scorer":
         player = str(spotlight.get("player", "")).strip()
         return f"{player} repete a dose na próxima rodada?" if player else "Quem repete esse feito na próxima rodada?"
+    if kind == "scorer_race":
+        player = str(spotlight.get("player", "")).strip()
+        rivals = [str(name).strip() for name in spotlight.get("rivals", []) if str(name).strip()]
+        if player and rivals:
+            return f"Quem termina como artilheiro: {player} ou {_join_question_options(rivals)}?"
+        return f"{player} termina o Brasileirão como artilheiro?" if player else "Quem termina o Brasileirão como artilheiro?"
     if kind == "collective_attack":
         team = str(spotlight.get("team", "")).strip()
         names = [str(name).strip() for name in spotlight.get("scorers", []) if str(name).strip()]
