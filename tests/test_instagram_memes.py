@@ -9,6 +9,48 @@ spec.loader.exec_module(memes)
 
 
 class PublicationSafety(unittest.TestCase):
+    def test_legacy_single_game_post_reserves_whole_round(self):
+        blocks = {
+            "isolated": {"match_keys": ['[35, "A", "B"]']},
+            "main": {"match_keys": ['[35, "C", "D"]', '[35, "E", "F"]', '[35, "G", "H"]']},
+            "next": {"match_keys": ['[36, "C", "D"]']},
+        }
+        for status in ("published", "publish_requested", "creating_containers"):
+            state = {"isolated": {"state": status}}
+            self.assertTrue(memes.round_already_claimed("main", blocks, state))
+            self.assertFalse(memes.round_already_claimed("next", blocks, state))
+
+    def test_explicit_round_receipt_and_own_resume(self):
+        blocks = {"main": {"match_keys": ['[35, "C", "D"]']}}
+        self.assertTrue(memes.round_already_claimed(
+            "main", blocks, {"old": {"round_key": "2026:35", "state": "published"}}))
+        self.assertTrue(memes.round_already_claimed(
+            "main", blocks, {"main": {"state": "published"}}))
+        self.assertFalse(memes.round_already_claimed(
+            "main", blocks, {"main": {"state": "container_ready"}}))
+
+    def test_unknown_or_mixed_round_fails_closed(self):
+        for block in ({}, {"match_keys": []}, {"match_keys": ['[35, "A", "B"]', '[36, "C", "D"]']}):
+            with self.assertRaises(memes.PublishError):
+                memes.round_key(block)
+
+    def test_isolated_games_and_repeated_featured_game_are_rejected(self):
+        matches = [{"round": 35, "home": home, "away": away, "score": "1 x 0"}
+                   for home, away in (("A", "B"), ("C", "D"), ("E", "F"))]
+        all_keys = [memes.json.dumps([m["round"], m["home"], m["away"]]) for m in matches]
+        for count, error in ((1, "at least three"), (2, "at least three"), (3, "different game")):
+            keys = all_keys[:count]
+            block_id = memes.hashlib.sha256("\n".join(sorted(keys)).encode()).hexdigest()[:20]
+            block = {"outcome": "published", "media_id": "summary",
+                     "published_at": "2026-11-01T12:00:00-03:00", "match_keys": keys}
+            manifest = {"block_id": block_id, "summary_media_id": "summary", "match_keys": keys,
+                        "account_id": memes.ACCOUNT, "api_profile_id": memes.PROFILE,
+                        "username": memes.USERNAME,
+                        "images": [{"file": f"{i}.jpg", "match_key": keys[0]} for i in range(3)]}
+            with patch.object(memes, "read_json", return_value=manifest):
+                with self.assertRaisesRegex(memes.PublishError, error):
+                    memes.validate_manifest(Path("unused"), block_id, block, matches)
+
     def test_activation_and_actual_publication_are_required(self):
         valid = {"outcome": "published", "media_id": "123", "published_at": "2026-10-13T16:00:00-03:00"}
         self.assertTrue(memes.eligible(valid))

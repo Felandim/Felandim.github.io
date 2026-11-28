@@ -1,4 +1,4 @@
-"""Publish three original memes only for a confirmed newly published round block."""
+"""Publish one carousel per round, with one meme per distinct featured match."""
 from __future__ import annotations
 import argparse
 from datetime import datetime, timezone
@@ -22,6 +22,7 @@ ACCOUNT = "17841429981371844"
 PROFILE = "27834175349616492"
 USERNAME = "brasileiraoemrodadas"
 CUTOFF = datetime.fromisoformat("2026-10-13T15:09:40-03:00")
+SEASON = 2026  # Same season as data/serie_a_2026.json and the source summaries.
 class PublishError(RuntimeError):
     """Safe error with no token or raw API response."""
 
@@ -100,6 +101,37 @@ def eligible(block):
         return False
 
 
+def round_key(block):
+    """Resolve legacy block receipts without relying on captions or block IDs."""
+    try:
+        rounds = {int(json.loads(key)[0]) for key in block["match_keys"]}
+        if len(rounds) != 1:
+            raise ValueError()
+        number = rounds.pop()
+        if not 1 <= number <= 38:
+            raise ValueError()
+        return f"{SEASON}:{number}"
+    except (KeyError, IndexError, TypeError, ValueError):
+        raise PublishError("Cannot establish a unique season/round for meme publication.") from None
+
+
+def round_already_claimed(block_id, blocks, state):
+    """Old per-game posts and uncertain attempts also reserve their whole round."""
+    target = round_key(blocks[block_id])
+    for other_id, receipt in state.items():
+        if not receipt:
+            continue
+        # Own unpublished containers may resume, but never another block's.
+        if other_id == block_id:
+            if receipt.get("state") == "published":
+                return True
+            continue
+        identity = receipt.get("round_key") or round_key(blocks.get(other_id, {}))
+        if identity == target:
+            return True
+    return False
+
+
 def account_media(api):
     profile = api.request("GET", ACCOUNT, fields="id,username")
     if str(profile.get("id")) != PROFILE or profile.get("username") != USERNAME:
@@ -140,6 +172,8 @@ def validate_manifest(path, block_id, block, matches):
     keys = block.get("match_keys", [])
     if not keys or len(keys) != len(set(keys)) or manifest.get("match_keys") != keys:
         raise PublishError("Manifest must reference exactly the source block match keys.")
+    if len(keys) < 3:
+        raise PublishError("A meme carousel requires at least three distinct source games.")
     expected_id = hashlib.sha256("\n".join(sorted(keys)).encode()).hexdigest()[:20]
     if expected_id != block_id:
         raise PublishError("Source block identity mismatch.")
@@ -153,6 +187,8 @@ def validate_manifest(path, block_id, block, matches):
     images = manifest.get("images", [])
     if len(images) != 3 or len({item.get("file") for item in images}) != 3:
         raise PublishError("Exactly three distinct images are required.")
+    if len({item.get("match_key") for item in images}) != 3:
+        raise PublishError("Each image must feature a different game: three games per round.")
     if not 0 < len(manifest.get("caption", "")) <= 2200 or not manifest.get("reviewed"):
         raise PublishError("Caption or editorial review missing.")
     for item in images:
@@ -168,8 +204,6 @@ def validate_manifest(path, block_id, block, matches):
         with Image.open(path.parent / name) as image:
             if image.format != "JPEG" or image.mode != "RGB" or image.size != (1080, 1350):
                 raise PublishError("Image must be JPEG RGB 1080x1350.")
-    if len(keys) >= 3 and len({item["match_key"] for item in images}) != 3:
-        raise PublishError("A block of three or more matches requires three distinct games.")
     return manifest
 
 
@@ -223,7 +257,8 @@ def publish_one(api, manifest, path, block, recent, sha):
                 raise PublishError("Public image bytes differ from reviewed image.")
             urls.append(url)
         checkpoint(block_id, state="creating_containers", summary_media_id=block["media_id"],
-                   summary_permalink=summary["permalink"], caption_sha256=digest, source_commit=sha)
+                   summary_permalink=summary["permalink"], caption_sha256=digest, source_commit=sha,
+                   round_key=round_key(block))
         children = []
         for index, url in enumerate(urls, 1):
             child = api.request("POST", f"{ACCOUNT}/media", image_url=url, is_carousel_item="true")
@@ -257,6 +292,12 @@ def main():
     recent = account_media(api)
     for block_id, block in blocks.items():
         if not eligible(block):
+            continue
+        if len(set(block.get("match_keys", []))) < 3:
+            print(f"Block {block_id}: isolated games do not generate meme carousels", flush=True)
+            continue
+        if round_already_claimed(block_id, blocks, read_json(STATE, {})):
+            print(f"Round {round_key(block)} already has a carousel or pending attempt", flush=True)
             continue
         summary = next((m for m in recent if str(m["id"]) == str(block["media_id"])), None)
         if not summary:
